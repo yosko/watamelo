@@ -1,7 +1,7 @@
 Watamelo
 =====
 
-Watamelo is a small and somehow lightweight PHP MVC Framework.
+Watamelo is a small and somehow lightweight PHP MVC Framework under the GNU LGPL licence.
 
 ## Requirements
 
