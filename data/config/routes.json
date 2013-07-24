@@ -1,0 +1,25 @@
+{
+    "": {
+        "controller": "general",
+        "action": "index"
+    },
+    "signup": {
+        "controller": "auth",
+        "action": "signUp"
+    },
+    "login": {
+        "controller": "auth",
+        "action": "login",
+        "optionalParameters": [
+            "login"
+        ]
+    },
+    "logout": {
+        "controller": "auth",
+        "action": "logout"
+    },
+    "404": {
+        "controller": "error",
+        "action": "404"
+    }
+}

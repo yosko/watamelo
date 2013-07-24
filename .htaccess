@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+# activate URL Rewriting
+RewriteEngine On
+
+# redirect access for application & framework files to frontend
+RewriteRule ^app/           index.php [QSA,L]
+RewriteRule ^data/db/       index.php [QSA,L]
+RewriteRule ^data/config/   index.php [QSA,L]
+RewriteRule ^tmp/           index.php [QSA,L]
+
+# authorize direct access if we get an existing filename
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# redirect remaining URLs to the index
+RewriteRule ^(.*)$          index.php?url=$1 [QSA,L]
+
+</IfModule>

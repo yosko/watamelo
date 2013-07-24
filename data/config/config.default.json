@@ -1,0 +1,8 @@
+{
+    "baseUrl": false,
+    "template": "default",
+    "sess.lt.dir": "tmp\/sessions\/",
+    "sess.lt.duration": 2592000,
+    "sess.lt.nbMax": 200,
+    "sess.name": ""
+}
