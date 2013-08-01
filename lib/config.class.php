@@ -5,12 +5,14 @@
  */
 class Config extends ApplicationComponent {
     protected $params = array();
+    protected $globalFile = "";
     protected $defaultFile = "";
     protected $file = "";
 
     public function __construct(Application $app) {
         parent::__construct($app);
 
+        $this->globalFile = ROOT.'/data/config/config.global.json';
         $this->defaultFile = ROOT.'/data/config/config.default.json';
         $this->file = ROOT.'/data/config/config.json';
 
@@ -33,6 +35,8 @@ class Config extends ApplicationComponent {
         } else {
             if(array_key_exists($key, $this->params)) {
                 return $this->params[$key];
+            } elseif(array_key_exists($key, $this->params['global'])) {
+                return $this->params['global'][$key];
             } else {
                 return false;
             }
@@ -41,10 +45,29 @@ class Config extends ApplicationComponent {
 
     /**
      * Returns all application configuration parameters
-     * @return array complete configuration array
+     * @param  string  $type          whether the values returned should be 'default', 'app' or 'current' specific
+     * @param  boolean $includeGlobal whether to include global config values
+     * @return array                  configuration array
      */
-    public function getAll() {
-        return $this->params;
+    public function getAll($type = 'current', $includeGlobal = true) {
+        //don't user $this->param her because it might contain user specific values & globals
+        if($type == 'default') {
+            $params = $this->loadFile($this->defaultFile);
+        } elseif($type == 'app') {
+            $params = $this->loadFile($this->file);
+        } else {
+            //current params: may be modified within app for different reasons
+            //suchs as user specific parameters
+            $params = $this->params;
+        }
+
+        if($includeGlobal) {
+            $globalParams = $this->loadFile($this->globalFile);
+            $params = array_merge($globalParams, $params);
+        } else {
+            unset($params['global']);
+        }
+        return $params;
     }
 
     /**
@@ -92,19 +115,23 @@ class Config extends ApplicationComponent {
 
     /**
      * Load the default configuration in app
-     * @return array false the configuration is empty afterwards
+     * @return boolean false if the configuration is empty afterwards
      */
     private function loadDefault() {
         $this->params = $this->loadFile($this->defaultFile);
+        $this->params['global'] = $this->loadFile($this->globalFile);
+
         return !empty($this->params);
     }
 
     /**
      * Load the application configuration from file
-     * @return array false the configuration is empty afterwards
+     * @return boolean false if the configuration is empty afterwards
      */
     private function load() {
         $this->params = $this->loadFile($this->file);
+        $this->params['global'] = $this->loadFile($this->globalFile);
+
         return !empty($this->params);
     }
 
@@ -127,7 +154,9 @@ class Config extends ApplicationComponent {
      * @return boolean true if save was a success
      */
     private function save() {
-        return $this->saveFile($this->file);
+        $params = $this->params;
+        unset($params['global']);
+        return $this->saveFile($this->file, $params);
     }
 
     /**
@@ -135,18 +164,29 @@ class Config extends ApplicationComponent {
      * @return boolean true if save was a success
      */
     private function saveDefault() {
-        return $this->saveFile($this->defaultFile);
+        $params = $this->params;
+        unset($params['global']);
+        return $this->saveFile($this->defaultFile, $params);
+    }
+
+    /**
+     * Save the current GLOBAL configuration to GLOBAL file
+     * @return boolean true if save was a success
+     */
+    private function saveGlobal() {
+        return $this->saveFile($this->defaultFile, $this->params['global']);
     }
 
     /**
      * Save the current configuration to the given file
-     * @param  string $file file name
-     * @return boolean      true if save was a success
+     * @param  string  $file   file name
+     * @param  misc    $params params to put in the file (json encoded)
+     * @return boolean        true if save was a success
      */
-    private function saveFile($file) {
+    private function saveFile($file, $params) {
         $fp = fopen( $file, 'w' );
         if($fp) {
-            fwrite($fp, json_encode($this->params));
+            fwrite($fp, json_encode($params));
             fclose($fp);
         }
         return $fp !== false;
