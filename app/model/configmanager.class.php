@@ -2,15 +2,16 @@
 
 /**
  * Application configuration management
+ * Is accessib
  */
-class Config extends ApplicationComponent {
+class ConfigManager extends Manager {
     protected $params = array();
     protected $globalFile = "";
     protected $defaultFile = "";
     protected $file = "";
 
-    public function __construct(Application $app) {
-        parent::__construct($app);
+    public function __construct($dao) {
+        parent::__construct($dao);
 
         $this->globalFile = ROOT.'/data/config/config.global.json';
         $this->defaultFile = ROOT.'/data/config/config.default.json';
@@ -19,6 +20,13 @@ class Config extends ApplicationComponent {
         if(!$this->load()) {
             $this->loadDefault();
         }
+    }
+    
+    /**
+     * Default action
+     */
+    public function executeIndex() {
+
     }
 
     /**

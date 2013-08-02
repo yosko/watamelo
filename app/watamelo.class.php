@@ -6,7 +6,7 @@ require_once( ROOT.'/app/tools.class.php');
  * The application itself, called from the index.php and does everything else
  */
 class Watamelo extends Application {
-    protected $user, $userLevels;
+    protected $configManager, $user, $userLevels;
     
     /**
      * Prepare the application
@@ -16,6 +16,15 @@ class Watamelo extends Application {
         $this->defaultControllerName = "general";
 
         parent::__construct();
+
+        //init config
+        $this->configManager = $this->managers->getManagerOf('config');
+
+        //required to display anything
+        $this->initView(
+            $this->configManager->get('template'),
+            $this->configManager->get('baseUrl')
+        );
 
         //get user levels and add it to the view
         $userManager = $this->managers->getManagerOf('user');
@@ -53,9 +62,19 @@ class Watamelo extends Application {
         //get controller corresponding to the user request
         $controller = $router->getController($controllerName);
         $controller->setAction($actionName);
+
+        //TODO: add config last state to the view
         
         //execute controller/action
         $controller->execute($actionName, $parameters);
+    }
+
+    /**
+     * Returns the application configuration
+     * @return array config
+     */
+    public function config() {
+        return $this->configManager;
     }
     
     /**

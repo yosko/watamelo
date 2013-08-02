@@ -13,13 +13,12 @@ require_once( ROOT.'/lib/ext/srand.php');
  */
 abstract class Application {
     protected $appName = '';
-    protected $config;
     protected $view;
     protected $managers = null;
     protected $useDefaultRoutes = true;
     protected $defaultControllerName = "";
-	
-	public function __construct() {
+
+    public function __construct() {
         //handle errors and warnings
         if (DEVELOPMENT_ENVIRONMENT == true) {
             error_reporting(E_ALL | E_STRICT);
@@ -27,23 +26,26 @@ abstract class Application {
         } else {
             error_reporting(E_ALL | E_STRICT);
             ini_set('display_errors','Off');
-        	ini_set('log_errors', 'On');
-        	ini_set('error_log', ROOT.'/tmp/logs/error.log');
+            ini_set('log_errors', 'On');
+            ini_set('error_log', ROOT.'/tmp/logs/error.log');
         }
-
-		$this->config = new Config($this);
         
         $this->appName = get_called_class();
         $this->managers = new Managers('sqlite', strtolower($this->appName));
-
-        $this->view = new View($this);
-        $this->view->setParam( "isDevelopmentEnvironment", DEVELOPMENT_ENVIRONMENT );
-	}
+    }
     
     /**
      * Run the application (will call the right controller and action)
      */
     abstract public function run();
+    
+    /**
+     * Initialise the View object
+     */
+    public function initView($template, $baseUrl) {
+        $this->view = new View($this, $template, $baseUrl);
+        $this->view->setParam( "isDevelopmentEnvironment", DEVELOPMENT_ENVIRONMENT );
+    }
     
     /**
      * Returns the application name
@@ -52,14 +54,6 @@ abstract class Application {
     public function appName() {
         return $this->appName;
     }
-    
-    /**
-     * Returns the application configuration
-     * @return array config
-     */
-	public function config() {
-		return $this->config;
-	}
     
     /**
      * Returns the application view
@@ -74,16 +68,16 @@ abstract class Application {
      * @return object managers
      */
     public function managers() {
-		return $this->managers;
-	}
+        return $this->managers;
+    }
     
     /**
      * Returns the application flag "useDefaultRoutes"
      * @return boolean useDefaultRoutes
      */
     public function useDefaultRoutes() {
-    	return $this->useDefaultRoutes;
-	}
+        return $this->useDefaultRoutes;
+    }
     
     /**
      * Returns the application default controller name

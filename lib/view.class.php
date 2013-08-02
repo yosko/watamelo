@@ -14,28 +14,28 @@ define( 'RESPONSE_MAIL', 'mail' );
 class View extends ApplicationComponent {
     protected $params;
     protected $baseUrl;
+    protected $templateName;
     protected $template;
 
-    public function __construct(Application $app) {
+    public function __construct(Application $app, $template, $baseUrl) {
         parent::__construct($app);
 
-        $params = array();
+        $this->params = array();
+        $this->baseUrl = $baseUrl;
+        $this->templateName = $template;
         
         //RainTPL config
-        $template = $this->app()->config()->get("template");
-        if($template===false) { $template = "default"; }
+        if($this->templateName===false) { $this->templateName = "default"; }
         raintpl::configure("base_url", null );
-        raintpl::configure("tpl_dir", "tpl/".$template."/" );
+        raintpl::configure("tpl_dir", "tpl/".$this->templateName."/" );
         raintpl::configure("cache_dir", "tmp/cache/" );
         raintpl::configure("path_replace", false );
         $this->template = new RainTPL;
         
-        $this->baseUrl = $this->app()->config()->get("baseUrl");
         if($this->baseUrl === false) {
             $this->baseUrl = 'http://'.$_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']).'/';
             $this->setParam( "baseUrl", $this->baseUrl );
-            $this->setParam( "templateUrl", $this->baseUrl.'tpl/'.$template.'/' );
-            $this->setParam( "config", $this->app()->config()->get() );
+            $this->setParam( "templateUrl", $this->baseUrl.'tpl/'.$this->templateName.'/' );
         }
     }
 
