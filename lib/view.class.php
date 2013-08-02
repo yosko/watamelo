@@ -16,13 +16,15 @@ class View extends ApplicationComponent {
     protected $baseUrl;
     protected $templateName;
     protected $template;
+    protected $ApacheURLRewriting;
 
-    public function __construct(Application $app, $template, $baseUrl) {
+    public function __construct(Application $app, $template, $baseUrl, $ApacheURLRewriting) {
         parent::__construct($app);
 
         $this->params = array();
         $this->baseUrl = $baseUrl;
         $this->templateName = $template;
+        $this->ApacheURLRewriting = $ApacheURLRewriting;
         
         //RainTPL config
         if($this->templateName===false) { $this->templateName = "default"; }
@@ -34,8 +36,13 @@ class View extends ApplicationComponent {
         
         if($this->baseUrl === false) {
             $this->baseUrl = 'http://'.$_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']).'/';
-            $this->setParam( "baseUrl", $this->baseUrl );
             $this->setParam( "templateUrl", $this->baseUrl.'tpl/'.$this->templateName.'/' );
+            
+            //if there is no URL Rewriting, the route will be put in the $_GET['p']
+            if(!$this->ApacheURLRewriting) {
+                $this->baseUrl .= '?p=';
+            }
+            $this->setParam( "baseUrl", $this->baseUrl );
         }
     }
 

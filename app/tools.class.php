@@ -131,6 +131,25 @@ class Tools {
         }
         fclose($handle);
     }
+
+    /**
+     * For debug purpose only
+     * @param  [misc] $variable the variable to dump
+     */
+    /**
+     * For debug purpose only
+     * @param  misc    $variable the variable to dump
+     * @param  boolean $exit     whether the program should stop right after the dump
+     */
+    public static function debug($variable, $exit = false) {
+        if(DEVELOPMENT_ENVIRONMENT) {
+            echo '<pre>';
+            var_dump($variable);
+            echo '</pre>';
+            if($exit)
+                exit;
+        }
+    }
 }
 
 ?>

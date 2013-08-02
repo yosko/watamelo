@@ -23,7 +23,8 @@ class Watamelo extends Application {
         //required to display anything
         $this->initView(
             $this->configManager->get('template'),
-            $this->configManager->get('baseUrl')
+            $this->configManager->get('baseUrl'),
+            $this->configManager->get('ApacheURLRewriting')
         );
 
         //get user levels and add it to the view
@@ -44,7 +45,7 @@ class Watamelo extends Application {
         $this->user = $authController->authenticateUser();
         
         //prepare router
-        $router = new Router($this);
+        $router = new Router($this, $this->configManager->get('ApacheURLRewriting'));
         $controllerName = "";
         $actionName = "";
         $parameters = array();
