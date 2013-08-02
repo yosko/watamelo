@@ -12,4 +12,49 @@
             <li><a href="{$baseUrl}logout">Log out</a></li>{/if}
 
         </ul>
+        <div>
+            The following variables are accessible from the views by default:
+        </div>
+        <ul>
+            <li><strong>$rootUrl =</strong> <em>{$rootUrl}</em> (for direct links to files)</li>
+            <li><strong>$baseUrl =</strong> <em>{$baseUrl}</em> (might differ from $rootUrl if URL rewriting not activated. Used for links to pages)</li>
+            <li><strong>$templateUrl =</strong> <em>{$templateUrl}</em> (for your CSS, javascript and design related images)</li>
+            <li><strong>$isDevelopmentEnvironment =</strong> <em>{$isDevelopmentEnvironment}</em> (boolean)</li>
+            <li><strong>$watameloVersion =</strong> <em>{$watameloVersion}</em> (used in footer)</li>
+        </ul>
+        <div>
+            The following variables are related to the current example and are accessible from the current view:
+        </div>
+        <ul>
+            <li>
+                <strong>$userLevels =</strong>
+                <ul>{loop="userLevels"}
+                    
+                    <li>{$key} => {$value}</li>{/loop}
+
+                </ul>
+            </li>
+            <li>
+                <strong>$currentUser =</strong>
+                <ul>{loop="currentUser"}
+                    
+                    <li>{$key} => {$value}</li>{/loop}
+
+                </ul>
+            </li>
+            <li>
+                <strong>$users =</strong> (exemple of database retrieved values)
+                <ul>{loop="users"}
+                    
+                    <li>{$key} =>
+                        <ul>{loop="value"}
+                            
+                            <li>{$key} => {$value}</li>{/loop}
+
+                        </ul>
+                    </li>{/loop}
+
+                </ul>
+            </li>
+        </ul>
 {include="footer"}

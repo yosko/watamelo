@@ -37,6 +37,7 @@ class View extends ApplicationComponent {
         if($this->baseUrl === false) {
             $this->baseUrl = 'http://'.$_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']).'/';
             $this->setParam( "templateUrl", $this->baseUrl.'tpl/'.$this->templateName.'/' );
+            $this->setParam( "rootUrl", $this->baseUrl );
             
             //if there is no URL Rewriting, the route will be put in the $_GET['p']
             if(!$this->ApacheURLRewriting) {
