@@ -34,7 +34,17 @@
     },
     "export.csv": {
         "controller": "general",
-        "action": "export"
+        "action": "export",
+        "additionalParameters": {
+            "type": "csv"
+        }
+    },
+    "export.json": {
+        "controller": "general",
+        "action": "export",
+        "additionalParameters": {
+            "type": "json"
+        }
     },
     "404": {
         "controller": "error",

@@ -24,6 +24,34 @@ class GeneralController extends Controller {
     }
 
     /**
+     * Return a data file (CSV/JSON)
+     */
+    public function executeExport() {
+        $data = array();
+
+        if($this->parameters['type'] == 'csv') {
+            //the data array must be bidimensional and every item must have the same form:
+            $data = array(
+                array(
+                    'column1' => 1,
+                    'column2' => 'text "1"'
+                ),
+                array(
+                    'column1' => 2,
+                    'column2' => 'text "2"'
+                )
+            );
+            $this->app()->view()->renderData( $data, RESPONSE_CSV );
+        } else {
+            //the $data array can have any number of dimension
+            $data = $this->app()->config()->getAll();
+            $this->app()->view()->renderData( $data, RESPONSE_JSON, array('fileName' => 'test.json') );
+
+            //Note: to use json data in an ajax request, don't use the "fileName" parameter
+        }
+    }
+
+    /**
      * Show an RSS/Atom feed
      */
     public function executeFeed() {
@@ -78,15 +106,6 @@ class GeneralController extends Controller {
         }
 
         $this->app()->view()->renderFeed( $data, $type );
-    }
-
-    /**
-     * Return a data file (CSV)
-     */
-    public function executeExport() {
-
-        $this->app()->view()->setParam( "users", $users );
-        $this->app()->view()->renderView( "home" );
     }
 }
 

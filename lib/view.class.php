@@ -149,16 +149,52 @@ class View extends ApplicationComponent {
      * Send a data response with the given data and response type
      * @param  array  $data         the data to return
      * @param  string $responseType the type of response to use
+     * @param  array  $options      possible options:
+     *                              - 'fileName'='filname.extension' to make it a downloadable file
+     *                              - 'header'=false to hide CSV header line
      */
-    public function renderData($data, $responseType = RESPONSE_JSON) {
+    public function renderData($data, $responseType = RESPONSE_JSON, $options = array()) {
         ob_start();
 
         //format response and headers
         if($responseType == RESPONSE_JSON) {
+            header('Content-type: application/json');
             echo json_encode($data);
+        } elseif($responseType == RESPONSE_CSV) {
+            header('Content-type: text/csv');
+
+            $header = array();
+            foreach($data as $key => $row) {
+                //headers
+                if(empty($header)) {
+                    $header = array_keys($row);
+                    if(!isset($options['header']) || $options['header'] !== false) {
+                        echo implode(",", $header)."\n";
+                    }
+                }
+                
+                $result='';
+                foreach($row as $key => $value) {
+                    if(is_numeric($value)) {
+                        $result .= $value.',';
+                    } else {
+                        $result .= '"'.str_replace( '"', '\"', htmlspecialchars_decode($row[$key]) ).'"';
+                    }
+                }
+                
+                $result = rtrim($result, ',')."\n";
+                echo $result;
+            }
         }
 
         $response = ob_get_clean();
+        
+        if(isset($options['fileName'])) {
+            header('Content-disposition: attachment; filename='.$options['fileName']);
+            header("Pragma: no-cache");
+            header("Expires: 0");
+        }
+
         echo $response;
     }
 
