@@ -1,6 +1,8 @@
 <?php
 
 define( 'RESPONSE_CSV', 'csv' );
+define( 'RESPONSE_RSS', 'rss' );
+define( 'RESPONSE_ATOM', 'atom' );
 define( 'RESPONSE_FILE', 'file' );
 define( 'RESPONSE_HTML', 'html' );
 define( 'RESPONSE_IMG', 'img' );
@@ -129,8 +131,8 @@ class View extends ApplicationComponent {
      * @param string $feed values for feed items
      * @param string $type rss (default) or atom
      */
-    public function renderFeed($feed, $type='rss') {
-        $viewName = ($type == 'atom')?'atom':'rss';
+    public function renderFeed($feed, $type=RESPONSE_RSS) {
+        $viewName = ($type == RESPONSE_ATOM)?RESPONSE_ATOM:RESPONSE_RSS;
 
         //the view is defined on framework level
         raintpl::configure("tpl_dir", "lib/views/" );

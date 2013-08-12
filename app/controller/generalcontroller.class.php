@@ -72,7 +72,7 @@ class GeneralController extends Controller {
         $data['language'] = 'en-en';
 
         //atom feed
-        if($type == 'atom') {
+        if($type == RESPONSE_ATOM) {
             $data['update'] = date(DATE_ATOM); //watch out for the date format!
 
         //rss feed
