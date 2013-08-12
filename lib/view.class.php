@@ -15,6 +15,7 @@ define( 'RESPONSE_MAIL', 'mail' );
  */
 class View extends ApplicationComponent {
     protected $params;
+    protected $rootUrl;
     protected $baseUrl;
     protected $templateName;
     protected $template;

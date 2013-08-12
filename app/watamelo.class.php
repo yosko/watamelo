@@ -96,14 +96,6 @@ class Watamelo extends Application {
     public function config() {
         return $this->configManager;
     }
-
-    /**
-     * Returns the language manager (for listing languages within controllers, essentially)
-     * @return array config
-     */
-    public function langManager() {
-        return $this->langManager;
-    }
     
     /**
      * Return current user's information
