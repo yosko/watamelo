@@ -18,6 +18,24 @@
         "controller": "auth",
         "action": "logout"
     },
+    "feed.rss": {
+        "controller": "general",
+        "action": "feed",
+        "additionalParameters": {
+            "type": "rss"
+        }
+    },
+    "feed.atom": {
+        "controller": "general",
+        "action": "feed",
+        "additionalParameters": {
+            "type": "atom"
+        }
+    },
+    "export.csv": {
+        "controller": "general",
+        "action": "export"
+    },
     "404": {
         "controller": "error",
         "action": "404"

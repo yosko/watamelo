@@ -43,10 +43,10 @@ abstract class Application {
     /**
      * Initialise the View object
      */
-    public function initView($template, $baseUrl, $ApacheURLRewriting) {
-        $this->view = new View($this, $template, $baseUrl, $ApacheURLRewriting);
+    public function initView($template, $rootUrl, $ApacheURLRewriting) {
+        $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
         $this->view->setParam( "isDevelopmentEnvironment", DEVELOPMENT_ENVIRONMENT );
-        $this->view->setParam( "watameloVersion", VERSION );
+        $this->view->setParam( "appVersion", VERSION );
     }
     
     /**

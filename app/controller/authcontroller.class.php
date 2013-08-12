@@ -126,7 +126,7 @@ class AuthController extends Controller {
                     //delete long-term cookie
                     $sessionManager->unsetLTCookie();
                     
-                    header( 'Location: '.$this->app()->view()->baseUrl() );
+                    header( 'Location: '.$this->app()->view()->rootUrl() );
                 }
             
             //user isn't logged in: anonymous
@@ -165,7 +165,7 @@ class AuthController extends Controller {
     public function executeIndex() {
         $user = $this->app()->user();
         if($user['level'] >= $this->userLevels['user']) {
-            header( 'Location: '.$this->app()->view()->baseUrl() );
+            header( 'Location: '.$this->app()->view()->rootUrl() );
         } else {
             if(isset($this->parameters['login'])) {
                 $this->app()->view()->setParam( "values", array("login" => $this->parameters['login']) );
@@ -195,7 +195,7 @@ class AuthController extends Controller {
     public function executeLogout() {
         $sessionManager = $this->app()->managers()->getManagerOf('session');
         $sessionManager->unsetSession();
-        header( 'Location: '.$this->app()->view()->baseUrl() );
+        header( 'Location: '.$this->app()->view()->rootUrl() );
     }
     
     /**

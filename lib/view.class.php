@@ -1,4 +1,4 @@
- <?php
+<?php
 
 define( 'RESPONSE_CSV', 'csv' );
 define( 'RESPONSE_FILE', 'file' );
@@ -16,13 +16,14 @@ class View extends ApplicationComponent {
     protected $baseUrl;
     protected $templateName;
     protected $template;
+    protected $templateUrl;
     protected $ApacheURLRewriting;
 
-    public function __construct(Application $app, $template, $baseUrl, $ApacheURLRewriting) {
+    public function __construct(Application $app, $template, $rootUrl, $ApacheURLRewriting) {
         parent::__construct($app);
 
         $this->params = array();
-        $this->baseUrl = $baseUrl;
+        $this->rootUrl = $rootUrl;
         $this->templateName = $template;
         $this->ApacheURLRewriting = $ApacheURLRewriting;
         
@@ -34,17 +35,19 @@ class View extends ApplicationComponent {
         raintpl::configure("path_replace", false );
         $this->template = new RainTPL;
         
-        if($this->baseUrl === false) {
-            $this->baseUrl = 'http://'.$_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']).'/';
-            $this->setParam( "templateUrl", $this->baseUrl.'tpl/'.$this->templateName.'/' );
-            $this->setParam( "rootUrl", $this->baseUrl );
-            
-            //if there is no URL Rewriting, the route will be put in the $_GET['p']
-            if(!$this->ApacheURLRewriting) {
-                $this->baseUrl .= '?p=';
-            }
-            $this->setParam( "baseUrl", $this->baseUrl );
+        if($this->rootUrl === false) {
+            $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']).'/';
         }
+        
+        $this->templateUrl = $this->rootUrl.'tpl/'.$this->templateName.'/';
+
+        //if there is no URL Rewriting, the route will be put in the $_GET['p']
+        $this->baseUrl = $this->rootUrl;
+        $this->baseUrl .= (!$this->ApacheURLRewriting)?'?p=':'';
+
+        $this->setParam( "templateUrl", $this->templateUrl );
+        $this->setParam( "rootUrl", $this->rootUrl );
+        $this->setParam( "baseUrl", $this->baseUrl );
     }
 
     /**
@@ -53,6 +56,30 @@ class View extends ApplicationComponent {
      */
     public function template() {
         return $this->template;
+    }
+
+    /**
+     * Return the currently used root url
+     * @return string url
+     */
+    public function rootUrl() {
+        return $this->baseUrl;
+    }
+
+    /**
+     * Return the currently used base url
+     * @return string url
+     */
+    public function baseUrl() {
+        return $this->baseUrl;
+    }
+
+    /**
+     * Returns the raintpl template
+     * @return object template
+     */
+    public function templateUrl() {
+        return $this->templateUrl;
     }
 
     /**
@@ -74,18 +101,11 @@ class View extends ApplicationComponent {
     }
 
     /**
-     * Return the currently used base url
-     * @return string url
-     */
-    public function baseUrl() {
-        return $this->baseUrl;
-    }
-
-    /**
      * Assign all parameters to the view, then render it
-     * @param string $name view name
+     * @param string  $name         view name
+     * @param boolean $directResult false to get result in the return
      */
-    public function renderView($name) {
+    public function renderView($name, $directResult = true) {
         foreach($this->params as $key => $value) {
             $this->template->assign($key, $value);
         }
@@ -95,8 +115,34 @@ class View extends ApplicationComponent {
         $this->template->draw($name);
 
         $response = ob_get_clean();
-        echo $response;
-        exit;
+
+        if($directResult) {
+            echo $response;
+            exit;
+        } else {
+            return $response;
+        }
+    }
+
+    /**
+     * Render a rss/atom feed with the given falues
+     * @param string $feed values for feed items
+     * @param string $type rss (default) or atom
+     */
+    public function renderFeed($feed, $type='rss') {
+        $viewName = ($type == 'atom')?'atom':'rss';
+
+        //the view is defined on framework level
+        raintpl::configure("tpl_dir", "lib/views/" );
+
+        header('Content-Type: text/xml');
+
+        //TODO: basic check on $feed
+
+        //TODO: order by date desc
+
+        $this->setParam('feed', $feed);
+        $this->renderView($viewName);
     }
 
     /**
@@ -122,16 +168,7 @@ class View extends ApplicationComponent {
      * @return string       view html content
      */
     public function renderMail($name) {
-        foreach($this->params as $key => $value) {
-            $this->template->assign($key, $value);
-        }
-
-        ob_start();
-
-        $this->template->draw($name);
-
-        $response = ob_get_clean();
-        return $response;
+        return $this->renderView($name, false);
     }
 }
 

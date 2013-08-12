@@ -23,7 +23,7 @@ class Watamelo extends Application {
         //required to display anything
         $this->initView(
             $this->configManager->get('template'),
-            $this->configManager->get('baseUrl'),
+            $this->configManager->get('rootUrl'),
             $this->configManager->get('ApacheURLRewriting')
         );
 
@@ -64,10 +64,29 @@ class Watamelo extends Application {
         $controller = $router->getController($controllerName);
         $controller->setAction($actionName);
 
-        //TODO: add config last state to the view
+        //add config last state to the view
+        $this->view->setParam( "config", $this->configManager->getAll() );
         
         //execute controller/action
         $controller->execute($actionName, $parameters);
+    }
+
+    /**
+     * Return an error (can be called from within controllers)
+     * @param  string $error error number (403, 404, etc...)
+     */
+    public function returnError($error="") {
+        $router = new Router($this);
+
+        Tools::log($error);
+
+        $controllerName = "error";
+        $actionName = $error;
+
+        $controller = $router->getController($controllerName);
+        
+        //execute controller/action
+        $controller->execute($actionName, array());
     }
 
     /**
@@ -76,6 +95,14 @@ class Watamelo extends Application {
      */
     public function config() {
         return $this->configManager;
+    }
+
+    /**
+     * Returns the language manager (for listing languages within controllers, essentially)
+     * @return array config
+     */
+    public function langManager() {
+        return $this->langManager;
     }
     
     /**

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>{$feed.title}</title>
+    <subtitle>{$feed.subtitle}</subtitle>
+    <link href="{$feed.self}" rel="self" />
+    <link href="{$feed.link}" />
+    <id>{$feed.self}</id>{if="isset($feed.self)"}
+
+    <updated>{$feed.self}</updated>{/if}{loop="feed.items"}
+
+    <entry>
+        <title>{$value.title}</title>
+        <link href="{$value.link}" />
+        <id>{$value.link}</id>
+        <updated>{$value.update}</updated>
+        <summary>{$value.summary}</summary>{if="isset($value.author)"}
+
+        <author>
+            <name>{$value.author.name}</name>
+            <email>{$value.author.email}</email>
+        </author>{/if}
+
+    </entry>{/loop}
+
+</feed>

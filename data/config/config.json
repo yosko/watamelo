@@ -1,5 +1,5 @@
 {
-    "baseUrl": false,
+    "rootUrl": false,
     "template": "default",
     "sess.lt.dir": "tmp\/sessions\/",
     "sess.lt.duration": 2592000,
