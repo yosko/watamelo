@@ -13,7 +13,7 @@
         <link href="{$value.link}" />
         <id>{$value.link}</id>
         <updated>{$value.update}</updated>
-        <summary>{$value.summary}</summary>{if="isset($value.author)"}
+        <summary type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">{$value.summary}</div></summary>{if="isset($value.author)"}
 
         <author>
             <name>{$value.author.name}</name>
