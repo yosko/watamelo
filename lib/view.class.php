@@ -39,7 +39,7 @@ class View extends ApplicationComponent {
         $this->template = new RainTPL;
         
         if($this->rootUrl === false) {
-            $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']).'/';
+            $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
         }
         
         $this->templateUrl = $this->rootUrl.'tpl/'.$this->templateName.'/';
