@@ -46,6 +46,10 @@
             "type": "json"
         }
     },
+    "403": {
+        "controller": "error",
+        "action": "403"
+    },
     "404": {
         "controller": "error",
         "action": "404"

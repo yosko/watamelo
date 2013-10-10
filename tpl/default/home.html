@@ -5,6 +5,7 @@
             You are currently: {if="$currentUser.level >= $userLevels.user"}connected as "{$currentUser.login}"{else}not connected{/if}
         </div>
         <ul>
+            <li><a href="{$baseUrl}403">Show a 403 error</a></li>
             <li><a href="{$baseUrl}no-route-for-this-url">Show a 404 error</a></li>{if="$currentUser.level < $userLevels.user"}
 
             <li><a href="{$baseUrl}login">Log in</a></li>{else}

@@ -37,7 +37,8 @@ class ErrorController extends Controller {
     
     //Forbidden
     public function execute403() {
-        
+        header("HTTP/1.0 403 Forbidden");
+        $this->app()->view()->renderView( "error.403" );
     }
     
     //Not Found
