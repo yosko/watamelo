@@ -11,6 +11,9 @@ class AuthController extends Controller {
             "secure" => array(
                 "level" => $this->userLevels['user']
             ),
+            "unsecure" => array(
+                "level" => $this->userLevels['admin']
+            ),
             "jsonAuthError" => array(
                 "responseType" => RESPONSE_JSON
             ),
@@ -45,8 +48,8 @@ class AuthController extends Controller {
             $values = array();
             $errors = array();
             
-            $values['login'] = trim($_POST['login']);
-            $values['password'] = trim($_POST['password']);
+            $values['login'] = Tools::htmlentities(trim($_POST['login']));
+            $values['password'] = trim($_POST['password']); //exception to htmlentities
             $values['remember'] = isset($_POST['remember']);
 
             //find user for this login
@@ -76,11 +79,7 @@ class AuthController extends Controller {
 
                     $sid = $sessionManager->getValue('sid');
                     if(!empty($sid)) {
-                        $sessionManager->setLTSession(
-                            $sessionManager->getValue('login'),
-                            $sessionManager->getValue('sid'),
-                            array()
-                        );
+                        $sessionManager->setLTSession();
                         
                         //maintenance: delete old sessions
                         $sessionManager->flushOldLTSessions();
@@ -152,10 +151,15 @@ class AuthController extends Controller {
 
         //for security reasons, don't send the password hash to other classes
         unset($user['password']);
+
+        // /!\ IMPORTANT /!\
+        // Reload user into the controller
+        // First instanciation of controller happens before the user is set
+        $this->currentUser = $user;
         
         $this->app()->view()->setParam( "values", $values );
         $this->app()->view()->setParam( "errors", $errors );
-        $this->app()->view()->setParam( "currentUser", $user );
+        $this->app()->view()->setParam( "currentUser", $this->currentUser );
         return $user;
     }
     
@@ -163,8 +167,7 @@ class AuthController extends Controller {
      * Show login form for unauthenticated users
      */
     public function executeIndex() {
-        $user = $this->app()->user();
-        if($user['level'] >= $this->userLevels['user']) {
+        if($this->currentUser['level'] >= $this->userLevels['user']) {
             header( 'Location: '.$this->app()->view()->rootUrl() );
         } else {
             if(isset($this->parameters['login'])) {
@@ -185,7 +188,6 @@ class AuthController extends Controller {
      * Show the secure form (asks password for already authenticated users)
      */
     public function executeSecure() {
-        $user = $this->app()->user();
         $this->app()->view()->renderView( "auth.secure.form" );
     }
     
@@ -196,6 +198,17 @@ class AuthController extends Controller {
         $sessionManager = $this->app()->managers()->getManagerOf('session');
         $sessionManager->unsetSession();
         header( 'Location: '.$this->app()->view()->rootUrl() );
+    }
+    
+    /**
+     * For DEBUG purpose!
+     * Render the current user authentication "unsecure" so that the
+     * "secure form" is shown again without having to manually delete any cookie
+     */
+    public function executeUnsecure() {
+        $sessionManager = $this->app()->managers()->getManagerOf('session');
+        $sessionManager->setValue('secure', false);
+        header( 'Location: '.$this->app()->view()->baseUrl().'admin' );
     }
     
     /**

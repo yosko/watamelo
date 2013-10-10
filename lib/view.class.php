@@ -40,6 +40,7 @@ class View extends ApplicationComponent {
         
         if($this->rootUrl === false) {
             $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
+            $this->setParam( "templateUrl", $this->rootUrl.'tpl/'.$this->templateName.'/' );
         }
         
         $this->templateUrl = $this->rootUrl.'tpl/'.$this->templateName.'/';

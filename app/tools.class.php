@@ -150,6 +150,24 @@ class Tools {
                 exit;
         }
     }
+
+    /**
+     * Make sure htmlentities uses the right encoding
+     * @param  string  $value text to convert
+     * @return string         text converted
+     */
+    public static function htmlentities($value) {
+        return htmlentities($value, ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Make sure html_entity_decode uses the right encoding
+     * @param  string  $value text to convert
+     * @return string         text converted
+     */
+    public static function html_entity_decode($value) {
+        return html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+    }
 }
 
 ?>
