@@ -110,9 +110,9 @@ class SessionManager extends Manager  {
     /**
      * Set the long-term cookie on client side
      * @param srting $login user login
-     * @param srting $id    long-term session id
+     * @param srting $sid    long-term session id
      */
-    public function setLTCookie($login, $id) {
+    public function setLTCookie($login, $sid) {
         setcookie(
             $this->LTSessionName,
             $login.'_'.$sid,
@@ -160,7 +160,7 @@ class SessionManager extends Manager  {
         $sid = $this->getValue('sid');
         
         //client-side
-        $this->setLTCookie($login, $id);
+        $this->setLTCookie($login, $sid);
 
         //server-side
         $fp = fopen($this->LTDir.$login.'_'.$sid.'.ses', 'w');
