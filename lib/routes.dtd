@@ -1,0 +1,10 @@
+<!ELEMENT routes (route*)>
+<!ELEMENT route (additional*, optional*)>
+<!ATTLIST route path CDATA #REQUIRED>
+<!ATTLIST route controller CDATA #REQUIRED>
+<!ATTLIST route action CDATA #REQUIRED>
+<!ELEMENT additional EMPTY>
+<!ATTLIST additional name CDATA #REQUIRED>
+<!ATTLIST additional value CDATA #REQUIRED>
+<!ELEMENT optional EMPTY>
+<!ATTLIST optional name CDATA #REQUIRED>

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE routes SYSTEM "../../lib/routes.dtd">
 <routes>
   <route path="" controller="general" action="index"/>
   <route path="signup" controller="auth" action="signUp"/>

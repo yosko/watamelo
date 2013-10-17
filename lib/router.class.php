@@ -22,6 +22,13 @@ class Router extends ApplicationComponent {
         if (file_exists( $this->file )) {
             $root = new DOMDocument('1.0', 'utf-8');
             $root->load( $this->file );
+
+            //no need to validate every time if in production environment
+            if(DEVELOPMENT_ENVIRONMENT && !$root->validate()) {
+                trigger_error("Failed to validate route definitions", E_USER_ERROR);
+            }
+
+            //only keep the route elements (and their children)
             $this->routes = $root->getElementsByTagName('route');
         }
     }
