@@ -4,8 +4,12 @@
  * Authentication handler
  */
 class AuthController extends Controller {
+    protected $currentUser;
+    
     public function __construct(Application $app) {
         parent::__construct($app);
+        
+        $this->currentUser = $this->app()->user();
 
         $this->actions = array(
             "secure" => array(
