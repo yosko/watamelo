@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<routes>
+  <route path="" controller="general" action="index"/>
+  <route path="signup" controller="auth" action="signUp"/>
+  <route path="login" controller="auth" action="login">
+    <optional name="login"/>
+  </route>
+  <route path="logout" controller="auth" action="logout"/>
+  <route path="feed.rss" controller="general" action="feed">
+    <additional name="type" value="rss"/>
+  </route>
+  <route path="feed.atom" controller="general" action="feed">
+    <additional name="type" value="atom"/>
+  </route>
+  <route path="export.csv" controller="general" action="export">
+    <additional name="type" value="csv"/>
+  </route>
+  <route path="export.json" controller="general" action="export">
+    <additional name="type" value="json"/>
+  </route>
+  <route path="403" controller="error" action="403"/>
+  <route path="404" controller="error" action="404"/>
+</routes>
