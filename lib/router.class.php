@@ -22,7 +22,7 @@ class Router extends ApplicationComponent {
         if (file_exists( $this->file )) {
             $root = new DOMDocument('1.0', 'utf-8');
             $root->load( $this->file );
-            $this->routes = $root->childNodes->item(0)->childNodes;
+            $this->routes = $root->getElementsByTagName('route');
         }
     }
     
