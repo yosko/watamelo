@@ -96,13 +96,13 @@ class Router extends ApplicationComponent {
                             if(count($optional) == 1 && empty($optional[0])) {
                                 unset($optional[0]);
                             }
-                            $nbOptParam = $optionalParameters->lenght;
+                            $nbOptParam = $optionalParameters->length;
                             
                             if(count($optional) <= $nbOptParam) {
                                 //match the remaining ones to optional parameters
                                 for($i = 0; $i < $nbOptParam; $i++) {
                                     if(isset($optional[$i])) {
-                                        $parameters[$optionalParameters->item($i)] = $optional[$i];
+                                        $parameters[$optionalParameters->item($i)->getAttribute('name')] = $optional[$i];
                                     }
                                 }
                             } else {
