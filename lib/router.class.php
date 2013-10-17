@@ -14,11 +14,7 @@ class Router extends ApplicationComponent {
         $this->useApacheURLRewriting = $useApacheURLRewriting;
         
         //load configuration file
-        // $this->file = ROOT.'/data/config/routes.json';
-        // if (file_exists( $this->file )) {
-        //     $this->routes = json_decode(file_get_contents($this->file), true);
-        // }
-        $this->file = ROOT.'/data/config/routes.xml';
+        $this->file = ROOT.'/app/routes.xml';
         if (file_exists( $this->file )) {
             $root = new DOMDocument('1.0', 'utf-8');
             $root->load( $this->file );

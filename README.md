@@ -20,8 +20,8 @@ And elements that aren't required but might be useful:
 
 You should only add or edit content in the following directories. Everything that is already in it is just an example on how to use watamelo:
 
-* ```app/```: the logic of your project (your application, controllers and models)
-* ```data/```: any file related to informations used in your app (routes, database/flat files, any downloadable file) 
+* ```app/```: the logic of your project (your application, controllers, models and route definitions)
+* ```data/```: any file related to informations used in your app (database/flat files, any downloadable file) 
 * ```tpl/```: the presentation of your project (views, javascript, CSS and any image for your design)
 
 ## Example description
@@ -47,28 +47,22 @@ Finally, the ```tpl/default/``` directory is designated for your views (RainTPL 
 
 ### Route definition
 
-The ```data/config/routes.json``` file must list all the relative URL for every single page in your app (and for URLs requested through ajax too). In this file, each route can be configured with these options:
+The ```app/routes.xml``` file must list all the relative URL for every single page in your app (and for URLs requested through ajax too). In this file, each route can be configured with these options:
 
-```json
-"relative/path/to/page/:int|param1:/:string|param2:": {
-    "controller": "myControllerName",
-    "action": "myMethod",
-    "additionalParameters": {
-        "json": true
-    }
-    "optionalParameters": [
-        "param3",
-        "param4",
-    ]
-}
+```xml
+<route path="relative/path/to/page/:int|param1:/:string|param2:" controller="myControllerName" action="myMethod">
+  <additional name="json" value="true"/>
+  <optional name="param3"/>
+  <optional name="param4"/>
+</route>
 ```
 
 * ```:int|param1:```: required parameter, must be an integer. Will be accessible withing your code with the name "param1"
 * ```:string|param2:```: required parameter, must be an string. Will be accessible withing your code with the name "param2"
-* ```"controller"```: required. Name of the controller (without the mention "Controller")
-* ```"action"```: required. Name of the controller method (without the mention "Controller")
-* ```"additionalParameters"```: optional. Array of fixed parameters that will be accessible from your controller code even if they don't appear in the requested URL. Useful to identify multiple routes pointing to the same action of the same controller.
-* ```"optionalParameters"```: optional. Array of optional parameters that appear at the end of the URL, preceded by "/".
+* ```controller=```: required. Name of the controller (without the mention "Controller")
+* ```action=```: required. Name of the controller method (without the mention "Controller")
+* ```"<additional/>"```: optional, can be used multiple times. Defines a fixed parameter that will be accessible from your controller code even if it doesn't appear in the requested URL. Useful to identify multiple routes pointing to the same action of the same controller.
+* ```<optional/>```: optional, can be used multiple times. Defines an optional parameter that appear at the end of the URL, preceded by "/".
 
 Exemple of relative URLs matching the route above :
 
@@ -98,7 +92,9 @@ The app name (default: Watamelo) is used in the following. If you wish to change
 
 ## Change DBMS
 
-Watamelo is currently given with a SQLite example, that can be adapted for any DBMS within the file ```lib/dbfactory.class.php``` and by changing the parameters given when instanciating Managers in ```lib/application.class.php```
+Watamelo is currently given with a SQLite example, that can be adapted for any DBMS within the file ```lib/dbfactory.class.php``` and by changing the parameters given when instanciating Managers in ```lib/application.class.php```.
+
+In a future version, it will be configurable without having to change the core's code.
 
 ## Dependancies
 
@@ -110,4 +106,4 @@ Libraries included in Watamelo:
 
 ## FAQ
 
-If you have any question or suggestion, please feel free to contact me or post an issue on the [Github page of the project](github.com/yosko/ddb/issues).
+If you have any question or suggestion, please feel free to contact me or post an issue on the [Github page of the project](github.com/yosko/watamelo/issues).
