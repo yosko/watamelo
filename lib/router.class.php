@@ -71,7 +71,7 @@ class Router extends ApplicationComponent {
                 );
 
                 //match route including required parameters
-                if( preg_match("%^".$regexp."(.*)$%i", $url, $matches) ) {
+                if( preg_match("%^".$regexp."(/.*)?$%i", $url, $matches) ) {
                     $foundRoute = true;
                     $parameters = array();
                     $controller = $route->getAttribute('controller');
