@@ -40,5 +40,5 @@ span.info, span.warning, span.error, span.success { margin: 0 5px; padding: 3px 
   box-shadow: 0 0 4px #bbbbbb;
 }
     
-#siteFooter { width: 1000px; margin: auto; text-align: center; font-style:italic; }
+#siteFooter { width: 1000px; margin: 0.5em auto; text-align: center; font-style:italic; }
 #siteFooter > * { margin: auto; width: 1000px; }
