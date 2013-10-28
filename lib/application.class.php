@@ -1,7 +1,5 @@
 <?php
 
-require_once( ROOT.'/lib/ext/rain.tpl.class.php');
-
 /**
  * Abstract class
  * Main application, will be called from index.php
@@ -39,8 +37,6 @@ abstract class Application {
      */
     public function initView($template, $rootUrl, $ApacheURLRewriting) {
         $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
-        $this->view->setParam( "isDevelopmentEnvironment", DEVELOPMENT_ENVIRONMENT );
-        $this->view->setParam( "appVersion", VERSION );
     }
     
     /**

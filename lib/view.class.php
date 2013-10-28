@@ -20,6 +20,7 @@ class View extends ApplicationComponent {
     protected $templateName;
     protected $template;
     protected $templateUrl;
+    protected $templatePath;
     protected $ApacheURLRewriting;
 
     public function __construct(Application $app, $template, $rootUrl, $ApacheURLRewriting) {
@@ -30,13 +31,8 @@ class View extends ApplicationComponent {
         $this->templateName = $template;
         $this->ApacheURLRewriting = $ApacheURLRewriting;
         
-        //RainTPL config
+        //template config
         if($this->templateName===false) { $this->templateName = "default"; }
-        raintpl::configure("base_url", null );
-        raintpl::configure("tpl_dir", "tpl/".$this->templateName."/" );
-        raintpl::configure("cache_dir", "tmp/cache/" );
-        raintpl::configure("path_replace", false );
-        $this->template = new RainTPL;
         
         if($this->rootUrl === false) {
             $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
@@ -44,6 +40,7 @@ class View extends ApplicationComponent {
         }
         
         $this->templateUrl = $this->rootUrl.'tpl/'.$this->templateName.'/';
+        $this->templatePath = ROOT.DIRECTORY_SEPARATOR.'tpl'.DIRECTORY_SEPARATOR.$this->templateName.DIRECTORY_SEPARATOR;
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl;
@@ -55,7 +52,7 @@ class View extends ApplicationComponent {
     }
 
     /**
-     * Returns the raintpl template
+     * Returns the template
      * @return object template
      */
     public function template() {
@@ -79,8 +76,8 @@ class View extends ApplicationComponent {
     }
 
     /**
-     * Returns the raintpl template
-     * @return object template
+     * Returns the template url
+     * @return string template url
      */
     public function templateUrl() {
         return $this->templateUrl;
@@ -110,13 +107,12 @@ class View extends ApplicationComponent {
      * @param boolean $directResult false to get result in the return
      */
     public function renderView($name, $directResult = true) {
-        foreach($this->params as $key => $value) {
-            $this->template->assign($key, $value);
-        }
+        $p = $this->params;
+        $tplPath = $this->templatePath;
 
         ob_start();
 
-        $this->template->draw($name);
+        include $tplPath.$name.'.tpl.php';
 
         $response = ob_get_clean();
 
@@ -137,7 +133,7 @@ class View extends ApplicationComponent {
         $viewName = ($type == RESPONSE_ATOM)?RESPONSE_ATOM:RESPONSE_RSS;
 
         //the view is defined on framework level
-        raintpl::configure("tpl_dir", "lib/views/" );
+        $this->templatePath = "lib/views/";
 
         header('Content-Type: text/xml');
 
