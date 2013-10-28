@@ -64,4 +64,10 @@ include $tplPath.'header.tpl.php';
                 </ul>
             </li>
         </ul>
+        <div>
+            Or a complete dump of the $p variable containing all parameters sent to the view:
+<?php
+EasyDump::debug($p);
+?>
+        </div>
 <?php include $tplPath.'footer.tpl.php'; ?>
