@@ -83,8 +83,8 @@ class EasyDump {
                 foreach($value as $k => $v) {
                     self::showVar($k, $v, $level+1);
                 }
+                for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
             }
-            for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
             echo "}\r\n";
         } else {
             echo '<span style="color:'.self::$config['color']['value'].';">';
