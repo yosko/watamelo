@@ -66,6 +66,25 @@ class Watamelo extends Application {
         $controller = $router->getController($controllerName);
         $controller->setAction($actionName);
 
+        //if user should be authenticated, redirect him to the login page
+        if($this->user['level'] < $controller->userLevelNeeded()
+            && $this->user['level'] < $this->userLevels['user']) {
+            $controllerName = 'auth';
+            $actionName = 'login';
+            $controller = $router->getController($controllerName);
+
+        //if the user is authenticated but doesn't have the right level of permission
+        } elseif($this->user['level'] < $controller->userLevelNeeded()) {
+            $controllerName = 'error';
+            $actionName = '403';
+            $controller = $router->getController($controllerName);
+
+        } elseif($controller->secureNeeded() && !$this->user['secure']) {
+            $controllerName = 'auth';
+            $actionName = 'secure';
+            $controller = $router->getController($controllerName);
+        }
+
         //add config last state to the view
         $this->view->setParam( "config", $this->configManager->getAll() );
         
