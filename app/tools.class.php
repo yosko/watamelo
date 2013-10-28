@@ -3,6 +3,12 @@
 require_once( ROOT.'/lib/autoload.php');
 
 /**
+ * https://github.com/GeorgeArgyros/Secure-random-bytes-in-PHP
+ * used to generate random strings, essentially for SessionManager and UserManager
+ */
+require_once( ROOT.'/app/ext/srand.php');
+
+/**
  * Utility functions (static methods)
  */
 class Tools {

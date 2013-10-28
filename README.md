@@ -102,7 +102,7 @@ Libraries included in Watamelo:
 
 * [RainTPL](http://www.raintpl.com/) for views
 * a modified version of [YosLogin](https://github.com/yosko/yoslogin) (LGPL) for authentication
-* [Secure Random Bytes](https://github.com/GeorgeArgyros/Secure-random-bytes-in-PHP/) (New BSD Licence), used in YosLogin
+* [Secure Random Bytes](https://github.com/GeorgeArgyros/Secure-random-bytes-in-PHP/) (New BSD Licence), used in example for authentication and password hashing. Can be removed.
 
 ## FAQ
 

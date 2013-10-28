@@ -3,12 +3,6 @@
 require_once( ROOT.'/lib/ext/rain.tpl.class.php');
 
 /**
- * https://github.com/GeorgeArgyros/Secure-random-bytes-in-PHP
- * used in tools, essentially for SessionManager and UserManager
- */
-require_once( ROOT.'/lib/ext/srand.php');
-
-/**
  * Abstract class
  * Main application, will be called from index.php
  */
