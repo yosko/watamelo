@@ -4,12 +4,12 @@
  *
  * @license     LGPL v3 (http://www.gnu.org/licenses/lgpl.html)
  * @author      Yosko <webmaster@yosko.net>
- * @version     v0.4
+ * @version     v0.5
  * @link        https://github.com/yosko/watamelo
  */
 
 define( 'DEVELOPMENT_ENVIRONMENT', true );
-define( 'VERSION', '0.4' );
+define( 'VERSION', '0.5' );
 define( 'ROOT', dirname(__FILE__) );
 
 //include the app class
