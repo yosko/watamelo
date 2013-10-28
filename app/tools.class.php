@@ -9,6 +9,12 @@ require_once( ROOT.'/lib/autoload.php');
 require_once( ROOT.'/app/ext/srand.php');
 
 /**
+ * https://github.com/yosko/easydump
+ * use it for debugging your app by displaying your variables
+ */
+require_once( ROOT.'/app/ext/easydump.php');
+
+/**
  * Utility functions (static methods)
  */
 class Tools {
@@ -136,25 +142,6 @@ class Tools {
             fwrite($handle, $date." - ".$message."\r\n");
         }
         fclose($handle);
-    }
-
-    /**
-     * For debug purpose only
-     * @param  [misc] $variable the variable to dump
-     */
-    /**
-     * For debug purpose only
-     * @param  misc    $variable the variable to dump
-     * @param  boolean $exit     whether the program should stop right after the dump
-     */
-    public static function debug($variable, $exit = false) {
-        if(DEVELOPMENT_ENVIRONMENT) {
-            echo '<pre>';
-            var_dump($variable);
-            echo '</pre>';
-            if($exit)
-                exit;
-        }
     }
 
     /**
