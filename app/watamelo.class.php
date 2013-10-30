@@ -54,9 +54,7 @@ class Watamelo extends Application {
         $this->user = $authController->authenticateUser();
         
         //prepare router
-        //note: you can replace the call to ApacheURLRewriting by a boolean value
-        //to indicate if you can/want to use URL rewriting or not
-        $router = new Router($this, $this->configManager->get('ApacheURLRewriting'));
+        $router = new Router($this);
         $controllerName = "";
         $actionName = "";
         $parameters = array();

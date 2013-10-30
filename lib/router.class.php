@@ -6,12 +6,9 @@
 class Router extends ApplicationComponent {
     protected $routes = array();
     protected $file = "";
-    protected $useApacheURLRewriting;
     
-    public function __construct(Application $app, $useApacheURLRewriting = true) {
+    public function __construct(Application $app) {
         parent::__construct($app);
-
-        $this->useApacheURLRewriting = $useApacheURLRewriting;
         
         //load configuration file
         $this->file = ROOT.'/app/routes.xml';
@@ -38,10 +35,8 @@ class Router extends ApplicationComponent {
      */
     public function getRoute(&$controller, &$action, &$parameters) {
         //remove '/' at beginning & end of the url
-        if($this->useApacheURLRewriting && isset($_GET['url']))
-            $url = trim($_GET['url'],"/");
-        elseif(!$this->useApacheURLRewriting && isset($_GET['p']))
-            $url = trim($_GET['p'],"/");
+        if(isset($_GET[$this->app()->getParamName()]))
+            $url = trim($_GET[$this->app()->getParamName()],"/");
         else
             $url = "";
         

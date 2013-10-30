@@ -11,7 +11,8 @@ abstract class Application {
     protected $defaultControllerName = "";
     protected $dao = null;
     protected $managers = array();
-    protected $dbms = '';
+    protected $dbms;
+    protected $getParamName;
 
 
     public function __construct() {
@@ -27,6 +28,7 @@ abstract class Application {
         }
         
         $this->dbms = $this->setDbms();
+        $this->getParamName = 'url';
         $this->appName = get_called_class();
         $this->dao = DbFactory::getConnexion($this->dbms, strtolower($this->appName));
     }
@@ -82,6 +84,14 @@ abstract class Application {
      */
     public function view() {
         return $this->view;
+    }
+    
+    /**
+     * Returns the application parameter name used in $_GET
+     * @return string name
+     */
+    public function getParamName() {
+        return $this->getParamName;
     }
     
     /**

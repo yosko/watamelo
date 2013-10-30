@@ -44,7 +44,7 @@ class View extends ApplicationComponent {
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl;
-        $this->baseUrl .= (!$this->ApacheURLRewriting)?'?p=':'';
+        $this->baseUrl .= (!$this->ApacheURLRewriting)?'?'.$this->app()->getParamName().'=':'';
 
         $this->setParam( "templateUrl", $this->templateUrl );
         $this->setParam( "rootUrl", $this->rootUrl );
