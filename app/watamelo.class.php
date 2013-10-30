@@ -18,7 +18,7 @@ class Watamelo extends Application {
         parent::__construct();
 
         //init config
-        $this->configManager = $this->managers->getManagerOf('config');
+        $this->configManager = $this->getManagerOf('config');
 
         //required to display anything
         $this->initView(
@@ -28,7 +28,7 @@ class Watamelo extends Application {
         );
 
         //get user levels and add it to the view
-        $userManager = $this->managers->getManagerOf('user');
+        $userManager = $this->getManagerOf('user');
         $levels = $userManager->getLevels();
         foreach($levels as $level) {
             $this->userLevels[$level['name']] = (int)$level['level'];

@@ -41,8 +41,8 @@ class AuthController extends Controller {
             $sessionName = 'watamelo';
 
         //get managers
-        $userManager = $this->app()->managers()->getManagerOf('user');
-        $sessionManager = $this->app()->managers()->getManagerOf('session');
+        $userManager = $this->app()->getManagerOf('user');
+        $sessionManager = $this->app()->getManagerOf('session');
         
         //initialize PHP session
         $sessionManager->start($sessionName, $this->app()->config());
@@ -199,7 +199,7 @@ class AuthController extends Controller {
      * Logs current user out
      */
     public function executeLogout() {
-        $sessionManager = $this->app()->managers()->getManagerOf('session');
+        $sessionManager = $this->app()->getManagerOf('session');
         $sessionManager->unsetSession();
         header( 'Location: '.$this->app()->view()->rootUrl() );
     }
@@ -210,7 +210,7 @@ class AuthController extends Controller {
      * "secure form" is shown again without having to manually delete any cookie
      */
     public function executeUnsecure() {
-        $sessionManager = $this->app()->managers()->getManagerOf('session');
+        $sessionManager = $this->app()->getManagerOf('session');
         $sessionManager->setValue('secure', false);
         header( 'Location: '.$this->app()->view()->baseUrl().'admin' );
     }

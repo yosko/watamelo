@@ -15,7 +15,7 @@ class GeneralController extends Controller {
      * Show application's homepage
      */
     public function executeIndex() {
-        $userManager = $this->app()->managers()->getManagerOf('user');
+        $userManager = $this->app()->getManagerOf('user');
         
         $users = $userManager->getList();
 
