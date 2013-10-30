@@ -107,13 +107,13 @@ class View extends ApplicationComponent {
      * @param boolean $directResult false to get result in the return
      */
     public function renderView($name, $directResult = true) {
-        $p = $this->params;
-        $tplPath = $this->templatePath;
+        //import the parameters into the current context
+        extract($this->params);
+
+        $templatePath = $this->templatePath;
 
         ob_start();
-
-        include $tplPath.$name.'.tpl.php';
-
+        include $templatePath.$name.'.tpl.php';
         $response = ob_get_clean();
 
         if($directResult) {
