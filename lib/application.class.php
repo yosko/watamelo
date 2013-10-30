@@ -11,6 +11,7 @@ abstract class Application {
     protected $defaultControllerName = "";
     protected $dao = null;
     protected $managers = array();
+    protected $dbms = '';
 
 
     public function __construct() {
@@ -25,9 +26,17 @@ abstract class Application {
             ini_set('error_log', ROOT.'/tmp/logs/error.log');
         }
         
+        $this->dbms = $this->setDbms();
         $this->appName = get_called_class();
-        $this->dao = DbFactory::getConnexion('sqlite', strtolower($this->appName));
+        $this->dao = DbFactory::getConnexion($this->dbms, strtolower($this->appName));
     }
+    
+    /**
+     * Return the Database Management System name
+     * @return string name of dbms in PDO style
+     *                possible values: sqlite, mysql, postgresql
+     */
+    abstract public function setDbms();
     
     /**
      * Run the application (will call the right controller and action)

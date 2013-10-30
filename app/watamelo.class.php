@@ -37,6 +37,15 @@ class Watamelo extends Application {
     }
 
     /**
+     * Return the Database Management System name
+     * @return string name of dbms in PDO style
+     *                possible values: sqlite, mysql, postgresql
+     */
+    public function setDbms() {
+        return 'sqlite';
+    }
+
+    /**
      * Run the application (call the proper controller and action)
      */
     public function run() {
