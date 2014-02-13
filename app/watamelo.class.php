@@ -58,6 +58,10 @@ class Watamelo extends Application {
         $controllerName = "";
         $actionName = "";
         $parameters = array();
+
+        //if you don't use ApacheUrlRewriting, you can optionally define the name
+        //of the $_GET parameter to use for your route
+        // $router->setGetParamName('url');
         
         //find route for the requested URL
         if(!$router->getRoute($controllerName, $actionName, $parameters)) {

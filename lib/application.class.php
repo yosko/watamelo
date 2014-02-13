@@ -95,6 +95,13 @@ abstract class Application {
     }
     
     /**
+     * Set the application parameter name used in $_GET
+     */
+    public function setGetParamName($getParamName) {
+        $this->getParamName = $getParamName;
+    }
+    
+    /**
      * Returns the application flag "useDefaultRoutes"
      * @return boolean useDefaultRoutes
      */
