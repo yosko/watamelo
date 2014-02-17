@@ -13,7 +13,7 @@ class EasyDump {
     //display configurattion
     public static $config = array(
         'showVarNames'  => true,    //true to show names of the given variables
-        'showSource'    => true,    //true to show the code of the PHP call to EasyDump
+        'showSource'    => false,   //true to show the code of the PHP call to EasyDump
         'color'         => array(   //default theme based on Earthsong by daylerees
             'text'          => '#EBD1B7',
             'border'        => '#7A7267',

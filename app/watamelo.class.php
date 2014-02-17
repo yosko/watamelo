@@ -67,8 +67,6 @@ class Watamelo extends Application {
         if(!$router->getRoute($controllerName, $actionName, $parameters)) {
 
             //if route not found, redirect to a 404 error
-            Tools::log('404');
-
             $controllerName = 'error';
             $actionName = '404';
         }
@@ -109,8 +107,6 @@ class Watamelo extends Application {
      */
     public function returnError($error="") {
         $router = new Router($this);
-
-        Tools::log($error);
 
         $controllerName = "error";
         $actionName = $error;
