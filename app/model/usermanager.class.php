@@ -71,12 +71,16 @@ class UserManager extends Manager  {
      * Returns a user's information
      * @param  misc    $value             id or login to identify user
      * @param  string  $type              possible values: "id", "login"
+     * @param  boolean $includeSecureInfo whether to return password hash & activation key
      * @return array                      user informations (or false if not found)
      */
-    public function get($value, $type = 'id') {
+    public function get($value, $type = 'id', $includeSecureInfo = false) {
         $sql = "SELECT u.userId as id, u.userLevel as level, u.userLogin as login"
-            .", u.userPassword as password, u.userCreation as creation, u.userBio as bio"
-            ." FROM wa_user u";
+            .", u.userCreation as creation, u.userBio as bio";
+        if($includeSecureInfo) {
+            $sql .= ", u.userPassword as password";
+        }
+        $sql .= " FROM wa_user u";
         if($type == "id") {
             $sql .= " WHERE u.userId = :id";
         } elseif($type == "login") {
@@ -118,6 +122,15 @@ class UserManager extends Manager  {
      */
     public function getByLogin($login, $includeSecureInfo = false) {
         return $this->get($login, "login", $includeSecureInfo);
+    }
+
+    /**
+     * Same as getByLogin() with $includeSecureInfor = true
+     * @param  string $login user login
+     * @return array         user informations (or false if not found)
+     */
+    public function getForAuthentication($login) {
+        return $this->get($login, "login", true);
     }
 
     public function getLevels() {

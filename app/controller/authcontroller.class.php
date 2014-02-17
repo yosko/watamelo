@@ -20,7 +20,7 @@ class AuthController extends Controller {
         
         $this->logger = new \Yosko\YosLogin(
             'exampleSessionName',
-            array($userManager, 'getByLogin'),
+            array($userManager, 'getForAuthentication'),
             $this->app()->view()->rootUrl(),
             DEVELOPMENT_ENVIRONMENT,
             DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
