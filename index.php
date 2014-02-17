@@ -9,7 +9,7 @@
  */
 
 define( 'DEVELOPMENT_ENVIRONMENT', true );
-define( 'VERSION', '0.5' );
+define( 'APP_VERSION', '0.6' );
 define( 'ROOT', dirname(__FILE__) );
 
 //include the app class

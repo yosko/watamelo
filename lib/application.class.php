@@ -1,5 +1,7 @@
 <?php
 
+define('WATAMELO_VERSION', '0.6');
+
 /**
  * Abstract class
  * Main application, will be called from index.php

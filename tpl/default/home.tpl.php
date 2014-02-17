@@ -27,7 +27,8 @@ include $templatePath.'header.tpl.php';
             <li><strong>$baseUrl =</strong> <em><?php echo $baseUrl; ?></em> (might differ from $rootUrl if URL rewriting not activated. Used for links to pages)</li>
             <li><strong>$templateUrl =</strong> <em><?php echo $templateUrl; ?></em> (for your CSS, javascript and design related images)</li>
             <li><strong>DEVELOPMENT_ENVIRONMENT =</strong> <em><?php echo DEVELOPMENT_ENVIRONMENT; ?></em> (boolean)</li>
-            <li><strong>VERSION =</strong> <em><?php echo VERSION; ?></em> (used in footer)</li>
+            <li><strong>APP_VERSION =</strong> <em><?php echo APP_VERSION; ?></em> (version number of your app)</li>
+            <li><strong>WATAMELO_VERSION =</strong> <em><?php echo WATAMELO_VERSION; ?></em> (version number of the framework, used here in footer)</li>
         </ul>
         <div>
             The following variables are related to the current example and are accessible from the current view:
