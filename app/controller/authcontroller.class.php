@@ -34,7 +34,13 @@ class AuthController extends Controller {
                 'unsetLTSessions' => array($sessionManager, 'unsetLTSessions'),
                 'flushOldLTSessions' => array($sessionManager, 'flushOldLTSessions')
             ),
-            $sessionManager::$LTDuration
+            $this->app()->config()->get('sess.lt.duration')
+        );
+
+        $sessionManager->setLTConfig(
+            $this->app()->config()->get('sess.lt.dir'),
+            $this->app()->config()->get('sess.lt.nbMax'),
+            $this->app()->config()->get('sess.lt.duration')
         );
         
         $this->currentUser = $this->app()->user();

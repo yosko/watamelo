@@ -4,9 +4,9 @@
  * Manage PHP sessions and cookie based long term sessions
  */
 class SessionManager extends Manager  {
-    protected static $LTDir = 'tmp/sessions/';
-    protected static $nbLTSession = 200;
-    public static $LTDuration = 2592000;
+    protected $LTDir;
+    protected $nbLTSession;
+    protected $LTDuration;
 
     /**
      * SESSION VALUE
@@ -53,22 +53,33 @@ class SessionManager extends Manager  {
      * LONG-TERM SESSION
      */
 
+    /**
+     * Set configuration for long-term session handling
+     * @param string $key   key
+     * @param misc   $value value
+     */
+    public function setLTConfig($LTDir = 'tmp/sessions/', $nbLTSession = 200, $LTDuration = 2592000) {
+        $this->LTDir = $LTDir;
+        $this->nbLTSession = $nbLTSession;
+        $this->LTDuration = $LTDuration;
+    }
+
     public function setLTSession($login, $sid, $value) {
         //create the session directory if needed
-        if(!file_exists(self::$LTDir)) { mkdir(self::$LTDir, 0700, true); }
+        if(!file_exists($this->LTDir)) { mkdir($this->LTDir, 0700, true); }
 
-        $fp = fopen(self::$LTDir.$login.'_'.$sid.'.ses', 'w');
+        $fp = fopen($this->LTDir.$login.'_'.$sid.'.ses', 'w');
         fwrite($fp, gzdeflate(json_encode($value)));
         fclose($fp);
     }
     
     public function getLTSession($login, $sid) {
         $value = false;
-        $file = self::$LTDir.$login.'_'.$sid.'.ses';
+        $file = $this->LTDir.$login.'_'.$sid.'.ses';
         if (file_exists($file)) {
             
             //unset long-term session if expired
-            if(filemtime($file)+self::$LTDuration <= time()) {
+            if(filemtime($file)+$this->LTDuration <= time()) {
                 $this->unsetLTSession($login, $sid);
                 $value = false;
             } else {
@@ -82,7 +93,7 @@ class SessionManager extends Manager  {
     
     //unset a specific LT session
     public function unsetLTSession($login, $sid) {
-        $filePath = self::$LTDir.$login.'_'.$sid.'.ses';
+        $filePath = $this->LTDir.$login.'_'.$sid.'.ses';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -90,14 +101,14 @@ class SessionManager extends Manager  {
     
     //unset all server-side LT session for this user
     public function unsetLTSessions($login) {
-        $files = glob( self::$LTDir.$login.'_*', GLOB_MARK );
+        $files = glob( $this->LTDir.$login.'_*', GLOB_MARK );
         foreach( $files as $file ) {
             unlink( $file );
         }
     }
     
     public function flushOldLTSessions() {
-        $dir = self::$LTDir;
+        $dir = $this->LTDir;
         
         //list all the session files
         $files = array();
@@ -118,7 +129,7 @@ class SessionManager extends Manager  {
         //check each file
         $i = 1;
         foreach($files as $file => $date) {
-            if ($i > self::$nbLTSession || $date+self::$LTDuration <= time()) {
+            if ($i > $this->nbLTSession || $date+$this->LTDuration <= time()) {
                 $this->unsetLTSession(basename($file));
             }
             ++$i;
