@@ -32,7 +32,10 @@ You should only add or edit content in the following directories. Everything tha
 
 ### Controllers & Models
 
-The ```GeneralController``` and ```UserManager``` are the best examples on how to write your own controllers and models. The ```AuthController```, ```SessionManager``` and part of the ```UserManager``` are used to handle authentication and user sessions here.
+* ```GeneralController```: example of a classic controller, used to display most of the views existing in the example
+* ```UserManager```: example of a classic manager using SQL
+* ```ConfigManager```: example of a classic manager using JSON files
+* ```AuthController```, ```SessionManager``` and part of the ```UserManager``` are used to handle authentication and user sessions here.
 
 ### Data
 
@@ -118,9 +121,33 @@ Watamelo doesn't have any dependancies.
 
 But the example code given relies on these libraries:
 
-* a modified version of [YosLogin](https://github.com/yosko/yoslogin) (LGPL) for authentication
+* [YosLogin](https://github.com/yosko/yoslogin) (LGPL) for authentication
 * [Secure Random Bytes](https://github.com/GeorgeArgyros/Secure-random-bytes-in-PHP/) (New BSD Licence), used in example for authentication and password hashing. Can be removed.
 
 ## FAQ
 
 If you have any question or suggestion, please feel free to contact me or post an issue on the [Github page of the project](github.com/yosko/watamelo/issues).
+
+## Version History
+
+- v0.6 (2014-02-17)
+  - parameters are extracted for the view, instead of kept in an array
+  - reorganised some code
+  - define DBMS on the app level
+  - updated YosLogin
+  - separated app version number from framework version number
+- v0.5 (2013-10-28)
+  - handle views without any external template librarby
+  - minor fixes
+- v0.4 (2013-10-17)
+  - many minor fixes and tweaks
+  - replaced route definition file from JSON to XML (with DTD)
+  - moved route definition file from data/ to app/ (because it concerns the app itself)
+- v0.3 (2013-08-12)
+  - added feed generation (atom/rss)
+  - added data download as file
+- v0.2 (2013-08-02)
+  - handle urls with or without rewriting
+  - config handling is now a Controller (and considered as implementation example)
+- v0.1 (2013-08-01)
+  - initial version
