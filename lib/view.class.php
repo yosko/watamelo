@@ -5,7 +5,7 @@ define( 'RESPONSE_RSS', 'rss' );
 define( 'RESPONSE_ATOM', 'atom' );
 define( 'RESPONSE_FILE', 'file' );
 define( 'RESPONSE_HTML', 'html' );
-define( 'RESPONSE_IMG', 'img' );
+define( 'RESPONSE_IMG_JPEG', 'jpeg' );
 define( 'RESPONSE_JSON', 'json' );
 define( 'RESPONSE_MAIL', 'mail' );
 
@@ -93,6 +93,15 @@ class View extends ApplicationComponent {
     }
 
     /**
+     * Add or update a parameter by reference to the view
+     * @param string $name  reference name
+     * @param misc   $value parameter value
+     */
+    public function setReference($name, &$value) {
+        $this->params[$name] = &$value;
+    }
+
+    /**
      * Get a parameter asigned to the view
      * @param  string $name  parameter name
      * @return misc          parameter value
@@ -152,38 +161,69 @@ class View extends ApplicationComponent {
      * @param  array  $options      possible options:
      *                              - 'fileName'='filname.extension' to make it a downloadable file
      *                              - 'header'=false to hide CSV header line
+     *                              - 'last-modified': date of last edition on page/file,
+     *                                in Unix timestamp format, using filemtime()
+     *                              - 'length': Http response length
      */
     public function renderData($data, $responseType = RESPONSE_JSON, $options = array()) {
         ob_start();
 
-        //format response and headers
-        if($responseType == RESPONSE_JSON) {
-            header('Content-type: application/json');
-            echo json_encode($data);
-        } elseif($responseType == RESPONSE_CSV) {
-            header('Content-type: text/csv');
+        //handle client cache if a last-modified date is given
+        $showData = true;
+        if(isset($option['last-modified'])) {
+            // Getting headers sent by the client.
+            $headers = apache_request_headers();
 
-            $header = array();
-            foreach($data as $key => $row) {
-                //headers
-                if(empty($header)) {
-                    $header = array_keys($row);
-                    if(!isset($options['header']) || $options['header'] !== false) {
-                        echo implode(",", $header)."\n";
-                    }
+            // Checking if the client is validating his cache and if it is current.
+            if (isset($headers['If-Modified-Since'])
+                && (strtotime($headers['If-Modified-Since']) == $option['last-modified'])
+            ) {
+                // Client's cache IS current, so we just respond '304 Not Modified'.
+                header('Last-Modified: '.gmdate('D, d M Y H:i:s', $option['last-modified']).' GMT', true, 304);
+                $showData = false;
+            } else {
+                // Image not cached or cache outdated, we respond '200 OK' and output the image.
+                header('Last-Modified: '.gmdate('D, d M Y H:i:s', $option['last-modified']).' GMT', true, 200);
+            }
+        }
+
+        if(isset($option['length'])) {
+            header('Content-Length: '.$option['length']);
+        }
+
+        if($showData) {
+	        //format response and headers
+	        if($responseType == RESPONSE_JSON) {
+	            header('Content-type: application/json');
+	            echo json_encode($data);
+	        } elseif($responseType == RESPONSE_CSV) {
+	            header('Content-type: text/csv');
+	
+	            $header = array();
+	            foreach($data as $key => $row) {
+	                //headers
+	                if(empty($header)) {
+	                    $header = array_keys($row);
+	                    if(!isset($options['header']) || $options['header'] !== false) {
+	                        echo implode(",", $header)."\n";
+	                    }
+	                }
+	                
+	                $result='';
+	                foreach($row as $key => $value) {
+	                    if(is_numeric($value)) {
+	                        $result .= $value.',';
+	                    } else {
+	                        $result .= '"'.str_replace( '"', '\"', htmlspecialchars_decode($row[$key]) ).'"';
+	                    }
+	                }
+	                
+	                $result = rtrim($result, ',')."\n";
+	                echo $result;
                 }
-                
-                $result='';
-                foreach($row as $key => $value) {
-                    if(is_numeric($value)) {
-                        $result .= $value.',';
-                    } else {
-                        $result .= '"'.str_replace( '"', '\"', htmlspecialchars_decode($row[$key]) ).'"';
-                    }
-                }
-                
-                $result = rtrim($result, ',')."\n";
-                echo $result;
+            } elseif($responseType == RESPONSE_IMG_JPEG) {
+                header('Content-type: image/jpeg');
+                echo $data;
             }
         }
 
