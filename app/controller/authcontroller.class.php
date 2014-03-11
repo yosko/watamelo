@@ -16,12 +16,12 @@ class AuthController extends Controller {
         $userManager = $this->app()->getManagerOf('user');
         $sessionManager = $this->app()->getManagerOf('session');
         $sessionName = $this->app()->config()->get('sess.name');
-        // redirect $this->app()->view()->rootUrl()
+        $redirectUrl = isset($_POST['password'])?$_SERVER['REQUEST_URI']:$this->app()->view()->rootUrl();
         
         $this->logger = new \Yosko\YosLogin(
             'exampleSessionName',
             array($userManager, 'getForAuthentication'),
-            $this->app()->view()->rootUrl(),
+            $redirectUrl,
             DEVELOPMENT_ENVIRONMENT,
             DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
         );
@@ -67,9 +67,14 @@ class AuthController extends Controller {
      * @return array user informations if found. Always include the 'level' key
      */
     public function authenticateUser() {
+        $values = array();
+        $errors = array();
+
         if(isset($_POST['login']) && isset($_POST['password'])) {
-            $remember = isset($_POST['remember']);
-            $this->currentUser = $this->logger->logIn($_POST['login'], $_POST['password'], $remember);
+            $values['login'] = $_POST['login'];
+            $values['password'] = $_POST['password'];
+            $values['remember'] = isset($_POST['remember']);
+            $this->currentUser = $this->logger->logIn($values['login'], $values['password'], $values['remember']);
         } elseif(isset($_POST['password'])) {
             $this->currentUser = $this->logger->authUser($_POST['password']);
         } else {
@@ -79,10 +84,11 @@ class AuthController extends Controller {
         if($this->currentUser['isLoggedIn'] === false) {
             $this->currentUser['level'] = $this->userLevels['visitor'];
         }
-        
-        //TODO send values and errors to the view if needed
-        // $this->app()->view()->setParam( "values", $values );
-        // $this->app()->view()->setParam( "errors", $errors );
+
+        if(isset($this->currentUser['error']))
+            $errors = $this->currentUser['error'];
+        $this->app()->view()->setParam( "values", $values );
+        $this->app()->view()->setParam( "errors", $errors );
         $this->app()->view()->setParam( "currentUser", $this->currentUser );
         return $this->currentUser;
     }
