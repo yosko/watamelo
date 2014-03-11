@@ -64,6 +64,10 @@ class SessionManager extends Manager  {
         $this->LTDuration = $LTDuration;
     }
 
+    /**
+     * Set the long-term session
+     * @param array $values possible values to save in session
+     */
     public function setLTSession($login, $sid, $value) {
         //create the session directory if needed
         if(!file_exists($this->LTDir)) { mkdir($this->LTDir, 0700, true); }
@@ -73,6 +77,13 @@ class SessionManager extends Manager  {
         fclose($fp);
     }
     
+    /**
+     * Get the long-term session values or false if no session is found
+     * @param  string $login login
+     * @param  string $sid   session id
+     * @return array         possible values stored in session or empty array
+     *                       false if no session found
+     */
     public function getLTSession($login, $sid) {
         $value = false;
         $file = $this->LTDir.$login.'_'.$sid.'.ses';
@@ -88,10 +99,14 @@ class SessionManager extends Manager  {
                 touch($file);
             }
         }
-        return($value);
+        return $value;
     }
     
-    //unset a specific LT session
+    /**
+     * Delete a long-term session on server side
+     * @param  string $login login
+     * @param  string $sid   session id
+     */
     public function unsetLTSession($login, $sid) {
         $filePath = $this->LTDir.$login.'_'.$sid.'.ses';
         if (file_exists($filePath)) {
@@ -99,7 +114,11 @@ class SessionManager extends Manager  {
         }
     }
     
-    //unset all server-side LT session for this user
+    /**
+     * Delete all long-term sessions of a user
+     * if no user is given, the current user's sessions are deleted
+     * @param  string $userLogin only delete a specific user's sessions
+     */
     public function unsetLTSessions($login) {
         $files = glob( $this->LTDir.$login.'_*', GLOB_MARK );
         foreach( $files as $file ) {
@@ -107,6 +126,9 @@ class SessionManager extends Manager  {
         }
     }
     
+    /**
+     * Delete all expired or exceeding long-term sessions
+     */
     public function flushOldLTSessions() {
         $dir = $this->LTDir;
         
