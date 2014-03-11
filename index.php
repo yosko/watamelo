@@ -4,7 +4,7 @@
  *
  * @license     LGPL v3 (http://www.gnu.org/licenses/lgpl.html)
  * @author      Yosko <webmaster@yosko.net>
- * @version     v0.5
+ * @version     see WATAMELO_VERSION in lib/application.class.php
  * @link        https://github.com/yosko/watamelo
  */
 
