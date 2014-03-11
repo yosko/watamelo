@@ -62,19 +62,24 @@ class Router extends ApplicationComponent {
                             return $matches[0];
                         }
                     },
-                    $route->getAttribute('path')
+                    str_replace('.', '\.', $route->getAttribute('path'))
                 );
 
                 //match route including required parameters
                 if( preg_match("%^".$regexp."(/.*)?$%i", $url, $matches) ) {
                     $foundRoute = true;
                     $parameters = array();
+                    $optional = array();
                     $controller = $route->getAttribute('controller');
                     $action = $route->getAttribute('action');
 
-                    //build parameters array. The subarray 'optional' contains optional parameters
+                    //remove unecessary match
                     unset($matches[0]);
-                    $optional = array_pop($matches);
+                    //pop optional parameters if they exists
+                    if(count($matches) > count($required)) {
+                    	$optional = array_pop($matches);
+                    }
+                    //combine required parameter values and names
                     if(!empty($required)) {
                         $parameters = array_combine($required, $matches);
                     }
