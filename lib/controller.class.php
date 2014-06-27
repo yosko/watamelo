@@ -21,6 +21,9 @@ abstract class Controller extends ApplicationComponent {
         $this->setAction($action);
         $this->setParameters($parameters);
 
+        //make the URL parameters accessible within the view
+        $this->app()->view()->setReference( "parameters", $this->parameters );
+
         $method = 'execute'.ucfirst($this->action);
 
         $this->$method();
@@ -61,7 +64,7 @@ abstract class Controller extends ApplicationComponent {
     /**
      * Default action
      */
-    abstract function executeIndex();
+    public function executeIndex() {}
 }
 
 ?>
