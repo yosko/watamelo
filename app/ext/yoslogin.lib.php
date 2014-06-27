@@ -46,19 +46,39 @@ class YosLogin {
      * Initialize the session handler
      * @param string $sessionName     base name for the PHP and the long-term sessions
      * @param misc   $getUserCallback callback to get a user from its login
-     * @param int    $allowLocalIp    true to handle properly localhost & 127.0.0.1 (but a bit less secure: for dev/debug purpose only)
      * @param int    $logFile         name and path to a log file to keep trace of every action
      */
-    public function __construct($sessionName, $getUserCallback, $redirectionPage = '', $allowLocalIp=false, $logFile='') {
-        $this->version = 'v4';
+    public function __construct($sessionName, $getUserCallback, $logFile='') {
+        $this->version = 'v5';
         $this->useLTSessions = false;
 
         $this->sessionName = $sessionName;
         $this->getUserCallback = $getUserCallback;
-        $this->redirectionPage = empty($redirectionPage)?$_SERVER['PHP_SELF']:$redirectionPage;
-        $this->allowLocalIp = $allowLocalIp;
+        $this->redirectionPage = $this->setRedirectionPage(''); //redirect to self
+        $this->allowLocalIp = false;
         $this->logFile = $logFile;
         $this->activateLog = !empty($this->logFile);
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * GETTERS AND SETTERS
+     * -------------------------------------------------------------------------
+     */
+
+    /**
+     * Define redirection URL (after login/logout/secure/unsecure)
+     * @param misc $redirectionPage possible values:
+     *                                false to disable redirection
+     *                                empty or null to redirect to self (default)
+     *                                url of the destination
+     */
+    public function setRedirectionPage($redirectionPage) {
+        if(!empty($redirectionPage) || $redirectionPage === false) {
+            $this->redirectionPage = $redirectionPage;
+        } else {
+            $this->redirectionPage = $_SERVER['PHP_SELF'];
+        }
     }
 
     /**
@@ -77,6 +97,14 @@ class YosLogin {
      */
     public function getUserCallback($callback) {
         $this->getUserCallback = $callback;
+    }
+
+    /**
+     * Whether local address should be allowed to identify secure session
+     * @param int $allowLocalIp true to handle properly localhost & 127.0.0.1 (but a bit less secure: for dev/debug purpose only)
+     */
+    public function setAllowLocalIp($allowLocalIp) {
+        $this->allowLocalIp = $allowLocalIp;
     }
 
     /**
@@ -295,7 +323,7 @@ class YosLogin {
         $_SESSION['secure'] = false;
 
         //to avoid any problem when using the browser's back button
-        header('Location: '.$this->redirectionPage);
+        if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
     }
 
     /**
@@ -334,7 +362,7 @@ class YosLogin {
         }
 
         //to avoid any problem when using the browser's back button
-        header('Location: '.$this->redirectionPage);
+        if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
         exit;
     }
 
@@ -343,7 +371,7 @@ class YosLogin {
      * @param  string  $login      login sent via sign in form
      * @param  string  $password   clea password sent via sign in form
      * @param  boolean $rememberMe wether we should use a long-term session or not
-     * @return array()             user informations (from getUser()) + the values of 'isLoggedIn' and optionally 'error'
+     * @return array()             user informations (from getUser()) + the values of 'isLoggedIn' and optionally 'errors'
      */
     public function logIn($login, $password, $rememberMe = false) {
         $user = array();
@@ -355,10 +383,10 @@ class YosLogin {
         //check user/password
         if(empty($user)) {
             $user = array();
-            $user['error']['unknownLogin'] = true;
+            $user['errors']['unknownLogin'] = true;
             $user['isLoggedIn'] = false;
         } elseif(!YosLoginTools::checkPassword($password, $user['password'])) {
-            $user['error']['wrongPassword'] = true;
+            $user['errors']['wrongPassword'] = true;
             $user['isLoggedIn'] = false;
         } else {
             //set session
@@ -387,7 +415,7 @@ class YosLogin {
             }
 
             //to avoid any problem when using the browser's back button
-            header('Location: '.$this->redirectionPage);
+            if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
             exit;
         }
 
@@ -446,7 +474,7 @@ class YosLogin {
                 //delete long-term cookie
                 $this->unsetLTCookie();
 
-                header('Location: '.$this->redirectionPage);
+                if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
                 exit;
             }
 
@@ -465,10 +493,10 @@ class YosLogin {
 
                     if($this->activateLog) { YosLoginTools::log($this->logFile, 'securing access for '.$_SESSION['login']); }
 
-                    header('Location: '.$this->redirectionPage);
+                    if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
                     exit;
                 } else {
-                    $user['error']['wrongPassword'] = true;
+                    $user['errors']['wrongPassword'] = true;
                 }
             }
             $user['secure'] = $_SESSION['secure'];
@@ -500,9 +528,12 @@ class YosLoginTools {
         //format the resulting string
         $randomString = base64_encode($randomBytes);
         if(strlen($randomString) >= $length) {
-            $randomString = str_replace('+', '.', $randomString);
-            if($pathCompliant === true)
+            if($pathCompliant === true) {
                 $randomString = str_replace('/', '-', $randomString);
+                $randomString = str_replace('+', '_', $randomString);
+            } else {
+                $randomString = str_replace('+', '.', $randomString);
+            }
             $randomString = substr($randomString, 0, $length);      //keep only what we need
             //$randomString = str_replace('=', '', $randomString);    //remove trailing '='
         } else {
