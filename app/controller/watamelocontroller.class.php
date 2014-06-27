@@ -9,9 +9,8 @@ abstract class WatameloController extends Controller {
     protected $userLevels;
     // protected $actions = array(
     //     "" => array(
-    //         "authNeeded" => false,
     //         "secureNeeded" => false,
-    //         "adminNeeded" => false,
+    //         "level" => $this->userLevels['visitor'],
     //         "responseType" => RESPONSE_HTML
     //     )
     // );

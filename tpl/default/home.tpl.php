@@ -12,6 +12,7 @@ include $templatePath.'header.tpl.php';
 
             <li><a href="<?php echo $baseUrl; ?>login">Log in</a></li><?php } else { ?>
 
+            <li><a href="<?php echo $baseUrl; ?>admin">Admin</a></li>
             <li><a href="<?php echo $baseUrl; ?>logout">Log out</a></li><?php } ?>
 
             <li><a href="<?php echo $baseUrl; ?>feed.rss">RSS feed</a> or <a href="<?php echo $baseUrl; ?>feed.atom">Atom feed</a></li>

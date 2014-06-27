@@ -6,9 +6,18 @@
 class GeneralController extends WatameloController {
     protected $currentUser;
 
+    //define specific behavior for some actions (here for action "executeAdmin")
+    protected $actions;
+
     public function __construct(Application $app) {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();
+        $this->actions = array(
+            "admin" => array(
+                "secureNeeded" => true,
+                "level" => $this->userLevels['admin']
+            )
+        );
     }
 
     /**
@@ -21,6 +30,13 @@ class GeneralController extends WatameloController {
 
         $this->app()->view()->setParam( "users", $users );
         $this->app()->view()->renderView( "home" );
+    }
+
+    /**
+     * Show an admin page (with secure access)
+     */
+    public function executeAdmin() {
+        $this->app()->view()->renderView( "admin" );
     }
 
     /**

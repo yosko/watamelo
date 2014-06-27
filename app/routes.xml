@@ -21,4 +21,5 @@
   </route>
   <route path="403" controller="error" action="403"/>
   <route path="404" controller="error" action="404"/>
+  <route path="admin" controller="general" action="admin"/>
 </routes>
