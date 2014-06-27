@@ -43,10 +43,10 @@ class ConfigManager extends Manager {
         } else {
             if(array_key_exists($key, $this->params)) {
                 return $this->params[$key];
-            } elseif(array_key_exists($key, $this->params['global'])) {
+            } elseif(!empty($this->params['global']) && array_key_exists($key, $this->params['global'])) {
                 return $this->params['global'][$key];
             } else {
-                return false;
+                return $key;
             }
         }
     }
@@ -99,6 +99,18 @@ class ConfigManager extends Manager {
     }
 
     /**
+     * Add or edit a global configuration parameter and save it to the file
+     * @param  string  $key   key
+     * @param  misc    $value value
+     * @return boolean        whether the save was a success
+     */
+    public function setGlobal($key, $value) {
+        $this->params['global'][$key] = $value;
+
+        return $this->saveGlobal();
+    }
+
+    /**
      * Use the given application configuration array as is 
      * @param array   $array configuration
      * @param boolean $save  whether to save this configuration to the file
@@ -138,9 +150,12 @@ class ConfigManager extends Manager {
      */
     private function load() {
         $this->params = $this->loadFile($this->file);
-        $this->params['global'] = $this->loadFile($this->globalFile);
-
-        return !empty($this->params);
+        if(!empty($this->params)) {
+            $this->params['global'] = $this->loadFile($this->globalFile);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -182,7 +197,7 @@ class ConfigManager extends Manager {
      * @return boolean true if save was a success
      */
     private function saveGlobal() {
-        return $this->saveFile($this->defaultFile, $this->params['global']);
+        return $this->saveFile($this->globalFile, $this->params['global']);
     }
 
     /**
