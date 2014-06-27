@@ -31,9 +31,10 @@ class Router extends ApplicationComponent {
      * @param  string $controller name of the found controller (if route found)
      * @param  string $action     name of the found action (if route found)
      * @param  array  $parameters array of corectly mapped parameters (if route found)
+     * @param  string $url        meaningful part of the url
      * @return boolean            true if a route was found
      */
-    public function getRoute(&$controller, &$action, &$parameters) {
+    public function getRoute(&$controller, &$action, &$parameters, &$url) {
         //remove '/' at beginning & end of the url
         if(isset($_GET[$this->app()->getParamName()]))
             $url = trim($_GET[$this->app()->getParamName()],"/");

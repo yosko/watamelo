@@ -2,6 +2,8 @@
 
 require_once( ROOT.'/lib/autoload.php');
 require_once( ROOT.'/app/tools.class.php');
+require_once(ROOT.'/app/ext/yoslogin.lib.php');
+
 /**
  * The application itself, called from the index.php and does everything else
  */
@@ -27,13 +29,6 @@ class Watamelo extends Application {
             $this->configManager->get('ApacheURLRewriting')
         );
 
-        //get user levels and add it to the view
-        $userManager = $this->getManagerOf('user');
-        $levels = $userManager->getLevels();
-        foreach($levels as $level) {
-            $this->userLevels[$level['name']] = (int)$level['level'];
-        }
-        $this->view->setParam( "userLevels", $this->userLevels );
     }
 
     /**
@@ -49,27 +44,37 @@ class Watamelo extends Application {
      * Run the application (call the proper controller and action)
      */
     public function run() {
-        //authenticate current user and get his/her/its informations
-        $authController = new AuthController($this);
-        $this->user = $authController->authenticateUser();
         
         //prepare router
         $router = new Router($this);
         $controllerName = "";
         $actionName = "";
         $parameters = array();
+        $url = "";
 
         //if you don't use ApacheUrlRewriting, you can optionally define the name
         //of the $_GET parameter to use for your route
         // $router->setGetParamName('url');
         
         //find route for the requested URL
-        if(!$router->getRoute($controllerName, $actionName, $parameters)) {
+        if(!$router->getRoute($controllerName, $actionName, $parameters, $url)) {
 
             //if route not found, redirect to a 404 error
             $controllerName = 'error';
             $actionName = '404';
         }
+
+        //get user levels and add it to the view
+        $userManager = $this->getManagerOf('user');
+        $levels = $userManager->getLevels();
+        foreach($levels as $level) {
+            $this->userLevels[$level['name']] = (int)$level['level'];
+        }
+        $this->view->setParam( "userLevels", $this->userLevels );
+
+        //authenticate current user and get his/her/its informations
+        $authController = new AuthController($this);
+        $this->user = $authController->authenticateUser();
         
         //get controller corresponding to the user request
         $controller = $router->getController($controllerName);
@@ -95,6 +100,7 @@ class Watamelo extends Application {
         }
 
         //add config last state to the view
+        $this->view->setParam( "user", $this->user );
         $this->view->setParam( "config", $this->configManager->getAll() );
         
         //execute controller/action

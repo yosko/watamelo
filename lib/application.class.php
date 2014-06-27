@@ -1,6 +1,6 @@
 <?php
 
-define('WATAMELO_VERSION', '0.6');
+define('WATAMELO_VERSION', '0.7');
 
 /**
  * Abstract class
@@ -41,6 +41,14 @@ abstract class Application {
      *                possible values: sqlite, mysql, postgresql
      */
     abstract public function setDbms();
+
+    /**
+     * Gives the DBMS name
+     * @return string dbms
+     */
+    public function dbms() {
+        return $this->dbms;
+    }
     
     /**
      * Run the application (will call the right controller and action)
@@ -59,7 +67,7 @@ abstract class Application {
         
         if (!isset($this->managers[$module])) {
             $manager = $module.'manager';
-            $this->managers[$module] = new $manager($this->dao);
+            $this->managers[$module] = new $manager($this, $this->dao);
         }
         
         return $this->managers[$module];

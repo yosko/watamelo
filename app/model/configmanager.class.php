@@ -10,8 +10,8 @@ class ConfigManager extends Manager {
     protected $defaultFile = "";
     protected $file = "";
 
-    public function __construct($dao) {
-        parent::__construct($dao);
+    public function __construct(Application $app, $dao) {
+        parent::__construct($app, $dao);
 
         $this->globalFile = ROOT.'/data/config/config.global.json';
         $this->defaultFile = ROOT.'/data/config/config.default.json';

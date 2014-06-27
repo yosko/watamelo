@@ -1,7 +1,5 @@
 <?php
 
-require_once(ROOT.'/app/ext/yoslogin.lib.php');
-
 /**
  * Authentication handler
  */
@@ -21,10 +19,11 @@ class AuthController extends Controller {
         $this->logger = new \Yosko\YosLogin(
             'exampleSessionName',
             array($userManager, 'getForAuthentication'),
-            $redirectUrl,
-            DEVELOPMENT_ENVIRONMENT,
             DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
         );
+
+        $this->logger->setRedirectionPage($redirectUrl);
+        $this->logger->setAllowLocalIp(DEVELOPMENT_ENVIRONMENT);
 
         $this->logger->ltSessionConfig(
             array(
