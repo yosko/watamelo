@@ -1,7 +1,7 @@
 Watamelo
 =====
 
-Watamelo is a small and somehow lightweight PHP MVC Framework under the GNU LGPL licence.
+Watamelo is a small and rather lightweight PHP MVC Framework under the GNU LGPL licence.
 
 It is currently in Alpha. This means that it might be unstable, and every way of doing things is subject to change in future versions.
 
@@ -16,13 +16,13 @@ The given example code also requires these to work:
 * **pdo** (PHP module)
 * **pdo_sqlite** (PHP module)
 
-Optional elements:
+Optional (but recommended) elements:
 
 * Apache URL rewriting module
 
 ## How to use
 
-You should only add or edit content in the following directories. Everything that is already in it is just an example on how to use watamelo:
+You should only add or edit content in the following directories. Everything that is already in it is just a complete example on how to use watamelo:
 
 * ```app/```: the logic of your project (your application, controllers, models and route definitions)
 * ```data/```: any file related to informations used in your app (database/flat files, any downloadable file) 
@@ -76,6 +76,24 @@ Exemple of relative URLs matching the route above :
 * ```relative/path/to/page/29/bleh/val3|val4```
 * ```relative/path/to/page/43/bloh/|val4```
 
+### Route with app variable
+
+In the above example path, there are parts that are fixed (such as ```relative/path/to/page/```), and parts that can vary a lot
+(such as ```10/blah```) because they might be defined on a context/data/user level.
+
+But what if you need to define some path parts that can evolve but are not subject to change often, parts that you want to
+define on your application level? For exemple, you would like to make the admin section of your website accessible via a
+not so obvious URL, and change it sometimes for security reasons without having to edit tons of routes in ```routes.xml```.
+
+For this kind of use, you can declare a variable in your app's main class which will be sent to the Router in the ```$variables``` array. The route syntax is close to parameters, without the pipe (```|```):
+
+```xml
+<route path="fixed-path/:variable-path:/" controller="myControllerName" action="myMethod" />
+```
+
+This way, ```:variable-path:``` will be automatically replaced by the value of ```$variables['variable-path']```. See the
+example given for the admin route.
+
 ### Routing method: basic or Apache Rewriting
 
 The default example is defined to use Apache **rewrite_mod**. If you don't want to use it or just can't, just do the following: 
@@ -97,9 +115,9 @@ $router->setGetParamName('customParamName');
 
 There is no route builder, but to avoid problems in your views, there are are three variables you can use :
 
-* ```$rootUrl```: always point to the root of your website (let's say it is ```http://www.example.com/```)
-* ```$baseUrl```: same as ```$rootUrl```, it changes to ```http://www.example.com/?url=``` (or to the custom parameter name you used)
-* ```$templateUrl```: path to the current template (by default: ```http://www.example.com/tpl/default/```)
+* ```$rootUrl```: always point to the root of your website (let's say it is ```http://www.example.com/```).
+* ```$baseUrl```: same as ```$rootUrl```, it changes to ```http://www.example.com/?url=``` (or to the custom parameter name you used) if rewriting is disabled.
+* ```$templateUrl```: path to the current template (by default: ```http://www.example.com/tpl/default/```).
 
 ## Change app & db names
 
@@ -126,10 +144,18 @@ But the example code given relies on these libraries:
 
 ## FAQ
 
-If you have any question or suggestion, please feel free to contact me or post an issue on the [Github page of the project](github.com/yosko/watamelo/issues).
+If you have any question or suggestion, please feel free to contact me or post an issue on the [Github page of the project](https://github.com/yosko/watamelo/issues).
 
 ## Version History
 
+- v0.7 (2014-06-27)
+  - handle app variables within routes
+  - updated YosLogin, again
+  - make URL parameters accessible from the view by default
+  - avoid having to redeclare executeIndex in every controller
+  - minor fixes in config manager
+  - enhanced session manager with some other methods
+  - remove example specific code from the core of watamelo
 - v0.6 (2014-02-17)
   - parameters are extracted for the view, instead of kept in an array
   - reorganised some code
