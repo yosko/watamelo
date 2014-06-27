@@ -3,7 +3,7 @@
 /**
  * Authentication handler
  */
-class AuthController extends Controller {
+class AuthController extends WatameloController {
     protected $currentUser;
     protected $logger;
     

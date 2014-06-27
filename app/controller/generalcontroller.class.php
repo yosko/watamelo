@@ -3,7 +3,7 @@
 /**
  * Controller for displaying global pages
  */
-class GeneralController extends Controller {
+class GeneralController extends WatameloController {
     protected $currentUser;
 
     public function __construct(Application $app) {

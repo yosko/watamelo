@@ -3,7 +3,7 @@
 /**
  * Controller for displaying general errors
  */
-class ErrorController extends Controller {
+class ErrorController extends WatameloController {
     public function issetHTTPError() {
         if(isset($_SERVER['REDIRECT_STATUS'])) {
             switch ($_SERVER['REDIRECT_STATUS']) {
