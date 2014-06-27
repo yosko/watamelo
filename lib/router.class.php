@@ -30,11 +30,12 @@ class Router extends ApplicationComponent {
      * Returns a route based requested URL
      * @param  string $controller name of the found controller (if route found)
      * @param  string $action     name of the found action (if route found)
-     * @param  array  $parameters array of corectly mapped parameters (if route found)
+     * @param  array  $parameters array of correctly mapped parameters (if route found)
      * @param  string $url        meaningful part of the url
+     * @param  array  $variables  array of variable parts of path defined on app level
      * @return boolean            true if a route was found
      */
-    public function getRoute(&$controller, &$action, &$parameters, &$url) {
+    public function getRoute(&$controller, &$action, &$parameters, &$url, $variables) {
         //remove '/' at beginning & end of the url
         if(isset($_GET[$this->app()->getParamName()]))
             $url = trim($_GET[$this->app()->getParamName()],"/");
@@ -48,6 +49,9 @@ class Router extends ApplicationComponent {
         foreach ($this->routes as $route) {
             if ($route->nodeType != XML_TEXT_NODE) {
                 $required = array();
+                $test = array();
+
+                //handle parameter types
                 $regexp = preg_replace_callback(
                     "/:(\w+)\|(\w+):/",
                     function ($matches) use (&$required) {
@@ -64,6 +68,15 @@ class Router extends ApplicationComponent {
                         }
                     },
                     str_replace('.', '\.', $route->getAttribute('path'))
+                );
+
+                //handle variable parts of path
+                $regexp = preg_replace_callback(
+                    "/%(\w+)%/",
+                    function ($matches) use ($variables) {
+                        return $variables[$matches[1]];
+                    },
+                    $regexp
                 );
 
                 //match route including required parameters

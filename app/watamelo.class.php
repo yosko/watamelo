@@ -50,14 +50,19 @@ class Watamelo extends Application {
         $controllerName = "";
         $actionName = "";
         $parameters = array();
+        $variables = array();
         $url = "";
 
         //if you don't use ApacheUrlRewriting, you can optionally define the name
         //of the $_GET parameter to use for your route
         // $router->setGetParamName('url');
+
+        //example of part of a path that can be defined on the app level
+        //here to avoid using an easy to find admin section
+        $variables['admin'] = 'custom-admin-path';
         
         //find route for the requested URL
-        if(!$router->getRoute($controllerName, $actionName, $parameters, $url)) {
+        if(!$router->getRoute($controllerName, $actionName, $parameters, $url, $variables)) {
 
             //if route not found, redirect to a 404 error
             $controllerName = 'error';
@@ -100,6 +105,7 @@ class Watamelo extends Application {
         }
 
         //add config last state to the view
+        $this->view->setParam( "variables", $variables );
         $this->view->setParam( "user", $this->user );
         $this->view->setParam( "config", $this->configManager->getAll() );
         
