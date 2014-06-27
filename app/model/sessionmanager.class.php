@@ -9,6 +9,37 @@ class SessionManager extends Manager  {
     protected $LTDuration;
 
     /**
+     * COOKIES
+     */
+
+    /**
+     * Set a value for a cookie
+     * @param string  $key      cookie name
+     * @param string  $value    cookie value
+     * @param integer $duration lifetime of the cookie (in seconds)
+     */
+    public function setCookie($key, $value, $duration) {
+        setcookie(
+            $key,
+            $value,
+            time()+$duration,
+            dirname($_SERVER['SCRIPT_NAME']).'/',
+            '',
+            false,
+            true
+        );
+    }
+
+    /**
+     * Get the value of a cookie
+     * @param  string $key cookie name
+     * @return misc        cookie value (a string) or false if cookie not found
+     */
+    public function getCookie($key) {
+        return (isset($_COOKIE[$key]))?$_COOKIE[$key]:false;
+    }
+
+    /**
      * SESSION VALUE
      */
 
@@ -28,6 +59,15 @@ class SessionManager extends Manager  {
      */
     public function getValue($key) {
         return (isset($_SESSION[$key]))?$_SESSION[$key]:false;
+    }
+
+    /**
+     * Get all PHP session variables
+     * @param  string $key key
+     * @return misc        value
+     */
+    public function getAll() {
+        return $_SESSION;
     }
 
     /**
