@@ -16,7 +16,7 @@ define( 'ROOT', dirname(__FILE__) );
 require_once( ROOT.'/app/watamelo.class.php');
 
 //start the app
-$app = new Watamelo;
+$app = new Watamelo('Wata');
 $app->run();
 
 ?>

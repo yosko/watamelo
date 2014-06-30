@@ -13,11 +13,10 @@ abstract class Application {
     protected $defaultControllerName = "";
     protected $dao = null;
     protected $managers = array();
-    protected $dbms;
     protected $getParamName;
 
 
-    public function __construct() {
+    public function __construct($appName = '') {
         //handle errors and warnings
         error_reporting(E_ALL | E_STRICT);
         if (DEVELOPMENT_ENVIRONMENT == true) {
@@ -29,25 +28,8 @@ abstract class Application {
         ini_set('log_errors', 'On');
         ini_set('error_log', ROOT.'/tmp/logs/error.log');
         
-        $this->dbms = $this->setDbms();
         $this->getParamName = 'url';
-        $this->appName = get_called_class();
-        $this->dao = DbFactory::getConnexion($this->dbms, strtolower($this->appName));
-    }
-    
-    /**
-     * Return the Database Management System name
-     * @return string name of dbms in PDO style
-     *                possible values: sqlite, mysql, postgresql
-     */
-    abstract public function setDbms();
-
-    /**
-     * Gives the DBMS name
-     * @return string dbms
-     */
-    public function dbms() {
-        return $this->dbms;
+        $this->appName = empty($appName)?get_called_class():$appName;
     }
     
     /**

@@ -8,16 +8,20 @@ require_once(ROOT.'/app/ext/yoslogin.lib.php');
  * The application itself, called from the index.php and does everything else
  */
 class Watamelo extends Application {
-    protected $configManager, $user, $userLevels;
+    protected $configManager;
+    protected $user;
+    protected $userLevels;
+    protected $dbms;
+    protected $dbParams;
     
     /**
      * Prepare the application
      */
-    public function __construct() {
+    public function __construct($appName) {
         $this->useDefaultRoutes = true;
         $this->defaultControllerName = "general";
 
-        parent::__construct();
+        parent::__construct($appName);
 
         //init config
         $this->configManager = $this->getManagerOf('config');
@@ -29,6 +33,9 @@ class Watamelo extends Application {
             $this->configManager->get('ApacheURLRewriting')
         );
 
+        $this->dbms = $this->setDbms();
+        $this->dbParams = $this->setDbParams();
+        $this->dao = DbFactory::getConnexion($this->dbms, $this->dbParams);
     }
 
     /**
@@ -38,6 +45,24 @@ class Watamelo extends Application {
      */
     public function setDbms() {
         return 'sqlite';
+    }
+
+    /**
+     * Gives the DBMS name
+     * @return string dbms
+     */
+    public function dbms() {
+        return $this->dbms;
+    }
+
+    /**
+     * Return the Database Parameters (connection string)
+     * @return array parameters to connect to the database
+     */
+    public function setDbParams() {
+        return array(
+            'dbName' => 'watamelo.db'
+        );
     }
 
     /**
