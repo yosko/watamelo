@@ -5,7 +5,7 @@
  * the functions d() and dd() where inspired Kint
  * 
  * @author      Yosko <contact@yosko.net>
- * @version     0.5
+ * @version     0.6
  * @copyright   none: free and opensource
  * @link        https://github.com/yosko/easydump
  */
@@ -13,7 +13,7 @@ class EasyDump {
     //display configurattion
     public static $config = array(
         'showVarNames'  => true,    //true to show names of the given variables
-        'showSource'    => false,   //true to show the code of the PHP call to EasyDump
+        'showSource'    => true,    //true to show the code of the PHP call to EasyDump
         'color'         => array(   //default theme based on Earthsong by daylerees
             'text'          => '#EBD1B7',
             'border'        => '#7A7267',
@@ -32,7 +32,7 @@ class EasyDump {
         $trace = debug_backtrace();
         $call = self::readCall($trace);
 
-        echo '<pre style="border: 0.5em solid '.self::$config['color']['border'].'; color: '.self::$config['color']['text'].'; background-color: '.self::$config['color']['background'].'; margin: 0; padding: 0.5em; white-space: pre-wrap;font-family:\'DejaVu Sans Mono\',monospace;font-size:11px;">';
+        echo '<pre class="easydump" style="border: 0.5em solid '.self::$config['color']['border'].'; color: '.self::$config['color']['text'].'; background-color: '.self::$config['color']['background'].'; margin: 0; padding: 0.5em; white-space: pre-wrap;font-family:\'DejaVu Sans Mono\',monospace;font-size:11px;">';
         
         //show file and line
         self::showCall($call);
@@ -75,16 +75,16 @@ class EasyDump {
         $indent = "    ";
         for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
         echo '<span style="color:'.self::$config['color']['name'].';">'.($level == 0?$name:(is_string($name)?'"'.$name.'"':'['.$name.']'))." </span>";
-        echo '<span style="color:'.self::$config['color']['type'].';">('.gettype($value).")</span>\t= ";
-        if(is_array($value) && !$dumpArray && $level <= 5) {
+        echo '<span style="color:'.self::$config['color']['type'].';">('.(is_object($value)?get_class($value):gettype($value)).")</span>\t= ";
+        if(self::isTraversable($value) && !$dumpArray && $level <= 5) {
             echo '{';
             if(!empty($value)) {
                 echo "\r\n";
                 foreach($value as $k => $v) {
                     self::showVar($k, $v, $level+1);
                 }
-                for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
             }
+            for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
             echo "}\r\n";
         } else {
             echo '<span style="color:'.self::$config['color']['value'].';">';
@@ -262,13 +262,15 @@ class EasyDump {
         $callMultiline = $file->current();
 
         //read the PHP file backward to the begining of the call
-        $regex = '/'.$trace[$rank]['function'].'\((.*)\);$/';
+        $regex = '/'.$trace[$rank]['function'].'\((.*)\);/';
         while( !preg_match($regex, $call, $match) ) {
             $file->seek( --$line );
             $call = trim( $file->current() ) . $call;
             $callMultiline = $file->current() . $callMultiline;
         }
         $call = $match[1];
+
+        $callMultiline = htmlentities($callMultiline);
 
         return array(
             'code' => $call,
@@ -277,6 +279,38 @@ class EasyDump {
             'line' => $line + 1,
             'file' => $trace[$rank]['file']
         );
+    }
+
+    /**
+     * Check if given variable is traversable in any way (array, traversable object even if it doesn't
+     * implements Traversable)
+     * @param  misc    $variable backtrace executed PHP code
+     * @return boolean           informations about the call
+     */
+    protected static function isTraversable($variable) {
+        //most common cases
+        if(is_array($variable) || $variable instanceof StdClass || $variable instanceof Traversable) {
+            return true;
+        } elseif(!is_object($variable)) {
+            return false;
+        }
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline, array $errcontext) {
+            throw new Exception($errstr, $errno);
+        });
+
+
+        //try to loop through object
+        try {
+            foreach ($variable as $k => $v) {
+                break;
+            }
+        } catch (Exception $e) {
+            restore_error_handler();
+            return false;
+        }
+        restore_error_handler();
+        return true;
     }
 }
 
