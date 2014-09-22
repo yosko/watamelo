@@ -1,6 +1,6 @@
 <?php
 
-define('WATAMELO_VERSION', '0.7');
+define('WATAMELO_VERSION', '0.8');
 
 /**
  * Abstract class
@@ -27,11 +27,11 @@ abstract class Application {
         }
         ini_set('log_errors', 'On');
         ini_set('error_log', ROOT.'/tmp/logs/error.log');
-        
+
         $this->getParamName = 'url';
         $this->appName = empty($appName)?get_called_class():$appName;
     }
-    
+
     /**
      * Run the application (will call the right controller and action)
      */
@@ -46,22 +46,22 @@ abstract class Application {
         if (!is_string($module) || empty($module)) {
             throw new InvalidArgumentException('Invalid module');
         }
-        
+
         if (!isset($this->managers[$module])) {
             $manager = $module.'manager';
             $this->managers[$module] = new $manager($this, $this->dao);
         }
-        
+
         return $this->managers[$module];
     }
-    
+
     /**
      * Initialise the View object
      */
     public function initView($template, $rootUrl, $ApacheURLRewriting) {
         $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
     }
-    
+
     /**
      * Returns the application name
      * @return string name
@@ -69,7 +69,7 @@ abstract class Application {
     public function appName() {
         return $this->appName;
     }
-    
+
     /**
      * Returns the application view
      * @return object view
@@ -77,7 +77,7 @@ abstract class Application {
     public function view() {
         return $this->view;
     }
-    
+
     /**
      * Returns the application parameter name used in $_GET
      * @return string name
@@ -85,14 +85,14 @@ abstract class Application {
     public function getParamName() {
         return $this->getParamName;
     }
-    
+
     /**
      * Set the application parameter name used in $_GET
      */
     public function setGetParamName($getParamName) {
         $this->getParamName = $getParamName;
     }
-    
+
     /**
      * Returns the application flag "useDefaultRoutes"
      * @return boolean useDefaultRoutes
@@ -100,7 +100,7 @@ abstract class Application {
     public function useDefaultRoutes() {
         return $this->useDefaultRoutes;
     }
-    
+
     /**
      * Returns the application default controller name
      * @return string defaultControllerName

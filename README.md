@@ -25,7 +25,7 @@ Optional (but recommended) elements:
 You should only add or edit content in the following directories. Everything that is already in it is just a complete example on how to use watamelo:
 
 * ```app/```: the logic of your project (your application, controllers, models and route definitions)
-* ```data/```: any file related to informations used in your app (database/flat files, any downloadable file) 
+* ```data/```: any file related to informations used in your app (database/flat files, any downloadable file)
 * ```tpl/```: the presentation of your project (views, javascript, CSS and any image for your design)
 
 ## Example description
@@ -39,7 +39,7 @@ You should only add or edit content in the following directories. Everything tha
 
 ### Data
 
-The given example uses a SQLite database (```data/db/watamelo.db```). Its content is described in ```app/utils/database.sql```.
+The given example uses a SQLite database (```data/db/watamelo.db```). Its content is described in ```app/model/database.sql```.
 
 The ```data/config/config.json``` file contains the parameters required for SessionManager. You can add to it any other parameter.
 
@@ -96,7 +96,7 @@ example given for the admin route.
 
 ### Routing method: basic or Apache Rewriting
 
-The default example is defined to use Apache **rewrite_mod**. If you don't want to use it or just can't, just do the following: 
+The default example is defined to use Apache **rewrite_mod**. If you don't want to use it or just can't, just do the following:
 
 * delete or rename the ```.htaccess``` file at the project root
 * in ```data/config/config.global.json```, change the parameter **ApacheURLRewriting** to false, or replace its calls in ```app/watamelo.class.php``` by the boolean of your choice.
@@ -148,6 +148,16 @@ If you have any question or suggestion, please feel free to contact me or post a
 
 ## Version History
 
+- v0.8 (2014-09-22)
+  - added CSS views handling (a way to add PHP in CSS files to handle variables, etc...)
+  - use StdClass objects instead of arrays for list of objects of variable natures
+  - handle DBMS and DB parameters in example code, not in Watamelo library (gives the ability to use as much database connections as needed)
+  - fix error on renderData() where options didn't work
+  - in given example, moved SQL files into the model directory
+  - in given example, updated YosLogin (this never stops...)
+  - in given example, use prefix for table names
+  - in given example, keep more useful tools
+  - in given example, make authController (and its YosLogin logger) accessible
 - v0.7 (2014-06-27)
   - handle app variables within routes
   - updated YosLogin, again

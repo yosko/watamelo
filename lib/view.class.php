@@ -30,15 +30,15 @@ class View extends ApplicationComponent {
         $this->rootUrl = $rootUrl;
         $this->templateName = $template;
         $this->ApacheURLRewriting = $ApacheURLRewriting;
-        
+
         //template config
         if($this->templateName===false) { $this->templateName = "default"; }
-        
+
         if($this->rootUrl === false) {
             $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
             $this->setParam( "templateUrl", $this->rootUrl.'tpl/'.$this->templateName.'/' );
         }
-        
+
         $this->templateUrl = $this->rootUrl.'tpl/'.$this->templateName.'/';
         $this->templatePath = ROOT.DIRECTORY_SEPARATOR.'tpl'.DIRECTORY_SEPARATOR.$this->templateName.DIRECTORY_SEPARATOR;
 
@@ -134,6 +134,33 @@ class View extends ApplicationComponent {
     }
 
     /**
+     * Assign all parameters to the view, then render it
+     * @param string  $name         view name
+     * @param boolean $directResult false to get result in the return
+     */
+    public function renderCss($name, $directResult = true) {
+        //import the parameters into the current context
+        extract($this->params);
+
+        $templatePath = $this->templatePath;
+
+        header('Content-Type: text/css; charset: UTF-8');
+        header('Cache-Control: must-revalidate');
+        header('Expires: ' . gmdate('D, d M Y H:i:s',time() + 3600) . ' GMT');
+
+        ob_start();
+        include $templatePath.$name.'.css.php';
+        $response = ob_get_clean();
+
+        if($directResult) {
+            echo $response;
+            exit;
+        } else {
+            return $response;
+        }
+    }
+
+    /**
      * Render a rss/atom feed with the given falues
      * @param string $feed values for feed items
      * @param string $type rss (default) or atom
@@ -170,25 +197,25 @@ class View extends ApplicationComponent {
 
         //handle client cache if a last-modified date is given
         $showData = true;
-        if(isset($option['last-modified'])) {
+        if(isset($options['last-modified'])) {
             // Getting headers sent by the client.
             $headers = apache_request_headers();
 
             // Checking if the client is validating his cache and if it is current.
             if (isset($headers['If-Modified-Since'])
-                && (strtotime($headers['If-Modified-Since']) == $option['last-modified'])
+                && (strtotime($headers['If-Modified-Since']) == $options['last-modified'])
             ) {
                 // Client's cache IS current, so we just respond '304 Not Modified'.
-                header('Last-Modified: '.gmdate('D, d M Y H:i:s', $option['last-modified']).' GMT', true, 304);
+                header('Last-Modified: '.gmdate('D, d M Y H:i:s', $options['last-modified']).' GMT', true, 304);
                 $showData = false;
             } else {
                 // Image not cached or cache outdated, we respond '200 OK' and output the image.
-                header('Last-Modified: '.gmdate('D, d M Y H:i:s', $option['last-modified']).' GMT', true, 200);
+                header('Last-Modified: '.gmdate('D, d M Y H:i:s', $options['last-modified']).' GMT', true, 200);
             }
         }
 
-        if(isset($option['length'])) {
-            header('Content-Length: '.$option['length']);
+        if(isset($options['length'])) {
+            header('Content-Length: '.$options['length']);
         }
 
         if($showData) {
@@ -198,26 +225,27 @@ class View extends ApplicationComponent {
 	            echo json_encode($data);
 	        } elseif($responseType == RESPONSE_CSV) {
 	            header('Content-type: text/csv');
-	
+
 	            $header = array();
 	            foreach($data as $key => $row) {
 	                //headers
 	                if(empty($header)) {
-	                    $header = array_keys($row);
+	                    $header = array_keys((array)$row);
 	                    if(!isset($options['header']) || $options['header'] !== false) {
 	                        echo implode(",", $header)."\n";
 	                    }
 	                }
-	                
+
 	                $result='';
 	                foreach($row as $key => $value) {
+                        $row = (array)$row;
 	                    if(is_numeric($value)) {
 	                        $result .= $value.',';
 	                    } else {
 	                        $result .= '"'.str_replace( '"', '\"', htmlspecialchars_decode($row[$key]) ).'"';
 	                    }
 	                }
-	                
+
 	                $result = rtrim($result, ',')."\n";
 	                echo $result;
                 }
@@ -228,7 +256,7 @@ class View extends ApplicationComponent {
         }
 
         $response = ob_get_clean();
-        
+
         if(isset($options['fileName'])) {
             header('Content-disposition: attachment; filename='.$options['fileName']);
             header("Pragma: no-cache");

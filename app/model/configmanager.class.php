@@ -5,13 +5,15 @@
  * Is accessib
  */
 class ConfigManager extends Manager {
-    protected $params = array();
+    protected $params;
     protected $globalFile = "";
     protected $defaultFile = "";
     protected $file = "";
 
     public function __construct(Application $app, $dao) {
         parent::__construct($app, $dao);
+
+        $this->param = new StdClass();
 
         $this->globalFile = ROOT.'/data/config/config.global.json';
         $this->defaultFile = ROOT.'/data/config/config.default.json';
@@ -20,13 +22,6 @@ class ConfigManager extends Manager {
         if(!$this->load()) {
             $this->loadDefault();
         }
-    }
-    
-    /**
-     * Default action
-     */
-    public function executeIndex() {
-
     }
 
     /**
@@ -41,12 +36,12 @@ class ConfigManager extends Manager {
         if(is_null($key)) {
             return $this->params;
         } else {
-            if(array_key_exists($key, $this->params)) {
-                return $this->params[$key];
-            } elseif(!empty($this->params['global']) && array_key_exists($key, $this->params['global'])) {
-                return $this->params['global'][$key];
+            if(isset($this->params->$key)) {
+                return $this->params->$key;
+            } elseif(isset($this->params->global->$key)) {
+                return $this->params->global->$key;
             } else {
-                return $key;
+                return null;
             }
         }
     }
@@ -66,14 +61,13 @@ class ConfigManager extends Manager {
         } else {
             //current params: may be modified within app for different reasons
             //suchs as user specific parameters
-            $params = $this->params;
+            $params = clone $this->params;
         }
 
         if($includeGlobal) {
-            $globalParams = $this->loadFile($this->globalFile);
-            $params = array_merge($globalParams, $params);
+            $params->global = $this->loadFile($this->globalFile);
         } else {
-            unset($params['global']);
+            unset($params->global);
         }
         return $params;
     }
@@ -93,7 +87,7 @@ class ConfigManager extends Manager {
      * @return boolean        whether the save was a success
      */
     public function set($key, $value) {
-        $this->params[$key] = $value;
+        $this->params->$key = $value;
 
         return $this->save();
     }
@@ -105,21 +99,21 @@ class ConfigManager extends Manager {
      * @return boolean        whether the save was a success
      */
     public function setGlobal($key, $value) {
-        $this->params['global'][$key] = $value;
+        $this->params->global->$key = $value;
 
         return $this->saveGlobal();
     }
 
     /**
-     * Use the given application configuration array as is 
-     * @param array   $array configuration
-     * @param boolean $save  whether to save this configuration to the file
-     * @return boolean       whether the save was a success
+     * Use the given application configuration array as is
+     * @param object  $object configuration
+     * @param boolean $save   whether to save this configuration to the file
+     * @return boolean        whether the save was a success
      */
-    public function setAll($array, $save = true) {
+    public function setAll($object, $save = true) {
         //make sure that no key get lost by merging arrays
         //this way, keys not handle via the interface will be kept
-        $this->params = array_merge($this->params, $array);
+        $this->params = (object)array_merge((array)$this->params, (array)$object);
 
         return ($save)?$this->save():true;
     }
@@ -139,7 +133,7 @@ class ConfigManager extends Manager {
      */
     private function loadDefault() {
         $this->params = $this->loadFile($this->defaultFile);
-        $this->params['global'] = $this->loadFile($this->globalFile);
+        $this->params->global = $this->loadFile($this->globalFile);
 
         return !empty($this->params);
     }
@@ -151,7 +145,7 @@ class ConfigManager extends Manager {
     private function load() {
         $this->params = $this->loadFile($this->file);
         if(!empty($this->params)) {
-            $this->params['global'] = $this->loadFile($this->globalFile);
+            $this->params->global = $this->loadFile($this->globalFile);
             return true;
         } else {
             return false;
@@ -165,7 +159,7 @@ class ConfigManager extends Manager {
      */
     private function loadFile($file) {
         if (file_exists( $file )) {
-            return json_decode(file_get_contents($file), true);
+            return json_decode(file_get_contents($file));
         } else {
             touch($file);
             return false;
@@ -177,8 +171,8 @@ class ConfigManager extends Manager {
      * @return boolean true if save was a success
      */
     private function save() {
-        $params = $this->params;
-        unset($params['global']);
+        $params = clone $this->params;
+        unset($params->global);
         return $this->saveFile($this->file, $params);
     }
 
@@ -187,8 +181,8 @@ class ConfigManager extends Manager {
      * @return boolean true if save was a success
      */
     private function saveDefault() {
-        $params = $this->params;
-        unset($params['global']);
+        $params = clone $this->params;
+        unset($params->global);
         return $this->saveFile($this->defaultFile, $params);
     }
 
@@ -197,7 +191,7 @@ class ConfigManager extends Manager {
      * @return boolean true if save was a success
      */
     private function saveGlobal() {
-        return $this->saveFile($this->globalFile, $this->params['global']);
+        return $this->saveFile($this->globalFile, $this->params->global);
     }
 
     /**

@@ -9,11 +9,12 @@ require_once(ROOT.'/app/ext/yoslogin.lib.php');
  */
 class Watamelo extends Application {
     protected $configManager;
+    protected $authController;
     protected $user;
     protected $userLevels;
     protected $dbms;
     protected $dbParams;
-    
+
     /**
      * Prepare the application
      */
@@ -57,19 +58,27 @@ class Watamelo extends Application {
 
     /**
      * Return the Database Parameters (connection string)
-     * @return array parameters to connect to the database
+     * @return StdClass parameters to connect to the database
      */
     public function setDbParams() {
-        return array(
-            'dbName' => 'watamelo.db'
-        );
+        $params = new StdClass;
+        $params->dbName = 'watamelo.db';
+        return $params;
+    }
+
+    /**
+     * Gives the DB parameters
+     * @return StdClass dbParams
+     */
+    public function dbParams() {
+        return $this->dbParams;
     }
 
     /**
      * Run the application (call the proper controller and action)
      */
     public function run() {
-        
+
         //prepare router
         $router = new Router($this);
         $controllerName = "";
@@ -85,7 +94,7 @@ class Watamelo extends Application {
         //example of part of a path that can be defined on the app level
         //here to avoid using an easy to find admin section
         $variables['admin'] = 'custom-admin-path';
-        
+
         //find route for the requested URL
         if(!$router->getRoute($controllerName, $actionName, $parameters, $url, $variables)) {
 
@@ -98,32 +107,32 @@ class Watamelo extends Application {
         $userManager = $this->getManagerOf('user');
         $levels = $userManager->getLevels();
         foreach($levels as $level) {
-            $this->userLevels[$level['name']] = (int)$level['level'];
+            $this->userLevels[$level->name] = (int)$level->level;
         }
         $this->view->setParam( "userLevels", $this->userLevels );
 
         //authenticate current user and get his/her/its informations
-        $authController = new AuthController($this);
-        $this->user = $authController->authenticateUser();
-        
+        $this->authController = new AuthController($this);
+        $this->user = $this->authController->authenticateUser();
+
         //get controller corresponding to the user request
         $controller = $router->getController($controllerName);
         $controller->setAction($actionName);
 
         //if user should be authenticated, redirect him to the login page
-        if($this->user['level'] < $controller->userLevelNeeded()
-            && $this->user['level'] < $this->userLevels['user']) {
+        if($this->user->level < $controller->userLevelNeeded()
+            && $this->user->level < $this->userLevels['user']) {
             $controllerName = 'auth';
             $actionName = 'login';
             $controller = $router->getController($controllerName);
 
         //if the user is authenticated but doesn't have the right level of permission
-        } elseif($this->user['level'] < $controller->userLevelNeeded()) {
+        } elseif($this->user->level < $controller->userLevelNeeded()) {
             $controllerName = 'error';
             $actionName = '403';
             $controller = $router->getController($controllerName);
 
-        } elseif($controller->secureNeeded() && !$this->user['secure']) {
+        } elseif($controller->secureNeeded() && !$this->user->secure) {
             $controllerName = 'auth';
             $actionName = 'secure';
             $controller = $router->getController($controllerName);
@@ -132,8 +141,8 @@ class Watamelo extends Application {
         //add config last state to the view
         $this->view->setParam( "variables", $variables );
         $this->view->setParam( "user", $this->user );
-        $this->view->setParam( "config", $this->configManager->getAll() );
-        
+        $this->view->setParam( "config", $this->configManager );
+
         //execute controller/action
         $controller->execute($actionName, $parameters);
     }
@@ -149,7 +158,7 @@ class Watamelo extends Application {
         $actionName = $error;
 
         $controller = $router->getController($controllerName);
-        
+
         //execute controller/action
         $controller->execute($actionName, array());
     }
@@ -161,7 +170,15 @@ class Watamelo extends Application {
     public function config() {
         return $this->configManager;
     }
-    
+
+    /**
+     * Returns the application configuration
+     * @return array config
+     */
+    public function auth() {
+        return $this->authController;
+    }
+
     /**
      * Return current user's information
      * @return array user information

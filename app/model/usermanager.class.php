@@ -3,13 +3,13 @@
 /**
  * Manage users data
  */
-class UserManager extends Manager  {
+class UserManager extends WatameloManager  {
     /**
      * Gives a list of users
      * @param  integer $limit   Max number of users to be returned
      * @param  integer $offset  Offeset of users (for pagination)
-     * @param  string  $sort    TODO
-     * @param  string  $order   TODO
+     * @param  string  $sort    column name to sort on
+     * @param  string  $order   asc or desc
      * @param  string  $filters array of filters (key : filter name, value : filter value)
      * @return array            array of users (each user is a subarray)
      */
@@ -44,8 +44,8 @@ class UserManager extends Manager  {
 
         $sql = "SELECT u.userId as id, u.userLevel as level, ul.userLevelName as levelName"
             .", u.userLogin as login, u.userCreation as creation, u.userBio as bio"
-            ." FROM wa_user u"
-            ." INNER JOIN wa_user_level ul ON ul.userLevel = u.userLevel"
+            ." FROM ".$this->tables['user']." u"
+            ." INNER JOIN ".$this->tables['user_level']." ul ON ul.userLevel = u.userLevel"
             .$sqlWhere
             .$sqlOrderBy
             .$sqlLimit;
@@ -56,14 +56,14 @@ class UserManager extends Manager  {
             foreach($filters as $key => $value) {
                 if($key == "level") {
                     $level = $value;
-                    $qryUsers->bindParam(':level', $level, PDO::PARAM_STR);  
+                    $qryUsers->bindParam(':level', $level, PDO::PARAM_STR);
                 }
             }
         }
 
         $qryUsers->execute();
-        $users = $qryUsers->fetchAll(PDO::FETCH_ASSOC);
-        
+        $users = $qryUsers->fetchAll(PDO::FETCH_OBJ);
+
         return $users;
     }
 
@@ -80,7 +80,7 @@ class UserManager extends Manager  {
         if($includeSecureInfo) {
             $sql .= ", u.userPassword as password";
         }
-        $sql .= " FROM wa_user u";
+        $sql .= " FROM ".$this->tables['user']." u";
         if($type == "id") {
             $sql .= " WHERE u.userId = :id";
         } elseif($type == "login") {
@@ -99,7 +99,7 @@ class UserManager extends Manager  {
         }
 
         $qryUser->execute();
-        $user = $qryUser->fetch(PDO::FETCH_ASSOC);
+        $user = $qryUser->fetch(PDO::FETCH_OBJ);
 
         return($user);
     }
@@ -113,7 +113,7 @@ class UserManager extends Manager  {
     public function getById($id, $includeSecureInfo = false) {
         return $this->get($id, "id", $includeSecureInfo);
     }
-    
+
     /**
      * Returns a user's information (based on login)
      * @param  string  $login              user login
@@ -135,11 +135,11 @@ class UserManager extends Manager  {
 
     public function getLevels() {
         $sql = "SELECT ul.userLevelId as id, ul.userLevelName as name, ul.userLevel as level"
-            ." FROM wa_user_level ul"
+            ." FROM ".$this->tables['user_level']." ul"
             ." ORDER BY ul.userLevel DESC";
         $qryLevels = $this->dao->prepare( $sql );
         $qryLevels->execute();
-        $levels = $qryLevels->fetchAll(PDO::FETCH_ASSOC);
+        $levels = $qryLevels->fetchAll(PDO::FETCH_OBJ);
         return $levels;
     }
 
@@ -152,7 +152,7 @@ class UserManager extends Manager  {
     public function setPassword($id, $hash) {
         try {
             $qryUpdateUser = $this->dao->prepare(
-                "UPDATE wa_user SET userPassword = :password"
+                "UPDATE ".$this->tables['user']." SET userPassword = :password"
                 ." WHERE userId = :id");
             $qryUpdateUser->bindParam(':id', $id, PDO::PARAM_INT);
             $qryUpdateUser->bindParam(':password', $hash, PDO::PARAM_STR);
@@ -171,7 +171,7 @@ class UserManager extends Manager  {
     public function setEmail($id, $email) {
         try {
             $qryUpdateUser = $this->dao->prepare(
-                "UPDATE wa_user SET userEmail = :email"
+                "UPDATE ".$this->tables['user']." SET userEmail = :email"
                 ." WHERE userId = :id");
             $qryUpdateUser->bindParam(':id', $id, PDO::PARAM_INT);
             $qryUpdateUser->bindParam(':email', $email, PDO::PARAM_STR);

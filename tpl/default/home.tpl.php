@@ -4,11 +4,11 @@ include $templatePath.'header.tpl.php';
 ?>
         <h3>Welcome to Watamelo</h3>
         <div>
-            You are currently: <?php if($currentUser['level'] >= $userLevels['user']) { echo 'connected as "'.$currentUser['login'].'"'; } else { echo 'not connected'; } ?>
+            You are currently: <?php if($currentUser->level >= $userLevels['user']) { echo 'connected as "'.$currentUser->login.'"'; } else { echo 'not connected'; } ?>
         </div>
         <ul>
             <li><a href="<?php echo $baseUrl; ?>403">Show a 403 error</a></li>
-            <li><a href="<?php echo $baseUrl; ?>no-route-for-this-url">Show a 404 error</a></li><?php if($currentUser['level'] < $userLevels['user']) { ?>
+            <li><a href="<?php echo $baseUrl; ?>no-route-for-this-url">Show a 404 error</a></li><?php if($currentUser->level < $userLevels['user']) { ?>
 
             <li><a href="<?php echo $baseUrl; ?>login">Log in</a></li><?php } else { ?>
 
@@ -38,7 +38,7 @@ include $templatePath.'header.tpl.php';
             <li>
                 <strong>$userLevels =</strong>
                 <ul><?php foreach($userLevels as $key => $value) { ?>
-                    
+
                     <li><?php echo $key.' => '.$value; ?></li><?php } //foreach ?>
 
                 </ul>
@@ -46,7 +46,7 @@ include $templatePath.'header.tpl.php';
             <li>
                 <strong>$currentUser =</strong>
                 <ul><?php foreach($currentUser as $key => $value) { ?>
-                    
+
                     <li><?php echo $key.' => '.$value; ?></li><?php } //foreach ?>
 
                 </ul>
@@ -54,10 +54,10 @@ include $templatePath.'header.tpl.php';
             <li>
                 <strong>$users =</strong> (exemple of database retrieved values)
                 <ul><?php foreach($users as $num => $user) { ?>
-                    
+
                     <li><?php echo $num; ?> =>
                         <ul><?php foreach($user as $key => $value) { ?>
-                            
+
                             <li><?php echo $key.' => '.$value; ?></li><?php } //foreach ?>
 
                         </ul>

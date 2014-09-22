@@ -1,8 +1,10 @@
 {
+    "db.dbms": "sqlite",
+    "db.prefix": "wa_",
     "rootUrl": false,
-    "template": "default",
-    "sess.lt.dir": "tmp\/sessions\/",
-    "sess.lt.nbMax": 200,
-    "sess.lt.duration": 2592000,
-    "sess.name": ""
+    "sessLtDir": "tmp\/sessions\/",
+    "sessLtNbMax": 200,
+    "sessLtDuration": 2592000,
+    "sessName": "watamelo",
+    "template": "default"
 }

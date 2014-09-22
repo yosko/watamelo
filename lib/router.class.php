@@ -6,10 +6,10 @@
 class Router extends ApplicationComponent {
     protected $routes = array();
     protected $file = "";
-    
+
     public function __construct(Application $app) {
         parent::__construct($app);
-        
+
         //load configuration file
         $this->file = ROOT.'/app/routes.xml';
         if (file_exists( $this->file )) {
@@ -25,7 +25,7 @@ class Router extends ApplicationComponent {
             $this->routes = $root->getElementsByTagName('route');
         }
     }
-    
+
     /**
      * Returns a route based requested URL
      * @param  string $controller name of the found controller (if route found)
@@ -41,7 +41,7 @@ class Router extends ApplicationComponent {
             $url = trim($_GET[$this->app()->getParamName()],"/");
         else
             $url = "";
-        
+
         $foundRoute = false;
         $remainingUrl = "";
 
@@ -49,7 +49,6 @@ class Router extends ApplicationComponent {
         foreach ($this->routes as $route) {
             if ($route->nodeType != XML_TEXT_NODE) {
                 $required = array();
-                $test = array();
 
                 //handle parameter types
                 $regexp = preg_replace_callback(
@@ -114,7 +113,7 @@ class Router extends ApplicationComponent {
                                 unset($optional[0]);
                             }
                             $nbOptParam = $optionalParameters->length;
-                            
+
                             if(count($optional) <= $nbOptParam) {
                                 //match the remaining ones to optional parameters
                                 for($i = 0; $i < $nbOptParam; $i++) {
@@ -133,7 +132,7 @@ class Router extends ApplicationComponent {
                 }
             }
         }
-       
+
         //add other parameters given after '?' in a subarray
         $parameters['get'] = array();
         foreach($_GET as $key => $getParam) {
@@ -141,7 +140,7 @@ class Router extends ApplicationComponent {
                 $parameters['get'][$key] = $getParam;
             }
         }
-        
+
         //return true if route found
         return $foundRoute;
     }
