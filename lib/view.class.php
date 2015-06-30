@@ -111,19 +111,44 @@ class View extends ApplicationComponent {
     }
 
     /**
+     * Get all parameters asigned to the view
+     * @return array list of parameters
+     */
+    public function getParams() {
+        return $this->params;
+    }
+
+    /**
      * Assign all parameters to the view, then render it
      * @param string  $name         view name
      * @param boolean $directResult false to get result in the return
      */
-    public function renderView($name, $directResult = true) {
-        //import the parameters into the current context
-        extract($this->params);
-
+    public function renderView($name, $directResult = true, $templatePath = '') {
+        //file path
+        if(empty($templatePath)) {
+            $templatePath = $this->templatePath;
+        }
+        $useTemplatePath = $templatePath;
         $templatePath = $this->templatePath;
+        $runtimeTemplateFile = $useTemplatePath.$name.'.tpl.php';
 
-        ob_start();
-        include $templatePath.$name.'.tpl.php';
-        $response = ob_get_clean();
+        //read the file
+        if(file_exists($runtimeTemplateFile)) {
+            //import the parameters into the current context
+            extract($this->params);
+
+            ob_start();
+            include $runtimeTemplateFile;
+            $response = ob_get_clean();
+
+        //file should always exists for direct results
+        } elseif($directResult) {
+            throw new Exception(sprintf('Template not found: "%s"', $name));
+
+        //return empty if file not found
+        } else {
+            $response = '';
+        }
 
         if($directResult) {
             echo $response;
@@ -222,7 +247,10 @@ class View extends ApplicationComponent {
 	        //format response and headers
 	        if($responseType == RESPONSE_JSON) {
 	            header('Content-type: application/json');
-	            echo json_encode($data);
+                if(version_compare(PHP_VERSION, '5.4.0') >= 0)
+                    echo json_encode($data, JSON_PRETTY_PRINT);
+                else
+                    echo json_encode($data);
 	        } elseif($responseType == RESPONSE_CSV) {
 	            header('Content-type: text/csv');
 
@@ -251,6 +279,9 @@ class View extends ApplicationComponent {
                 }
             } elseif($responseType == RESPONSE_IMG_JPEG) {
                 header('Content-type: image/jpeg');
+                echo $data;
+            } else {
+                header("Content-type: application/octet-stream");
                 echo $data;
             }
         }

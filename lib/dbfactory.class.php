@@ -38,7 +38,7 @@ class DbFactory {
     public static function startSqliteConnexion($dbParam) {
         $db = false;
         try {
-            $db = new PDO('sqlite:'.ROOT.'/data/db/'.$dbParam->dbName);
+            $db = new PDO('sqlite:'.DB_PATH.$dbParam->dbName);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
             echo $e->getMessage();

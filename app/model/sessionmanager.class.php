@@ -31,6 +31,13 @@ class SessionManager extends Manager  {
     }
 
     /**
+     *
+     */
+    public function unsetCookie($key) {
+        $this->setCookie($key, '', time() - 86400);
+    }
+
+    /**
      * Get the value of a cookie
      * @param  string $key cookie name
      * @return misc        cookie value (a string) or false if cookie not found
@@ -67,7 +74,7 @@ class SessionManager extends Manager  {
      * @return misc        value
      */
     public function getAll() {
-        return $_SESSION;
+        return isset($_SESSION)?$_SESSION:array();
     }
 
     /**
@@ -116,7 +123,7 @@ class SessionManager extends Manager  {
         fwrite($fp, gzdeflate(json_encode($value)));
         fclose($fp);
     }
-    
+
     /**
      * Get the long-term session values or false if no session is found
      * @param  string $login login
@@ -128,7 +135,7 @@ class SessionManager extends Manager  {
         $value = false;
         $file = $this->LTDir.$login.'_'.$sid.'.ses';
         if (file_exists($file)) {
-            
+
             //unset long-term session if expired
             if(filemtime($file)+$this->LTDuration <= time()) {
                 $this->unsetLTSession($login, $sid);
@@ -141,7 +148,7 @@ class SessionManager extends Manager  {
         }
         return $value;
     }
-    
+
     /**
      * Delete a long-term session on server side
      * @param  string $login login
@@ -153,7 +160,7 @@ class SessionManager extends Manager  {
             unlink($filePath);
         }
     }
-    
+
     /**
      * Delete all long-term sessions of a user
      * if no user is given, the current user's sessions are deleted
@@ -165,13 +172,13 @@ class SessionManager extends Manager  {
             unlink( $file );
         }
     }
-    
+
     /**
      * Delete all expired or exceeding long-term sessions
      */
     public function flushOldLTSessions() {
         $dir = $this->LTDir;
-        
+
         //list all the session files
         $files = array();
         if ($dh = opendir($dir)) {
@@ -184,10 +191,10 @@ class SessionManager extends Manager  {
             }
             closedir($dh);
         }
-        
+
         //sort files by date (descending)
         arsort($files);
-        
+
         //check each file
         $i = 1;
         foreach($files as $file => $date) {
@@ -195,7 +202,7 @@ class SessionManager extends Manager  {
                 $this->unsetLTSession(basename($file));
             }
             ++$i;
-        } 
+        }
     }
 }
 

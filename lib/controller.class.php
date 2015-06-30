@@ -60,7 +60,7 @@ abstract class Controller extends ApplicationComponent {
         else
             $this->parameters = array();
     }
-    
+
     /**
      * Default action
      */

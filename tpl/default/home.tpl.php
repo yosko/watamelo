@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "";
+$pageTitle = '';
 include $templatePath.'header.tpl.php';
 ?>
         <h3>Welcome to Watamelo</h3>

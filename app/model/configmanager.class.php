@@ -6,6 +6,7 @@
  */
 class ConfigManager extends Manager {
     protected $params;
+    protected $customParams;
     protected $globalFile = "";
     protected $defaultFile = "";
     protected $file = "";
@@ -40,6 +41,29 @@ class ConfigManager extends Manager {
                 return $this->params->$key;
             } elseif(isset($this->params->global->$key)) {
                 return $this->params->global->$key;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Returns a configuration parameter from a custom file
+     * @param  string @fileName custom file name (without path, without extension)
+     * @param  string @key      key to search for
+     * @return misc             value of the given key
+     *                          or false for not found values
+     *                          or array of all parameters
+     */
+    public function getCustom($fileName, $key = null) {
+        if(!isset($this->customParams[$fileName])) {
+            $this->loadCustom($fileName);
+        }
+        if(is_null($key)) {
+            return $this->customParams[$fileName];
+        } else {
+            if(isset($this->customParams[$fileName]->$key)) {
+                return $this->customParams[$fileName]->$key;
             } else {
                 return null;
             }
@@ -147,6 +171,16 @@ class ConfigManager extends Manager {
         if(!empty($this->params)) {
             $this->params->global = $this->loadFile($this->globalFile);
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function loadCustom($fileName) {
+        $path = ROOT.'/data/config/'.$fileName.'.json';
+        $this->customParams[$fileName] = $this->loadFile($path);
+        if(!empty($this->customParams[$fileName])) {
+            return $this->customParams;
         } else {
             return false;
         }

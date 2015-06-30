@@ -18,8 +18,8 @@ class AuthController extends WatameloController {
 
         $this->logger = new \Yosko\YosLogin(
             $sessionName,
-            array($userManager, 'getForAuthentication'),
-            DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
+            array($userManager, 'getForAuthentication')
+            // , DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
         );
 
         $this->logger->setRedirectionPage($redirectUrl);

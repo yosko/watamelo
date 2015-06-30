@@ -9,8 +9,8 @@ abstract class Manager extends ApplicationComponent {
 
     public function __construct(Application $app, $dao) {
         parent::__construct($app);
-		$this->dao = $dao;
-	}
+        $this->dao = $dao;
+    }
 }
 
 ?>

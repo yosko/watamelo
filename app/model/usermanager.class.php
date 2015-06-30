@@ -6,65 +6,41 @@
 class UserManager extends WatameloManager  {
     /**
      * Gives a list of users
-     * @param  integer $limit   Max number of users to be returned
-     * @param  integer $offset  Offeset of users (for pagination)
-     * @param  string  $sort    column name to sort on
-     * @param  string  $order   asc or desc
-     * @param  string  $filters array of filters (key : filter name, value : filter value)
-     * @return array            array of users (each user is a subarray)
+     * @param  integer $quantity    Max number of items to be returned
+     * @param  integer $offset      Offset of items (for pagination)
+     * @param  string  $sort        field to sort on
+     * @param  string  $order       asc or desc
+     * @param  string  $filters     array of filters (key : filter name, value : filter value)
+     * @param  boolean $resultCount false to return the results, true to only give the count
+     * @return array                array of items (each item is a subarray)
      */
-    public function getList($limit = 0, $offset = 0, $sort = "", $order = "", $filters = array()) {
-        $sqlLimit = "";
-        $sqlOrderBy = "";
-        $sqlWhere = "";
+    public function getList($quantity = 0, $offset = 0, $sort = "", $order = "", $filters = array(), $resultCount = false) {
+        $qry = $this->newSqlGenerator();
 
-        if($limit > 0) {
-            if($offset > 0) {
-                $sqlLimit = " LIMIT ".$offset.", ".$limit;
-            } else {
-                $sqlLimit = " LIMIT ".$limit;
-            }
-        }
-
-        if(!empty($sort)) {
-            //TODO
+        if($resultCount) {
+            $qry->select('user', 'u', array('count' => 'count(u.id)'));
         } else {
-            $sqlOrderBy = " ORDER BY u.userLogin";
+            $qry->select('user', 'u', array('u.*'));
+            $qry->leftJoin('user_level', 'ul', 'ul.level = u.level', array(
+                'levelName' => 'ul.name'
+            ));
         }
 
-        if(!empty($filters)) {
-            foreach($filters as $key => $value) {
-                if($key == "level") {
-                    $sqlWhere .= " AND ul.userLevelName = :level";
-                }
-            }
-            $sqlWhere = preg_replace("/AND/", "WHERE", $sqlWhere, 1);
-        }
-
-
-        $sql = "SELECT u.userId as id, u.userLevel as level, ul.userLevelName as levelName"
-            .", u.userLogin as login, u.userCreation as creation, u.userBio as bio"
-            ." FROM ".$this->tables['user']." u"
-            ." INNER JOIN ".$this->tables['user_level']." ul ON ul.userLevel = u.userLevel"
-            .$sqlWhere
-            .$sqlOrderBy
-            .$sqlLimit;
-
-        $qryUsers = $this->dao->prepare( $sql );
-
-        if(!empty($filters)) {
-            foreach($filters as $key => $value) {
-                if($key == "level") {
-                    $level = $value;
-                    $qryUsers->bindParam(':level', $level, PDO::PARAM_STR);
-                }
+        foreach($filters as $field => $value) {
+            if($field == 'level') {
+                $qry->where('ul.name = :level', 'level', $value, PDO::PARAM_INT);
             }
         }
 
-        $qryUsers->execute();
-        $users = $qryUsers->fetchAll(PDO::FETCH_OBJ);
+        if(empty($sort))
+            $sort = 'u.login';
+        if(empty($order))
+            $order = 'asc';
 
-        return $users;
+        $qry->orderBy($sort, $order);
+        $qry->limit($quantity, $offset);
+
+        return $qry->execute($resultCount?'fetchColumn':'fetchAll');
     }
 
     /**
@@ -75,33 +51,29 @@ class UserManager extends WatameloManager  {
      * @return array                      user informations (or false if not found)
      */
     public function get($value, $type = 'id', $includeSecureInfo = false) {
-        $sql = "SELECT u.userId as id, u.userLevel as level, u.userLogin as login"
-            .", u.userCreation as creation, u.userBio as bio";
-        if($includeSecureInfo) {
-            $sql .= ", u.userPassword as password";
-        }
-        $sql .= " FROM ".$this->tables['user']." u";
-        if($type == "id") {
-            $sql .= " WHERE u.userId = :id";
-        } elseif($type == "login") {
-            $sql .= " WHERE LOWER(u.userLogin) = LOWER(:login)";
+        $qry = $this->newSqlGenerator();
+        $qry->select('user', 'u', array('u.*'));
+
+        if($type == 'id') {
+            $qry->where('u.id = :id', 'level', $value, PDO::PARAM_INT);
+        } elseif($type == 'login') {
+            $qry->where('LOWER(u.login) = LOWER(:login)', 'login', $value, PDO::PARAM_STR);
         } else {
             //don't return anything if $type is not valid
-            $sql .= " WHERE 0 = 1";
+            $qry->where('0 = 1');
         }
 
-        $qryUser = $this->dao->prepare( $sql );
+        try {
+            $user = $qry->execute('fetch');
 
-        if($type == "id") {
-            $qryUser->bindParam(':id', $value, PDO::PARAM_INT);
-        } elseif($type == "login") {
-            $qryUser->bindParam(':login', $value, PDO::PARAM_STR);
+            if(!$includeSecureInfo) {
+                unset($user->password);
+            }
+
+            return($user);
+        } catch (PDOException $e) {
+            return false;
         }
-
-        $qryUser->execute();
-        $user = $qryUser->fetch(PDO::FETCH_OBJ);
-
-        return($user);
     }
 
     /**
@@ -111,7 +83,7 @@ class UserManager extends WatameloManager  {
      * @return array                      user informations (or false if not found)
      */
     public function getById($id, $includeSecureInfo = false) {
-        return $this->get($id, "id", $includeSecureInfo);
+        return $this->get($id, 'id', $includeSecureInfo);
     }
 
     /**
@@ -121,7 +93,7 @@ class UserManager extends WatameloManager  {
      * @return array                       user informations (or false if not found)
      */
     public function getByLogin($login, $includeSecureInfo = false) {
-        return $this->get($login, "login", $includeSecureInfo);
+        return $this->get($login, 'login', $includeSecureInfo);
     }
 
     /**
@@ -130,17 +102,19 @@ class UserManager extends WatameloManager  {
      * @return array         user informations (or false if not found)
      */
     public function getForAuthentication($login) {
-        return $this->get($login, "login", true);
+        return $this->get($login, 'login', true);
     }
 
     public function getLevels() {
-        $sql = "SELECT ul.userLevelId as id, ul.userLevelName as name, ul.userLevel as level"
-            ." FROM ".$this->tables['user_level']." ul"
-            ." ORDER BY ul.userLevel DESC";
-        $qryLevels = $this->dao->prepare( $sql );
-        $qryLevels->execute();
-        $levels = $qryLevels->fetchAll(PDO::FETCH_OBJ);
-        return $levels;
+        $qry = $this->newSqlGenerator();
+        $qry->select('user_level', 'ul', array('ul.*'));
+        $qry->orderBy('ul.level');
+
+        try {
+            return $user = $qry->execute('fetchAll');
+        } catch (PDOException $e) {
+            return array();
+        }
     }
 
     /**
@@ -150,13 +124,13 @@ class UserManager extends WatameloManager  {
      * @return boolean       true on success
      */
     public function setPassword($id, $hash) {
+        $qry = $this->newSqlGenerator();
+        $qry->update('user');
+        $qry->setField('password', $hash);
+        $qry->where('id = :id', 'id', $id, PDO::PARAM_INT);
+
         try {
-            $qryUpdateUser = $this->dao->prepare(
-                "UPDATE ".$this->tables['user']." SET userPassword = :password"
-                ." WHERE userId = :id");
-            $qryUpdateUser->bindParam(':id', $id, PDO::PARAM_INT);
-            $qryUpdateUser->bindParam(':password', $hash, PDO::PARAM_STR);
-            return $qryUpdateUser->execute();
+            return $user = $qry->execute();
         } catch (PDOException $e) {
             return false;
         }
@@ -169,13 +143,13 @@ class UserManager extends WatameloManager  {
      * @return boolean        true on success
      */
     public function setEmail($id, $email) {
+        $qry = $this->newSqlGenerator();
+        $qry->update('user');
+        $qry->setField('email', $email);
+        $qry->where('id = :id', 'id', $id, PDO::PARAM_INT);
+
         try {
-            $qryUpdateUser = $this->dao->prepare(
-                "UPDATE ".$this->tables['user']." SET userEmail = :email"
-                ." WHERE userId = :id");
-            $qryUpdateUser->bindParam(':id', $id, PDO::PARAM_INT);
-            $qryUpdateUser->bindParam(':email', $email, PDO::PARAM_STR);
-            return $qryUpdateUser->execute();
+            return $user = $qry->execute();
         } catch (PDOException $e) {
             return false;
         }

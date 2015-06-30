@@ -1,6 +1,6 @@
 <?php
 
-define('WATAMELO_VERSION', '0.8');
+define('WATAMELO_VERSION', '0.9');
 
 /**
  * Abstract class
@@ -10,7 +10,7 @@ abstract class Application {
     protected $appName = '';
     protected $view;
     protected $useDefaultRoutes = true;
-    protected $defaultControllerName = "";
+    protected $defaultControllerName = '';
     protected $dao = null;
     protected $managers = array();
     protected $getParamName;
@@ -25,8 +25,24 @@ abstract class Application {
             error_reporting(E_ALL | E_STRICT);
             ini_set('display_errors','Off');
         }
+
+        $errorFile = ROOT.'/tmp/logs/error.log';
         ini_set('log_errors', 'On');
-        ini_set('error_log', ROOT.'/tmp/logs/error.log');
+        ini_set('error_log', $errorFile);
+
+        //purge old logs
+        $today = date('Y-m-d');
+        $errorFileYesterday = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -1 day' )).'.log';
+        $errorFileAWeekAgo = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -8 day' )).'.log';
+        if(file_exists($errorFile) && !file_exists($errorFileYesterday)) {
+            rename(
+                $errorFile,
+                $errorFileYesterday
+            );
+            if(file_exists($errorFileAWeekAgo)) {
+                unlink($errorFileAWeekAgo);
+            }
+        }
 
         $this->getParamName = 'url';
         $this->appName = empty($appName)?get_called_class():$appName;
@@ -94,7 +110,7 @@ abstract class Application {
     }
 
     /**
-     * Returns the application flag "useDefaultRoutes"
+     * Returns the application flag 'useDefaultRoutes'
      * @return boolean useDefaultRoutes
      */
     public function useDefaultRoutes() {
@@ -107,6 +123,15 @@ abstract class Application {
      */
     public function defaultControllerName() {
         return $this->defaultControllerName;
+    }
+
+    /**
+     * Explicitely log errors/exceptions that where already catched
+     */
+    public function logException($e) {
+        return error_log(
+            ' (manually logged) '.$e->getMessage()
+        );
     }
 }
 

@@ -62,7 +62,7 @@ class Watamelo extends Application {
      */
     public function setDbParams() {
         $params = new StdClass;
-        $params->dbName = 'watamelo.db';
+        $params->dbName = $this->configManager->get('sessName').'.db';
         return $params;
     }
 
@@ -94,6 +94,7 @@ class Watamelo extends Application {
         //example of part of a path that can be defined on the app level
         //here to avoid using an easy to find admin section
         $variables['admin'] = 'custom-admin-path';
+        $url = $router->getUrl();
 
         //find route for the requested URL
         if(!$router->getRoute($controllerName, $actionName, $parameters, $url, $variables)) {

@@ -26,6 +26,16 @@ class Router extends ApplicationComponent {
         }
     }
 
+    public function getUrl() {
+        //remove '/' at beginning & end of the url
+        if(isset($_GET[$this->app()->getParamName()]))
+            $url = trim($_GET[$this->app()->getParamName()],"/");
+        else
+            $url = "";
+
+        return $url;
+    }
+
     /**
      * Returns a route based requested URL
      * @param  string $controller name of the found controller (if route found)
@@ -36,11 +46,9 @@ class Router extends ApplicationComponent {
      * @return boolean            true if a route was found
      */
     public function getRoute(&$controller, &$action, &$parameters, &$url, $variables) {
-        //remove '/' at beginning & end of the url
-        if(isset($_GET[$this->app()->getParamName()]))
-            $url = trim($_GET[$this->app()->getParamName()],"/");
-        else
-            $url = "";
+        if(is_null($url)) {
+            $url = $this->getUrl();
+        }
 
         $foundRoute = false;
         $remainingUrl = "";
@@ -79,7 +87,7 @@ class Router extends ApplicationComponent {
                 );
 
                 //match route including required parameters
-                if( preg_match("%^".$regexp."(/.*)?$%i", $url, $matches) ) {
+                if( preg_match('%^'.$regexp.'(/.*)?$%i', $url, $matches) ) {
                     $foundRoute = true;
                     $parameters = array();
                     $optional = array();
