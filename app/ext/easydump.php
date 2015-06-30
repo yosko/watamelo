@@ -3,17 +3,19 @@
 /**
  * Utility class to easily and beautifully dump PHP variables
  * the functions d() and dd() where inspired Kint
- * 
+ *
  * @author      Yosko <contact@yosko.net>
- * @version     0.6
+ * @version     0.8
  * @copyright   none: free and opensource
  * @link        https://github.com/yosko/easydump
  */
 class EasyDump {
     //display configurattion
     public static $config = array(
+        'showCall'      => true,    //true to show file name and line number of each call to EasyDump
+        'showTime'      => false,   //true to show the execution date, time and microsecond of each call
         'showVarNames'  => true,    //true to show names of the given variables
-        'showSource'    => true,    //true to show the code of the PHP call to EasyDump
+        'showSource'    => false,   //true to show the code of each PHP call to EasyDump
         'color'         => array(   //default theme based on Earthsong by daylerees
             'text'          => '#EBD1B7',
             'border'        => '#7A7267',
@@ -30,12 +32,18 @@ class EasyDump {
      */
     public static function debug() {
         $trace = debug_backtrace();
-        $call = self::readCall($trace);
+        if(self::$config['showCall'] || self::$config['showVarNames'] || self::$config['showSource'])
+            $call = self::readCall($trace);
 
         echo '<pre class="easydump" style="border: 0.5em solid '.self::$config['color']['border'].'; color: '.self::$config['color']['text'].'; background-color: '.self::$config['color']['background'].'; margin: 0; padding: 0.5em; white-space: pre-wrap;font-family:\'DejaVu Sans Mono\',monospace;font-size:11px;">';
-        
+
         //show file and line
-        self::showCall($call);
+        if(self::$config['showCall'])
+            self::showCall($call);
+
+        //show file and line
+        if(self::$config['showTime'])
+            echo self::microDateTime()."\r\n";
 
         //show PHP source of the call
         if(self::$config['showSource'])
@@ -65,7 +73,7 @@ class EasyDump {
     /**
      * For debug purpose only, used by debug()
      * Recursive (for arrays) function to display variable in a nice formated way
-     * 
+     *
      * @param  string  $name           name/value of the variable's index
      * @param  misc    $value          value to display
      * @param  integer $level          for indentation purpose, used in recursion
@@ -78,13 +86,17 @@ class EasyDump {
         echo '<span style="color:'.self::$config['color']['type'].';">('.(is_object($value)?get_class($value):gettype($value)).")</span>\t= ";
         if(self::isTraversable($value) && !$dumpArray && $level <= 5) {
             echo '{';
-            if(!empty($value)) {
+            $count = 0;
+            foreach($value as $k => $v) {
+                $count++;
+            }
+            if($count > 0) {
                 echo "\r\n";
                 foreach($value as $k => $v) {
                     self::showVar($k, $v, $level+1);
                 }
+                for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
             }
-            for($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
             echo "}\r\n";
         } else {
             echo '<span style="color:'.self::$config['color']['value'].';">';
@@ -133,13 +145,13 @@ class EasyDump {
 
     /**
      * Get the variable names used in the function call
-     * 
+     *
      * @param  array  $trace trace of nested calls
      * @return array         list of variable names (if available)
      */
     protected static function guessVarName($trace, $call) {
         $varNames = array();
-        
+
         $results = self::parse($call['code']);
 
         foreach($results as $k => $v) {
@@ -231,7 +243,7 @@ class EasyDump {
     /**
      * Read informations from the backtrace and the PHP file about the call to EasyDump
      * This function uses SplFileObject, only available on PHP 5.1.0+
-     * 
+     *
      * @param  array $trace backtrace executed PHP code
      * @return array        informations about the call
      */
@@ -254,7 +266,7 @@ class EasyDump {
         } else {
             $rank = 0;
         }
-        
+
         $line = --$trace[$rank]['line'];
         $file = new SplFileObject( $trace[$rank]['file'] );
         $file->seek( $line );
@@ -311,6 +323,11 @@ class EasyDump {
         }
         restore_error_handler();
         return true;
+    }
+
+    protected static function microDateTime() {
+      list($microSec, $timeStamp) = explode(' ', microtime());
+      return date('Y-m-d H:i:s.', $timeStamp) . (int)($microSec * 1000000);
     }
 }
 
