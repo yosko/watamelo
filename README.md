@@ -33,7 +33,8 @@ You should only add or edit content in the following directories. Everything tha
 ### Controllers & Models
 
 * ```GeneralController```: example of a classic controller, used to display most of the views existing in the example
-* ```UserManager```: example of a classic manager using SQL
+* ```UserManager```: example of a classic manager using queries
+* ```SqlGenerator```: utility class to build SQL queries
 * ```ConfigManager```: example of a classic manager using JSON files
 * ```AuthController```, ```SessionManager``` and part of the ```UserManager``` are used to handle authentication and user sessions here.
 
@@ -68,13 +69,13 @@ The ```app/routes.xml``` file must list all the relative URL for every single pa
 * ```controller=```: required. Name of the controller (without the suffix "Controller")
 * ```action=```: required. Name of the controller method (without the prefix "execute")
 * ```"<additional/>"```: optional, can be used multiple times. Defines a parameter with a fixed value that will be accessible from your controller code even if it doesn't appear in the requested URL. Useful to identify multiple routes pointing to the same action of the same controller.
-* ```<optional/>```: optional, can be used multiple times. Defines an optional parameter that appear at the end of the URL, preceded by "/". Multiple optional parameters are then separated by "|".
+* ```<optional/>```: optional, can be used multiple times. Defines an optional parameter that appear at the end of the URL, preceded by "/". Multiple optional parameters are then separated by "|". You can still use GET parameters at the end of your URLs with ```?param5=val5```, but these don't need to be declared in ```app/routes.xml```.
 
 Exemple of relative URLs matching the route above :
 
 * ```relative/path/to/page/10/blah/```
 * ```relative/path/to/page/29/bleh/val3|val4```
-* ```relative/path/to/page/43/bloh/|val4```
+* ```relative/path/to/page/43/bloh/|val4?param5=val5```
 
 ### Route with app variable
 
@@ -121,11 +122,9 @@ There is no route builder, but to avoid problems in your views, there are are th
 
 ## Change app & db names
 
-The app name (default: Watamelo) is used in the following. If you wish to change it, you have to modify it in every listed occurence:
+The app name (default: Wata) may be used in the project. To change it, you just have to change the value sent to the constructor of Watamelo in ```index.php```.
 
-* application file name: ```app/watamelo.class.php``` (also change the include in ```index.php```)
-* application class name: Watamelo in ```app/watamelo.class.php``` (also called in ```index.php```)
-* database file name: ```data/db/watamelo.db``` (lower case)
+As for the sqlite database file (```data/db/watamelo.db```) and session name, their name is defined within the application through the key ```sessName``` of the config file ```data/config/config.json```.
 
 ## Change DBMS
 
@@ -139,6 +138,7 @@ Watamelo doesn't have any dependancies.
 
 But the example code given relies on these libraries:
 
+* [EasyDump](https://github.com/yosko/easydump) (LGPL) for displaying variables content (debug)
 * [YosLogin](https://github.com/yosko/yoslogin) (LGPL) for authentication
 * [Secure Random Bytes](https://github.com/GeorgeArgyros/Secure-random-bytes-in-PHP/) (New BSD Licence), used in example for authentication and password hashing. Can be removed.
 
@@ -148,6 +148,17 @@ If you have any question or suggestion, please feel free to contact me or post a
 
 ## Version History
 
+- v0.8 (2015-06-30)
+  - added rewrite rule to block access to ```lib/``` directory
+  - added the ability to use template files stored outside of the ```tpl/``` directory
+  - expanded ConfigManager to handle custom json config files
+  - added a SqlGenerator class to construct queries and updated UserManager to rely on it
+  - added a bunch of small utility functions to the Tools class
+  - automatically rename error log files every day
+  - updated example database model for a simpler naming system
+  - updated EasyDump to 0.8 (including latest fixes)
+  - disabled authentication log (not very useful)
+  - minor bugfixes
 - v0.8 (2014-09-22)
   - added CSS views handling (a way to add PHP in CSS files to handle variables, etc...)
   - use StdClass objects instead of arrays for list of objects of variable natures
