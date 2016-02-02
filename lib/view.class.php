@@ -35,7 +35,11 @@ class View extends ApplicationComponent {
         if($this->templateName===false) { $this->templateName = "default"; }
 
         if($this->rootUrl === false) {
-            $this->rootUrl = 'http://'.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
+        	$protocol = (!empty($_SERVER['HTTPS']) AND strtolower($_SERVER['HTTPS']) == 'on')
+        		|| (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) AND strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https' )
+        		?'https://'
+        		: "http://";
+            $this->rootUrl = $protocol.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
             $this->setParam( "templateUrl", $this->rootUrl.'tpl/'.$this->templateName.'/' );
         }
 
