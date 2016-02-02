@@ -17,6 +17,7 @@ class View extends ApplicationComponent {
     protected $params;
     protected $rootUrl;
     protected $baseUrl;
+    protected $currentUrl;
     protected $templateName;
     protected $template;
     protected $templateUrl;
@@ -50,9 +51,12 @@ class View extends ApplicationComponent {
         $this->baseUrl = $this->rootUrl;
         $this->baseUrl .= (!$this->ApacheURLRewriting)?'?'.$this->app()->getParamName().'=':'';
 
+        $this->currentUrl = (isset($_SERVER['REQUEST_SCHEME'])?$_SERVER['REQUEST_SCHEME']:'http').'://'.$_SERVER['SERVER_NAME'].(isset($_SERVER['REDIRECT_URL'])?$_SERVER['REDIRECT_URL']:'');
+
         $this->setParam( "templateUrl", $this->templateUrl );
         $this->setParam( "rootUrl", $this->rootUrl );
         $this->setParam( "baseUrl", $this->baseUrl );
+        $this->setParam( 'templateUrl', $this->templateUrl );
     }
 
     /**
