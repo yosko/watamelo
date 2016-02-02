@@ -106,6 +106,9 @@ class SessionManager extends Manager  {
      * @param misc   $value value
      */
     public function setLTConfig($LTDir = 'tmp/sessions/', $nbLTSession = 200, $LTDuration = 2592000) {
+        if (!file_exists($LTDir)) {
+            mkdir($LTDir, 0755, true);
+        }
         $this->LTDir = $LTDir;
         $this->nbLTSession = $nbLTSession;
         $this->LTDuration = $LTDuration;
