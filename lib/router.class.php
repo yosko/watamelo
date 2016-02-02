@@ -13,7 +13,7 @@ class Router extends ApplicationComponent {
         //load configuration file
         $this->file = ROOT.'/app/routes.xml';
         if (file_exists( $this->file )) {
-            $root = new DOMDocument('1.0', 'utf-8');
+            $root = new DOMDocument('1.0', 'UTF-8');
             $root->load( $this->file );
 
             //no need to validate every time if in production environment

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title><?php if($pageTitle!='') { echo $pageTitle.' - Watamelo'; } else { echo 'Watamelo - small PHP MVC framework'; } ?></title>
     <link rel="stylesheet" href="<?php echo $templateUrl; ?>css/style.css">
     <link href="<?php echo $templateUrl; ?>img/watamelo-16.png" rel="icon" type="image/x-icon" />
