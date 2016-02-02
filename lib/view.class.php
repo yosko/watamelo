@@ -204,7 +204,13 @@ class View extends ApplicationComponent {
         //the view is defined on framework level
         $this->templatePath = "lib/views/";
 
-        header('Content-Type: text/xml');
+        if($type == RESPONSE_ATOM) {
+            header('Content-Type: application/atom+xml');
+        } elseif($type == RESPONSE_RSS) {
+            header('Content-Type: application/rss+xml');
+        } else {
+            header('Content-Type: text/xml');
+        }
 
         //TODO: basic check on $feed
 
