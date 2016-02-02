@@ -18,13 +18,9 @@ abstract class Application {
 
     public function __construct($appName = '') {
         //handle errors and warnings
-        error_reporting(E_ALL | E_STRICT);
-        if (DEVELOPMENT_ENVIRONMENT == true) {
-            ini_set('display_errors','On');
-        } else {
-            error_reporting(E_ALL | E_STRICT);
-            ini_set('display_errors','Off');
-        }
+        $this->setErrorReporting(DEVELOPMENT_ENVIRONMENT);
+
+        set_exception_handler(array($this, 'exceptionHandler'));
 
         $errorFile = ROOT.'/tmp/logs/error.log';
         ini_set('log_errors', 'On');
@@ -128,10 +124,24 @@ abstract class Application {
     /**
      * Explicitely log errors/exceptions that where already catched
      */
-    public function logException($e) {
+    public function logException($e, $string = '') {
         return error_log(
-            ' (manually logged) '.$e->getMessage()
+            ' (manually logged) '.$e->getMessage().(empty($string)?'':' ['.$string.']')
         );
+    }
+
+    public function setErrorReporting($isDebug) {
+        error_reporting(E_ALL | E_STRICT);
+        if ($isDebug) {
+            ini_set('display_errors','On');
+        } else {
+            error_reporting(E_ALL | E_STRICT);
+            ini_set('display_errors','Off');
+        }
+    }
+
+    public function exceptionHandler($e) {
+        d($e->getMessage(), $e->getTrace());
     }
 }
 
