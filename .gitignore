@@ -1,3 +1,5 @@
+data/db/
+data/files/
 tmp/cache/*
 tmp/logs/*
 tmp/sessions/*
