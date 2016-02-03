@@ -25,7 +25,7 @@ class Tools {
      * @return [type]       [description]
      */
     public static function convertPath($path) {
-        if(DIRECTORY_SEPARATOR == "\\") {
+        if (DIRECTORY_SEPARATOR == "\\") {
             $path = str_replace("/","\\",$path);
         }
         return $path;
@@ -40,8 +40,8 @@ class Tools {
      */
     public static function isInt($value, $min = false, $max = false) {
         $options = array();
-        if($min !== false) { $options["min_range"] = $min; }
-        if($max !== false) { $options["max_range"] = $max; }
+        if ($min !== false) { $options["min_range"] = $min; }
+        if ($max !== false) { $options["max_range"] = $max; }
         return filter_var(
             $value,
             FILTER_VALIDATE_INT,
@@ -55,7 +55,7 @@ class Tools {
      * @return boolean
      */
     public static function validateUrl(&$url) {
-        if(!empty($url) && !preg_match("%^https?://%i", $url)) {
+        if (!empty($url) && !preg_match("%^https?://%i", $url)) {
             $url .= 'http://';
         }
         return filter_var($url, FILTER_VALIDATE_URL);
@@ -93,22 +93,22 @@ class Tools {
         $diffCharTypes = 0;
 
         //lower case
-        if(preg_match("%[a-z]%", $password)) {
+        if (preg_match("%[a-z]%", $password)) {
             $diffCharTypes++;
         }
 
         //upper case
-        if(preg_match("%[A-Z]%", $password)) {
+        if (preg_match("%[A-Z]%", $password)) {
             $diffCharTypes++;
         }
 
         //digits
-        if(preg_match("%\d%", $password)) {
+        if (preg_match("%\d%", $password)) {
             $diffCharTypes++;
         }
 
         //symbols
-        if(preg_match("%[-!$\%^&*()_+|~=`{}\[\]:\";'<>?,.\/@]%", $password)) {
+        if (preg_match("%[-!$\%^&*()_+|~=`{}\[\]:\";'<>?,.\/@]%", $password)) {
             $diffCharTypes++;
         }
 
@@ -175,9 +175,9 @@ class Tools {
         $bestlang = $available[0];
         $bestqval = 0;
         foreach ($hits as $arr) {
-            $langprefix = strtolower ($arr[1]);
+            $langprefix = strtolower($arr[1]);
             if (!empty($arr[3])) {
-                $langrange = strtolower ($arr[3]);
+                $langrange = strtolower($arr[3]);
                 $language = $langprefix . "-" . $langrange;
             }
             else $language = $langprefix;
@@ -186,11 +186,11 @@ class Tools {
                 $qvalue = floatval($arr[5]);
 
             // find q-maximal language
-            if (in_array($language, $available) && ($qvalue > $bestqval)) {
+            if (in_array($language, $available) && $qvalue > $bestqval) {
                 $bestlang = $language;
                 $bestqval = $qvalue;
             // if no direct hit, try the prefix only but decrease q-value by 10% (as http_negotiate_language does)
-            } elseif (in_array($langprefix, $available) && (($qvalue*0.9) > $bestqval)) {
+            } elseif (in_array($langprefix, $available) && $qvalue*0.9 > $bestqval) {
                 $bestlang = $langprefix;
                 $bestqval = $qvalue*0.9;
             }
@@ -211,14 +211,14 @@ class Tools {
      * check if string starts with given substring
      */
     public static function startsWith($haystack, $needle) {
-        return (substr($haystack, 0, strlen($needle)) === $needle);
+        return substr($haystack, 0, strlen($needle)) === $needle;
     }
 
     /**
      * check if string ends with given substring
      */
     public static function endsWith($haystack, $needle) {
-        return (substr($haystack, - strlen($needle), strlen($needle)) === $needle);
+        return substr($haystack, - strlen($needle), strlen($needle)) === $needle;
     }
 
     /**
@@ -245,7 +245,7 @@ class Tools {
      * @return string                 formatted date
      */
     public static function formatSqliteDate($date, $format = "d/m/Y", $useMonthNames = false) {
-        if(!$useMonthNames) {
+        if (!$useMonthNames) {
             $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
             $result = $dateTime->format($format);
 
@@ -290,33 +290,33 @@ class Tools {
     public static function generatePagination($currentPage, $totalPages = 0, $itemPerPage = 0, $totalItems = 0, $nbPagesAround = 2) {
         $pagination = array();
 
-        if($totalPages == 0) {
-            if($itemPerPage == 0 || $totalItems == 0) {
+        if ($totalPages == 0) {
+            if ($itemPerPage == 0 || $totalItems == 0) {
                 return false;
             } else {
                 $totalPages = (int)ceil($totalItems / $itemPerPage);
             }
         }
 
-        if($currentPage > $nbPagesAround + 2) {
+        if ($currentPage > $nbPagesAround + 2) {
             $pagination[1] = self::PAGINATION_FIRST;
-        } elseif($currentPage > $nbPagesAround + 1) {
+        } elseif ($currentPage > $nbPagesAround + 1) {
             $pagination[1] = self::PAGINATION_LINK;
         }
-        for($i = ($currentPage - $nbPagesAround); $i < $currentPage; $i++) {
-            if($i > 1 || ($i == 1 && $currentPage <= $nbPagesAround + 1)) {
+        for ($i = $currentPage - $nbPagesAround; $i < $currentPage; $i++) {
+            if ($i > 1 || $i == 1 && $currentPage <= $nbPagesAround + 1) {
                 $pagination[$i] = self::PAGINATION_LINK;
             }
         }
         $pagination[$currentPage] = self::PAGINATION_CURRENT;
-        for($i = ($currentPage + 1); $i < ($currentPage + $nbPagesAround + 1); $i++) {
-            if($i < $totalPages || ($i == $totalPages && $currentPage >= $totalPages - $nbPagesAround)) {
+        for ($i = $currentPage + 1; $i < $currentPage + $nbPagesAround + 1; $i++) {
+            if ($i < $totalPages || $i == $totalPages && $currentPage >= $totalPages - $nbPagesAround) {
                 $pagination[$i] = self::PAGINATION_LINK;
             }
         }
-        if($currentPage < ($totalPages - $nbPagesAround - 1)) {
+        if ($currentPage < $totalPages - $nbPagesAround - 1) {
             $pagination[$totalPages] = self::PAGINATION_LAST;
-        } elseif($currentPage < ($totalPages - $nbPagesAround)) {
+        } elseif ($currentPage < $totalPages - $nbPagesAround) {
             $pagination[$totalPages] = self::PAGINATION_LINK;
         }
         // ksort($pagination);
@@ -337,10 +337,10 @@ class Tools {
      */
     public static function gcd($a, $b) {
         $a = abs($a); $b = abs($b);
-        if( $a < $b) list($b,$a) = Array($a,$b);
-        if( $b == 0) return $a;
+        if ( $a < $b) list($b,$a) = Array($a,$b);
+        if ( $b == 0) return $a;
         $r = $a % $b;
-        while($r > 0) {
+        while ($r > 0) {
             $a = $b;
             $b = $r;
             $r = $a % $b;
@@ -363,7 +363,7 @@ class Tools {
      */
     public static function rmdir($dir, $recursive = false) {
         if (is_dir($dir)) {
-            if($recursive === false) {
+            if ($recursive === false) {
                 $objects = scandir($dir);
                 foreach ($objects as $object) {
                     if ($object != "." && $object != "..") {
@@ -423,9 +423,9 @@ class Tools {
     public static function sendHTMLMail($to, $from, $subject, $message, $cc = '', $bcc = '') {
         $headers = "From: " . $from . "\r\n";
         $headers .= "Reply-To: ". $from . "\r\n";
-        if(!empty($cc))
+        if (!empty($cc))
             $headers .= "CC: " . $cc . "\r\n";
-        if(!empty($bcc))
+        if (!empty($bcc))
             $headers .= "BCC: " . $bcc . "\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -440,7 +440,7 @@ class Tools {
      */
     public static function formatFloatForDisplay($value, $digits = 2, $hideZeros = true) {
         $value = round($value, $digits);
-        if($hideZeros && $value == round($value, 0)) {
+        if ($hideZeros && $value == round($value, 0)) {
             $value = (int)$value;
         }
         $value = str_replace('.', ',', $value);

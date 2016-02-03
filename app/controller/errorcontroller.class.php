@@ -6,7 +6,7 @@ namespace Watamelo\Controllers;
  */
 class ErrorController extends WatameloController {
     public function issetHTTPError() {
-        if(isset($_SERVER['REDIRECT_STATUS'])) {
+        if (isset($_SERVER['REDIRECT_STATUS'])) {
             switch ($_SERVER['REDIRECT_STATUS']) {
                 case 400:
                 case 403:

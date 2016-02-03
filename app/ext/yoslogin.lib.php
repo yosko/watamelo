@@ -74,7 +74,7 @@ class YosLogin {
      *                                url of the destination
      */
     public function setRedirectionPage($redirectionPage) {
-        if(!empty($redirectionPage) || $redirectionPage === false) {
+        if (!empty($redirectionPage) || $redirectionPage === false) {
             $this->redirectionPage = $redirectionPage;
         } else {
             $this->redirectionPage = $_SERVER['PHP_SELF'];
@@ -154,7 +154,7 @@ class YosLogin {
      * Initialize and configure the PHP (short-term) session
      */
     protected function initPHPSession() {
-        if(!$this->isPHPSessionStarted()) {
+        if (!$this->isPHPSessionStarted()) {
             //force cookie path
             $cookie=session_get_cookie_params();
             $cookieDir = (dirname($_SERVER['SCRIPT_NAME'])!='/') ? dirname($_SERVER['SCRIPT_NAME']) : '';
@@ -180,8 +180,8 @@ class YosLogin {
      * @return boolean session status
      */
     protected function isPHPSessionStarted() {
-        if ( php_sapi_name() !== 'cli' ) {
-            if ( version_compare(phpversion(), '5.4.0', '>=') ) {
+        if (php_sapi_name() !== 'cli') {
+            if (version_compare(phpversion(), '5.4.0', '>=')) {
                 return session_status() === PHP_SESSION_ACTIVE ? true : false;
             } else {
                 return session_id() === '' ? false : true;
@@ -191,7 +191,7 @@ class YosLogin {
     }
 
     protected function unsetSessionVar($var) {
-        if(isset($_SESSION[$var]))
+        if (isset($_SESSION[$var]))
             unset($_SESSION[$var]);
     }
 
@@ -202,7 +202,7 @@ class YosLogin {
      * @param array() $value optional: array of data you want to keep in long-term session on server side
      */
     protected function setLTSession($login, $sid, $value) {
-        if(isset($this->ltSessionCallbacks['setLTSession']))
+        if (isset($this->ltSessionCallbacks['setLTSession']))
             return call_user_func($this->ltSessionCallbacks['setLTSession'], $login, $sid, $value);
     }
 
@@ -214,7 +214,7 @@ class YosLogin {
      */
     protected function getLTSession($cookieValue) {
         $cookieValues = explode('_', $cookieValue, 2);
-        if(isset($this->ltSessionCallbacks['getLTSession']))
+        if (isset($this->ltSessionCallbacks['getLTSession']))
             return call_user_func($this->ltSessionCallbacks['getLTSession'], $cookieValues[0], $cookieValues[1]);
     }
 
@@ -224,7 +224,7 @@ class YosLogin {
      */
     protected function unsetLTSession($cookieValue) {
         $cookieValues = explode('_', $cookieValue, 2);
-        if(isset($this->ltSessionCallbacks['unsetLTSession']))
+        if (isset($this->ltSessionCallbacks['unsetLTSession']))
             return call_user_func($this->ltSessionCallbacks['unsetLTSession'], $cookieValues[0], $cookieValues[1]);
     }
 
@@ -233,7 +233,7 @@ class YosLogin {
      * @param  string $login user login
      */
     protected function unsetLTSessions($login) {
-        if(isset($this->ltSessionCallbacks['unsetLTSessions']))
+        if (isset($this->ltSessionCallbacks['unsetLTSessions']))
             return call_user_func($this->ltSessionCallbacks['unsetLTSessions'], $login);
     }
 
@@ -241,7 +241,7 @@ class YosLogin {
      * Remove all expired or exceeding long-term sessions
      */
     protected function flushOldLTSessions() {
-        if(isset($this->ltSessionCallbacks['flushOldLTSessions']))
+        if (isset($this->ltSessionCallbacks['flushOldLTSessions']))
             return call_user_func($this->ltSessionCallbacks['flushOldLTSessions']);
     }
 
@@ -294,7 +294,7 @@ class YosLogin {
      * Load long-term cookie informations
      */
     protected function loadLTCookie() {
-        if( isset($_COOKIE[$this->LTSessionName]) ) {
+        if ( isset($_COOKIE[$this->LTSessionName]) ) {
             $this->ltCookie = new \stdClass;
             $cookieValues = explode('_', $_COOKIE[$this->LTSessionName], 2);
             $this->ltCookie->login = $cookieValues[0];
@@ -307,7 +307,7 @@ class YosLogin {
      * @return bool if the cookie exists or not
      */
     protected function issetLTCookie() {
-        return (isset($this->ltCookie->sid));
+        return isset($this->ltCookie->sid);
     }
 
     /**
@@ -324,7 +324,7 @@ class YosLogin {
         $_SESSION['secure'] = false;
 
         //to avoid any problem when using the browser's back button
-        if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
+        if ($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
     }
 
     /**
@@ -335,16 +335,16 @@ class YosLogin {
         $this->initPHPSession();
 
         //determine user name
-        if(isset($_SESSION['login'])) {
+        if (isset($_SESSION['login'])) {
             $userName = $_SESSION['login'];
-        } elseif($this->useLTSessions && $this->issetLTCookie()) {
+        } elseif ($this->useLTSessions && $this->issetLTCookie()) {
             $userName = $this->ltCookie->login;
         }
 
         //if user wasn't automatically logged out before asking to log out
-        if(!empty($userName)) {
+        if (!empty($userName)) {
             //unset long-term session
-            if($this->useLTSessions)
+            if ($this->useLTSessions)
                 $this->unsetLTSessions($userName);
             $this->unsetLTCookie();
         }
@@ -353,17 +353,17 @@ class YosLogin {
         $this->unsetSessionVar('sid');
         $this->unsetSessionVar('login');
         $this->unsetSessionVar('secure');
-        $cookieDir = (dirname($_SERVER['SCRIPT_NAME'])!='/') ? dirname($_SERVER['SCRIPT_NAME']) : '';
+        $cookieDir = dirname($_SERVER['SCRIPT_NAME'])!='/' ? dirname($_SERVER['SCRIPT_NAME']) : '';
         session_set_cookie_params(time()-31536000, $cookieDir, $_SERVER['SERVER_NAME']);
 
-        if($this->activateLog) { YosLoginTools::log($this->logFile, 'manual logout '.$userName); }
+        if ($this->activateLog) { YosLoginTools::log($this->logFile, 'manual logout '.$userName); }
 
-        if($this->isPHPSessionStarted()) {
+        if ($this->isPHPSessionStarted()) {
             session_destroy();
         }
 
         //to avoid any problem when using the browser's back button
-        if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
+        if ($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
         exit;
     }
 
@@ -383,11 +383,11 @@ class YosLogin {
         $user = $this->getUser($login);
 
         //check user/password
-        if(empty($user)) {
+        if (empty($user)) {
             $user = new \stdClass;
             $user->errors['unknownLogin'] = true;
             $user->isLoggedIn = false;
-        } elseif(!YosLoginTools::checkPassword($password, $user->password)) {
+        } elseif (!YosLoginTools::checkPassword($password, $user->password)) {
             $user->errors['wrongPassword'] = true;
             $user->isLoggedIn = false;
         } else {
@@ -398,13 +398,13 @@ class YosLogin {
             $user->secure = $_SESSION['secure'];
             $user->isLoggedIn = true;
 
-            if($this->activateLog) { YosLoginTools::log($this->logFile, 'manual login '.$login); }
+            if ($this->activateLog) { YosLoginTools::log($this->logFile, 'manual login '.$login); }
 
             //also create a long-term session
-            if($rememberMe && $this->useLTSessions) {
+            if ($rememberMe && $this->useLTSessions) {
                 $_SESSION['sid'] = YosLoginTools::generateRandomString(42, true);
 
-                if(!empty($_SESSION['sid'])) {
+                if (!empty($_SESSION['sid'])) {
                     $this->setLTCookie($_SESSION['login'], $_SESSION['sid']);
                     $this->setLTSession($this->ltCookie->login, $this->ltCookie->sid, array());
 
@@ -417,7 +417,7 @@ class YosLogin {
             }
 
             //to avoid any problem when using the browser's back button
-            if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
+            if ($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
             exit;
         }
 
@@ -435,18 +435,18 @@ class YosLogin {
         $this->initPHPSession();
 
         //user has a PHP session
-        if(isset($_SESSION['login']) && isset($_COOKIE[$this->sessionName])) {
+        if (isset($_SESSION['login']) && isset($_COOKIE[$this->sessionName])) {
             $user = $this->getUser($_SESSION['login']);
             $user->isLoggedIn = true;
 
-            if($this->activateLog) { YosLoginTools::log($this->logFile, 'user '.$_SESSION['login'].' is authenticated'); }
+            if ($this->activateLog) { YosLoginTools::log($this->logFile, 'user '.$_SESSION['login'].' is authenticated'); }
 
             //if ip change, the session isn't secure anymore, even if legitimate
             //  it might be because the user was given a new one
             //  or because if a session hijacking
-            if(!isset($_SESSION['ip']) || $_SESSION['ip'] != YosLoginTools::getIpAddress($this->allowLocalIp)) {
+            if (!isset($_SESSION['ip']) || $_SESSION['ip'] != YosLoginTools::getIpAddress($this->allowLocalIp)) {
                 $_SESSION['secure'] = false;
-                if($this->activateLog) { YosLoginTools::log($this->logFile, 'note: lost secure access'); }
+                if ($this->activateLog) { YosLoginTools::log($this->logFile, 'note: lost secure access'); }
             }
 
         //user has LT cookie but no PHP session
@@ -454,7 +454,7 @@ class YosLogin {
             //TODO: check if LT session exists on server-side
             $LTSession = $this->useLTSessions?$this->getLTSession($_COOKIE[$this->LTSessionName]):false;
 
-            if($LTSession !== false) {
+            if ($LTSession !== false) {
                 //set php session
                 $cookieValues = explode('_', $_COOKIE[$this->LTSessionName], 2);
                 $_SESSION['login'] = $cookieValues[0];
@@ -468,34 +468,34 @@ class YosLogin {
                 $this->setLTCookie($_SESSION['login'], $_SESSION['sid']);
                 $this->setLTSession($this->ltCookie->login, $this->ltCookie->sid, array());
 
-                if($this->activateLog) { YosLoginTools::log($this->logFile, 'reload PHP session for '.$_SESSION['login'], $LTSession); }
+                if ($this->activateLog) { YosLoginTools::log($this->logFile, 'reload PHP session for '.$_SESSION['login'], $LTSession); }
 
             } else {
-                if($this->activateLog) { YosLoginTools::log($this->logFile, 'lost both sessions, even if lt cookie exists'); }
+                if ($this->activateLog) { YosLoginTools::log($this->logFile, 'lost both sessions, even if lt cookie exists'); }
 
                 //delete long-term cookie
                 $this->unsetLTCookie();
 
-                if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
+                if ($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
                 exit;
             }
 
         //user isn't logged in: anonymous
         } else {
-            if($this->activateLog) { YosLoginTools::log($this->logFile, 'not logged in'); }
+            if ($this->activateLog) { YosLoginTools::log($this->logFile, 'not logged in'); }
             $user->isLoggedIn = false;
         }
 
         //if a password was given, check it
-        if($user->isLoggedIn) {
-            if(!empty($password)) {
-                if(YosLoginTools::checkPassword($password, $user->password)) {
+        if ($user->isLoggedIn) {
+            if (!empty($password)) {
+                if (YosLoginTools::checkPassword($password, $user->password)) {
                     $_SESSION['ip'] = YosLoginTools::getIpAddress($this->allowLocalIp);
                     $_SESSION['secure'] = true;
 
-                    if($this->activateLog) { YosLoginTools::log($this->logFile, 'securing access for '.$_SESSION['login']); }
+                    if ($this->activateLog) { YosLoginTools::log($this->logFile, 'securing access for '.$_SESSION['login']); }
 
-                    if($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
+                    if ($this->redirectionPage !== false) header('Location: '.$this->redirectionPage);
                     exit;
                 } else {
                     $user->errors['wrongPassword'] = true;
@@ -529,8 +529,8 @@ class YosLoginTools {
 
         //format the resulting string
         $randomString = base64_encode($randomBytes);
-        if(strlen($randomString) >= $length) {
-            if($pathCompliant === true) {
+        if (strlen($randomString) >= $length) {
+            if ($pathCompliant === true) {
                 $randomString = str_replace('/', '-', $randomString);
                 $randomString = str_replace('+', '_', $randomString);
             } else {
@@ -553,7 +553,7 @@ class YosLoginTools {
     public static function generateSalt() {
         $random = self::generateRandomString();
 
-        if( version_compare(PHP_VERSION, '5.3.7') >= 0 ) {
+        if ( version_compare(PHP_VERSION, '5.3.7') >= 0 ) {
             $salt = '$2y$10$';
         } else {
             //PHP 5.3 but < 5.3.7
@@ -562,7 +562,7 @@ class YosLoginTools {
         $salt .= $random;
 
         //if for some reason the string is not long enough
-        if ( strlen($salt) >= 29 )
+        if (strlen($salt) >= 29)
             return $salt;
         else
             return false;
@@ -579,7 +579,7 @@ class YosLoginTools {
         $salt = self::generateSalt();
 
         //if salt generation failed
-        if($salt !== false) {
+        if ($salt !== false) {
             $hash = crypt($password, $salt);
             return $hash;
         } else {
@@ -597,7 +597,7 @@ class YosLoginTools {
         //crypt with blowfish takes approximately 0.05 s
         $newHash = crypt($password, $hash);
 
-        return ($newHash == $hash);
+        return $newHash == $hash;
     }
 
     /**
@@ -606,7 +606,7 @@ class YosLoginTools {
      * @return string ip address (ipv4 or ipv6)
      */
     public static function getIpAddress($local=false) {
-        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
+        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
             if (array_key_exists($key, $_SERVER) === true){
                 foreach (explode(',', $_SERVER[$key]) as $ip){
                     $ip = trim($ip); // just to be safe
@@ -623,21 +623,21 @@ class YosLoginTools {
     public static function log($file, $message, $ltSession = false, $ip = false) {
         $date = date("Y-m-d H:i:s");
         $message = $message." on ".$_SERVER['REQUEST_URI'];
-        if(isset($_SESSION))
+        if (isset($_SESSION))
             $message .= "\n\tSESSION: ".json_encode($_SESSION);
-        if(isset($_COOKIE))
+        if (isset($_COOKIE))
             $message .= "\n\tCOOKIE: ".json_encode($_COOKIE);
-        if($ltSession !== false)
+        if ($ltSession !== false)
             $message .= "\n\tLT SESSION: ".json_encode($ltSession);
-        if($ip !== false)
+        if ($ip !== false)
             $message .= "\n\tIP: ".$ip;
 
-        if(!file_exists($file)) {
+        if (!file_exists($file)) {
             touch($file);
         }
 
         $handle = fopen($file, 'a+');
-        if($handle) {
+        if ($handle) {
             fwrite($handle, $date." - ".$message."\r\n");
         }
         fclose($handle);
@@ -733,7 +733,7 @@ class YosLoginTools {
             @stream_set_read_buffer($handle, 0);
 
         do {
-            $bytes = ($total > $hash_len)? $hash_len : $total;
+            $bytes = $total > $hash_len?$hash_len:$total;
             $total -= $bytes;
 
             //collect any entropy available from the PHP system and filesystem

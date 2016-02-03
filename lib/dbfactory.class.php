@@ -15,13 +15,13 @@ class DbFactory {
      */
     public static function getConnexion($dbms = "sqlite", $dbParam) {
         //instanciate PDO singleton)
-        if(!self::$PDOInstance) {
+        if (!self::$PDOInstance) {
             $db = false;
-            if($dbms == "sqlite") {
+            if ($dbms == "sqlite") {
                 $db = self::startSqliteConnexion($dbParam);
-            } elseif($dbms == "mysql") {
+            } elseif ($dbms == "mysql") {
                 $db = self::startMysqlConnexion($dbParam);
-            } elseif($dbms == "postgresql") {
+            } elseif ($dbms == "postgresql") {
                 $db = self::startPostgresConnexion($dbParam);
             }
 
@@ -41,7 +41,7 @@ class DbFactory {
         try {
             $db = new \PDO('sqlite:'.DB_PATH.$dbParam->dbName);
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             echo $e->getMessage();
         }
 

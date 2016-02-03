@@ -98,7 +98,7 @@ class Watamelo extends Application {
         $url = $router->getUrl();
 
         //find route for the requested URL
-        if(!$router->getRoute($controllerName, $actionName, $parameters, $url, $variables)) {
+        if (!$router->getRoute($controllerName, $actionName, $parameters, $url, $variables)) {
 
             //if route not found, redirect to a 404 error
             $controllerName = 'error';
@@ -108,7 +108,7 @@ class Watamelo extends Application {
         //get user levels and add it to the view
         $userManager = $this->getManagerOf('user');
         $levels = $userManager->getLevels();
-        foreach($levels as $level) {
+        foreach ($levels as $level) {
             $this->userLevels[$level->name] = (int)$level->level;
         }
         $this->view->setParam( "userLevels", $this->userLevels );
@@ -122,19 +122,19 @@ class Watamelo extends Application {
         $controller->setAction($actionName);
 
         //if user should be authenticated, redirect him to the login page
-        if($this->user->level < $controller->userLevelNeeded()
+        if ($this->user->level < $controller->userLevelNeeded()
             && $this->user->level < $this->userLevels['user']) {
             $controllerName = 'auth';
             $actionName = 'login';
             $controller = $router->getController($controllerName);
 
         //if the user is authenticated but doesn't have the right level of permission
-        } elseif($this->user->level < $controller->userLevelNeeded()) {
+        } elseif ($this->user->level < $controller->userLevelNeeded()) {
             $controllerName = 'error';
             $actionName = '403';
             $controller = $router->getController($controllerName);
 
-        } elseif($controller->secureNeeded() && !$this->user->secure) {
+        } elseif ($controller->secureNeeded() && !$this->user->secure) {
             $controllerName = 'auth';
             $actionName = 'secure';
             $controller = $router->getController($controllerName);

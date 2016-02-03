@@ -38,7 +38,7 @@ class WatameloManager extends Manager  {
         $sql->beginTransaction();
         try {
             $result = $sql->execute();
-            if($returnLastInsertId) {
+            if ($returnLastInsertId) {
                 $result = $sql->lastInsertId();
             } else {
                 $result = true;

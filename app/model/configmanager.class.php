@@ -21,7 +21,7 @@ class ConfigManager extends Manager {
         $this->defaultFile = ROOT.'/data/config/config.default.json';
         $this->file = ROOT.'/data/config/config.json';
 
-        if(!$this->load()) {
+        if (!$this->load()) {
             $this->loadDefault();
         }
     }
@@ -35,12 +35,12 @@ class ConfigManager extends Manager {
      *                     or array of all parameters
      */
     public function get($key = null) {
-        if(is_null($key)) {
+        if (is_null($key)) {
             return $this->params;
         } else {
-            if(isset($this->params->$key)) {
+            if (isset($this->params->$key)) {
                 return $this->params->$key;
-            } elseif(isset($this->params->global->$key)) {
+            } elseif (isset($this->params->global->$key)) {
                 return $this->params->global->$key;
             } else {
                 return null;
@@ -57,13 +57,13 @@ class ConfigManager extends Manager {
      *                          or array of all parameters
      */
     public function getCustom($fileName, $key = null) {
-        if(!isset($this->customParams[$fileName])) {
+        if (!isset($this->customParams[$fileName])) {
             $this->loadCustom($fileName);
         }
-        if(is_null($key)) {
+        if (is_null($key)) {
             return $this->customParams[$fileName];
         } else {
-            if(isset($this->customParams[$fileName]->$key)) {
+            if (isset($this->customParams[$fileName]->$key)) {
                 return $this->customParams[$fileName]->$key;
             } else {
                 return null;
@@ -79,9 +79,9 @@ class ConfigManager extends Manager {
      */
     public function getAll($type = 'current', $includeGlobal = true) {
         //don't user $this->param her because it might contain user specific values & globals
-        if($type == 'default') {
+        if ($type == 'default') {
             $params = $this->loadFile($this->defaultFile);
-        } elseif($type == 'app') {
+        } elseif ($type == 'app') {
             $params = $this->loadFile($this->file);
         } else {
             //current params: may be modified within app for different reasons
@@ -89,7 +89,7 @@ class ConfigManager extends Manager {
             $params = clone $this->params;
         }
 
-        if($includeGlobal) {
+        if ($includeGlobal) {
             $params->global = $this->loadFile($this->globalFile);
         } else {
             unset($params->global);
@@ -140,7 +140,7 @@ class ConfigManager extends Manager {
         //this way, keys not handle via the interface will be kept
         $this->params = (object)array_merge((array)$this->params, (array)$object);
 
-        return ($save)?$this->save():true;
+        return $save?$this->save():true;
     }
 
     /**
@@ -169,7 +169,7 @@ class ConfigManager extends Manager {
      */
     private function load() {
         $this->params = $this->loadFile($this->file);
-        if(!empty($this->params)) {
+        if (!empty($this->params)) {
             $this->params->global = $this->loadFile($this->globalFile);
             return true;
         } else {
@@ -180,7 +180,7 @@ class ConfigManager extends Manager {
     private function loadCustom($fileName) {
         $path = ROOT.'/data/config/'.$fileName.'.json';
         $this->customParams[$fileName] = $this->loadFile($path);
-        if(!empty($this->customParams[$fileName])) {
+        if (!empty($this->customParams[$fileName])) {
             return $this->customParams;
         } else {
             return false;
@@ -237,7 +237,7 @@ class ConfigManager extends Manager {
      */
     private function saveFile($file, $params) {
         $fp = fopen( $file, 'w' );
-        if($fp) {
+        if ($fp) {
             fwrite($fp, json_encode($params));
             fclose($fp);
         }

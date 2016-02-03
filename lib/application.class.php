@@ -31,12 +31,12 @@ abstract class Application {
         $today = date('Y-m-d');
         $errorFileYesterday = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -1 day' )).'.log';
         $errorFileAWeekAgo = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -8 day' )).'.log';
-        if(file_exists($errorFile) && !file_exists($errorFileYesterday)) {
+        if (file_exists($errorFile) && !file_exists($errorFileYesterday)) {
             rename(
                 $errorFile,
                 $errorFileYesterday
             );
-            if(file_exists($errorFileAWeekAgo)) {
+            if (file_exists($errorFileAWeekAgo)) {
                 unlink($errorFileAWeekAgo);
             }
         }

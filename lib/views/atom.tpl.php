@@ -5,11 +5,11 @@
     <link href="<?php echo $feed['self']; ?>" rel="self" />
     <link href="<?php echo $feed['link']; ?>" />
     <id><?php echo $feed['self']; ?></id><?php
-    if(isset($feed['self'])) { ?>
+    if (isset($feed['self'])) { ?>
 
     <updated><?php echo $feed['updated']; ?></updated><?php
     } //if
-    foreach($feed['items'] as $key => $value) { ?>
+    foreach ($feed['items'] as $key => $value) { ?>
 
     <entry>
         <title><?php echo $value['title']; ?></title>
@@ -19,7 +19,7 @@
         <summary type="xhtml">
             <div xmlns="http://www.w3.org/1999/xhtml"><?php echo $value['summary']; ?></div>
         </summary><?php
-        if(isset($value['author'])) { ?>
+        if (isset($value['author'])) { ?>
 
         <author>
             <name><?php echo $value['author']['name']; ?></name>

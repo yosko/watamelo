@@ -28,7 +28,7 @@ abstract class WatameloController extends Controller {
      * @return integer the minimum user level required for this action
      */
     public function userLevelNeeded() {
-        if(isset($this->actions[$this->action]) && isset($this->actions[$this->action]['level'])) {
+        if (isset($this->actions[$this->action]) && isset($this->actions[$this->action]['level'])) {
             $level = $this->actions[$this->action]['level'];
         } else {
             $level = $this->userLevels['visitor'];
@@ -42,7 +42,7 @@ abstract class WatameloController extends Controller {
      *                 false by default
      */
     public function secureNeeded() {
-        if(isset($this->actions[$this->action]) && isset($this->actions[$this->action]['secureNeeded'])) {
+        if (isset($this->actions[$this->action]) && isset($this->actions[$this->action]['secureNeeded'])) {
             $secureNeeded = $this->actions[$this->action]['secureNeeded'];
         } else {
             $secureNeeded = false;

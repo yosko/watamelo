@@ -34,11 +34,11 @@ class View extends ApplicationComponent {
         $this->ApacheURLRewriting = $ApacheURLRewriting;
 
         //template config
-        if($this->templateName===false) { $this->templateName = "default"; }
+        if ($this->templateName===false) { $this->templateName = "default"; }
 
-        if($this->rootUrl === false) {
-        	$protocol = (!empty($_SERVER['HTTPS']) AND strtolower($_SERVER['HTTPS']) == 'on')
-        		|| (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) AND strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https' )
+        if ($this->rootUrl === false) {
+        	$protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'
+        		|| !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
         		?'https://'
         		: "http://";
             $this->rootUrl = $protocol.$_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/';
@@ -50,7 +50,7 @@ class View extends ApplicationComponent {
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl;
-        $this->baseUrl .= (!$this->ApacheURLRewriting)?'?'.$this->app()->getParamName().'=':'';
+        $this->baseUrl .= !$this->ApacheURLRewriting?'?'.$this->app()->getParamName().'=':'';
 
         $this->currentUrl = (isset($_SERVER['REQUEST_SCHEME'])?$_SERVER['REQUEST_SCHEME']:'http').'://'.$_SERVER['SERVER_NAME'].(isset($_SERVER['REDIRECT_URL'])?$_SERVER['REDIRECT_URL']:'');
 
@@ -134,7 +134,7 @@ class View extends ApplicationComponent {
      */
     public function renderView($name, $directResult = true, $templatePath = '') {
         //file path
-        if(empty($templatePath)) {
+        if (empty($templatePath)) {
             $templatePath = $this->templatePath;
         }
         $useTemplatePath = $templatePath;
@@ -142,7 +142,7 @@ class View extends ApplicationComponent {
         $runtimeTemplateFile = $useTemplatePath.$name.'.tpl.php';
 
         //read the file
-        if(file_exists($runtimeTemplateFile)) {
+        if (file_exists($runtimeTemplateFile)) {
             //import the parameters into the current context
             extract($this->params);
 
@@ -151,7 +151,7 @@ class View extends ApplicationComponent {
             $response = ob_get_clean();
 
         //file should always exists for direct results
-        } elseif($directResult) {
+        } elseif ($directResult) {
             throw new Exception(sprintf('Template not found: "%s"', $name));
 
         //return empty if file not found
@@ -159,7 +159,7 @@ class View extends ApplicationComponent {
             $response = '';
         }
 
-        if($directResult) {
+        if ($directResult) {
             echo $response;
             exit;
         } else {
@@ -186,7 +186,7 @@ class View extends ApplicationComponent {
         include $templatePath.$name.'.css.php';
         $response = ob_get_clean();
 
-        if($directResult) {
+        if ($directResult) {
             echo $response;
             exit;
         } else {
@@ -200,14 +200,14 @@ class View extends ApplicationComponent {
      * @param string $type rss (default) or atom
      */
     public function renderFeed($feed, $type=RESPONSE_RSS) {
-        $viewName = ($type == RESPONSE_ATOM)?RESPONSE_ATOM:RESPONSE_RSS;
+        $viewName = $type == RESPONSE_ATOM?RESPONSE_ATOM:RESPONSE_RSS;
 
         //the view is defined on framework level
         $this->templatePath = "lib/views/";
 
-        if($type == RESPONSE_ATOM) {
+        if ($type == RESPONSE_ATOM) {
             header('Content-Type: application/atom+xml');
-        } elseif($type == RESPONSE_RSS) {
+        } elseif ($type == RESPONSE_RSS) {
             header('Content-Type: application/rss+xml');
         } else {
             header('Content-Type: text/xml');
@@ -237,13 +237,13 @@ class View extends ApplicationComponent {
 
         //handle client cache if a last-modified date is given
         $showData = true;
-        if(isset($options['last-modified'])) {
+        if (isset($options['last-modified'])) {
             // Getting headers sent by the client.
             $headers = apache_request_headers();
 
             // Checking if the client is validating his cache and if it is current.
             if (isset($headers['If-Modified-Since'])
-                && (strtotime($headers['If-Modified-Since']) == $options['last-modified'])
+                && strtotime($headers['If-Modified-Since']) == $options['last-modified']
             ) {
                 // Client's cache IS current, so we just respond '304 Not Modified'.
                 header('Last-Modified: '.gmdate('D, d M Y H:i:s', $options['last-modified']).' GMT', true, 304);
@@ -254,35 +254,35 @@ class View extends ApplicationComponent {
             }
         }
 
-        if(isset($options['length'])) {
+        if (isset($options['length'])) {
             header('Content-Length: '.$options['length']);
         }
 
-        if($showData) {
+        if ($showData) {
 	        //format response and headers
-	        if($responseType == RESPONSE_JSON) {
+	        if ($responseType == RESPONSE_JSON) {
 	            header('Content-type: application/json');
-                if(version_compare(PHP_VERSION, '5.4.0') >= 0)
+                if (version_compare(PHP_VERSION, '5.4.0') >= 0)
                     echo json_encode($data, JSON_PRETTY_PRINT);
                 else
                     echo json_encode($data);
-	        } elseif($responseType == RESPONSE_CSV) {
+	        } elseif ($responseType == RESPONSE_CSV) {
 	            header('Content-type: text/csv');
 
 	            $header = array();
-	            foreach($data as $key => $row) {
+	            foreach ($data as $key => $row) {
 	                //headers
-	                if(empty($header)) {
+	                if (empty($header)) {
 	                    $header = array_keys((array)$row);
-	                    if(!isset($options['header']) || $options['header'] !== false) {
+	                    if (!isset($options['header']) || $options['header'] !== false) {
 	                        echo implode(",", $header)."\n";
 	                    }
 	                }
 
 	                $result='';
-	                foreach($row as $key => $value) {
+	                foreach ($row as $key => $value) {
                         $row = (array)$row;
-	                    if(is_numeric($value)) {
+	                    if (is_numeric($value)) {
 	                        $result .= $value.',';
 	                    } else {
 	                        $result .= '"'.str_replace( '"', '\"', htmlspecialchars_decode($row[$key]) ).'"';
@@ -292,7 +292,7 @@ class View extends ApplicationComponent {
 	                $result = rtrim($result, ',')."\n";
 	                echo $result;
                 }
-            } elseif($responseType == RESPONSE_IMG_JPEG) {
+            } elseif ($responseType == RESPONSE_IMG_JPEG) {
                 header('Content-type: image/jpeg');
                 echo $data;
             } else {
@@ -303,7 +303,7 @@ class View extends ApplicationComponent {
 
         $response = ob_get_clean();
 
-        if(isset($options['fileName'])) {
+        if (isset($options['fileName'])) {
             header('Content-disposition: attachment; filename='.$options['fileName']);
             header("Pragma: no-cache");
             header("Expires: 0");

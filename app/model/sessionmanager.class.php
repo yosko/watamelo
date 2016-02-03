@@ -44,7 +44,7 @@ class SessionManager extends Manager  {
      * @return misc        cookie value (a string) or false if cookie not found
      */
     public function getCookie($key) {
-        return (isset($_COOKIE[$key]))?$_COOKIE[$key]:false;
+        return isset($_COOKIE[$key])?$_COOKIE[$key]:false;
     }
 
     /**
@@ -66,7 +66,7 @@ class SessionManager extends Manager  {
      * @return misc        value
      */
     public function getValue($key) {
-        return (isset($_SESSION[$key]))?$_SESSION[$key]:false;
+        return isset($_SESSION[$key])?$_SESSION[$key]:false;
     }
 
     /**
@@ -121,7 +121,7 @@ class SessionManager extends Manager  {
      */
     public function setLTSession($login, $sid, $value) {
         //create the session directory if needed
-        if(!file_exists($this->LTDir)) { mkdir($this->LTDir, 0700, true); }
+        if (!file_exists($this->LTDir)) { mkdir($this->LTDir, 0700, true); }
 
         $fp = fopen($this->LTDir.$login.'_'.$sid.'.ses', 'w');
         fwrite($fp, gzdeflate(json_encode($value)));
@@ -141,7 +141,7 @@ class SessionManager extends Manager  {
         if (file_exists($file)) {
 
             //unset long-term session if expired
-            if(filemtime($file)+$this->LTDuration <= time()) {
+            if (filemtime($file)+$this->LTDuration <= time()) {
                 $this->unsetLTSession($login, $sid);
                 $value = false;
             } else {
@@ -172,7 +172,7 @@ class SessionManager extends Manager  {
      */
     public function unsetLTSessions($login) {
         $files = glob( $this->LTDir.$login.'_*', GLOB_MARK );
-        foreach( $files as $file ) {
+        foreach ( $files as $file ) {
             unlink( $file );
         }
     }
@@ -187,7 +187,7 @@ class SessionManager extends Manager  {
         $files = array();
         if ($dh = opendir($dir)) {
             while ($file = readdir($dh)) {
-                if(!is_dir($dir.$file)) {
+                if (!is_dir($dir.$file)) {
                     if ($file != "." && $file != "..") {
                         $files[$file] = filemtime($dir.$file);
                     }
@@ -201,7 +201,7 @@ class SessionManager extends Manager  {
 
         //check each file
         $i = 1;
-        foreach($files as $file => $date) {
+        foreach ($files as $file => $date) {
             if ($i > $this->nbLTSession || $date+$this->LTDuration <= time()) {
                 $this->unsetLTSession(basename($file));
             }

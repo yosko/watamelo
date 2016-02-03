@@ -82,22 +82,22 @@ class AuthController extends WatameloController {
         $values = array();
         $errors = array();
 
-        if(isset($_POST['login']) && isset($_POST['password'])) {
+        if (isset($_POST['login']) && isset($_POST['password'])) {
             $values['login'] = $_POST['login'];
             $values['password'] = $_POST['password'];
             $values['remember'] = isset($_POST['remember']);
             $this->currentUser = $this->logger->logIn($values['login'], $values['password'], $values['remember']);
-        } elseif(isset($_POST['password'])) {
+        } elseif (isset($_POST['password'])) {
             $this->currentUser = $this->logger->authUser($_POST['password']);
         } else {
             $this->currentUser = $this->logger->authUser();
         }
 
-        if($this->currentUser->isLoggedIn === false) {
+        if ($this->currentUser->isLoggedIn === false) {
             $this->currentUser->level = $this->userLevels['visitor'];
         }
 
-        if(isset($this->currentUser->errors))
+        if (isset($this->currentUser->errors))
             $errors = $this->currentUser->errors;
         $this->app()->view()->setParam( "values", $values );
         $this->app()->view()->setParam( "errors", $errors );
@@ -109,10 +109,10 @@ class AuthController extends WatameloController {
      * Show login form for unauthenticated users
      */
     public function executeIndex() {
-        if($this->currentUser->level >= $this->userLevels['user']) {
+        if ($this->currentUser->level >= $this->userLevels['user']) {
             header( 'Location: '.$this->app()->view()->rootUrl() );
         } else {
-            if(isset($this->parameters['login'])) {
+            if (isset($this->parameters['login'])) {
                 $this->app()->view()->setParam( "values", array("login" => $this->parameters['login']) );
             }
             $this->app()->view()->renderView( "auth.login.form" );

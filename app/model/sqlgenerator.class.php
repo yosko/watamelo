@@ -61,7 +61,7 @@ class SqlGenerator {
         $this->table = $table;
         $this->alias = $alias;
         $this->selectDistinct = $distinct;
-        if(!empty($fieldAliases)) {
+        if (!empty($fieldAliases)) {
             //TODO array_merge $fields and $aliases?
         } else {
             $this->selectFields = $fields;
@@ -147,7 +147,7 @@ class SqlGenerator {
      */
     public function where($clause, $name = null, $value = null, $type = null) {
         $this->where[] = $clause;
-        if(!is_null($name)) {
+        if (!is_null($name)) {
             $this->bindParam($name, $value, $type);
         }
     }
@@ -174,7 +174,7 @@ class SqlGenerator {
 
         // 'asc' by default, 'desc' if explicitely requested
         $order = strtolower($order);
-        if($order != 'desc') {
+        if ($order != 'desc') {
             $order = 'asc';
         }
 
@@ -221,7 +221,7 @@ class SqlGenerator {
      * @throws LogicException If undefined type of statement
      */
     public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ) {
-        if(empty($this->type)) {
+        if (empty($this->type)) {
             throw new LogicException('No query to execute');
         }
 
@@ -235,13 +235,13 @@ class SqlGenerator {
 
         $result = $qry->execute();
 
-        if($this->type == 'select') {
-            if($fetchMethod == 'fetchColumn')
+        if ($this->type == 'select') {
+            if ($fetchMethod == 'fetchColumn')
                 $result = $qry->$fetchMethod();
             else
                 $result = $qry->$fetchMethod($fetchParam);
             //TODO check that fetchColumn can receive a \PDO::FETCH_OBJ as parameter...
-            // if($fetchColumn)
+            // if ($fetchColumn)
             //     $result = $qry->fetchColumn();
             // else
             //     $result = $qry->fetchAll($fetchParam);
@@ -252,11 +252,11 @@ class SqlGenerator {
 
     public function toString($replaceValues = true) {
         $sql = $this->buildQuery();
-        if($replaceValues) {
+        if ($replaceValues) {
             foreach ($this->params as $name => $param) {
-                if(is_null($param['value'])) {
+                if (is_null($param['value'])) {
                     $sql = str_replace(':'.$name, 'NULL', $sql);
-                } elseif($param['type'] == \PDO::PARAM_STR) {
+                } elseif ($param['type'] == \PDO::PARAM_STR) {
                     $sql = str_replace(':'.$name, '"'.$param['value'].'"', $sql);
                 } else {
                     $sql = str_replace(':'.$name, $param['value'], $sql);
@@ -271,12 +271,12 @@ class SqlGenerator {
     }
 
     protected function buildQuery() {
-        if($this->type == 'select') {
+        if ($this->type == 'select') {
             $sql = 'SELECT ';
-            if($this->selectDistinct)
+            if ($this->selectDistinct)
                 $sql .= 'DISTINCT ';
             foreach ($this->selectFields as $alias => $field) {
-                if(Tools::isInt($alias)) {
+                if (Tools::isInt($alias)) {
                     $sql .= $field.', ';
                 } else {
                     $sql .= $field.' as '.$alias.', ';
@@ -285,7 +285,7 @@ class SqlGenerator {
             $sql = rtrim($sql, ', ');
             $sql .= "\nFROM ";
             //select using a subquery made with SqlGenerator
-            if(is_object($this->table) && get_class($this->table) == get_class($this)) {
+            if (is_object($this->table) && get_class($this->table) == get_class($this)) {
                 $sql .= '('.$this->table->toString(false).')';
 
             //join using table name
@@ -293,35 +293,35 @@ class SqlGenerator {
                 $sql .= $this->tables[$this->table];
             }
 
-            if(!empty($this->alias))
+            if (!empty($this->alias))
                 $sql .= ' '.$this->alias;
-        } elseif($this->type == 'insert') {
+        } elseif ($this->type == 'insert') {
             $sql = 'INSERT INTO '.$this->tables[$this->table]."\n(".implode(', ', $this->setFields).")\nVALUES (";
             foreach ($this->setFields as $field) {
                 $sql .= ':'.$field.', ';
             }
             $sql = rtrim($sql, ', ');
             $sql .= ')';
-        } elseif($this->type == 'update') {
+        } elseif ($this->type == 'update') {
             $sql = 'UPDATE '.$this->tables[$this->table]."\nSET ";
             foreach ($this->setFields as $field) {
                 $sql .= $field.' = :'.$field.', ';
             }
             $sql = rtrim($sql, ', ');
-        } elseif($this->type == 'delete') {
+        } elseif ($this->type == 'delete') {
             //TODO
         }
 
         //joins
-        if(!empty($this->joins) && in_array($this->type, array('select')) ) {
+        if (!empty($this->joins) && in_array($this->type, array('select')) ) {
             foreach ($this->joins as $join) {
                 $sql .= "\n";
-                if(!empty($join['type']))
+                if (!empty($join['type']))
                     $sql .= $join['type'].' ';
                 $sql .= ' JOIN ';
 
                 //join using a subquery made with SqlGenerator
-                if(is_object($join['table']) && get_class($join['table']) == get_class($this)) {
+                if (is_object($join['table']) && get_class($join['table']) == get_class($this)) {
                     $sql .= '('.$join['table']->toString(false).')';
 
                 //join using table name
@@ -334,17 +334,17 @@ class SqlGenerator {
         }
 
         //where clauses
-        if(!empty($this->where) && in_array($this->type, array('select', 'update', 'delete'))) {
+        if (!empty($this->where) && in_array($this->type, array('select', 'update', 'delete'))) {
             $sql .= "\nWHERE ".implode(' AND ', $this->where);
         }
 
         //group by
-        if(!empty($this->groupBy) && $this->type == 'select') {
+        if (!empty($this->groupBy) && $this->type == 'select') {
             $sql .= "\nGROUP BY ".implode(', ', $this->groupBy);
         }
 
         //order by
-        if(!empty($this->orderBy) && $this->type == 'select') {
+        if (!empty($this->orderBy) && $this->type == 'select') {
             $sql .= "\nORDER BY ";
             foreach ($this->orderBy as $value) {
                 $sql .= $value['sort'].' '.$value['order'].', ';
@@ -353,15 +353,15 @@ class SqlGenerator {
         }
 
         //having
-        if(!empty($this->having) && $this->type == 'select') {
+        if (!empty($this->having) && $this->type == 'select') {
             //TODO
         }
 
         //limit
-        if((!empty($this->limitQuantity) || !empty($this->limitOffset)) && $this->type == 'select') {
-            if($this->limitQuantity > 0) {
+        if ((!empty($this->limitQuantity) || !empty($this->limitOffset)) && $this->type == 'select') {
+            if ($this->limitQuantity > 0) {
                 $sql .= "\nLIMIT ";
-                if($this->limitOffset > 0) {
+                if ($this->limitOffset > 0) {
                     $sql .= $this->limitOffset.', '.$this->limitQuantity;
                 } else {
                     $sql .= $this->limitQuantity;
@@ -377,7 +377,7 @@ class SqlGenerator {
      * @param string $filePath path to SQL file
      */
     public function executeFile($filePath) {
-        if(!file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             throw new Exception('SQL file not found');
         }
 

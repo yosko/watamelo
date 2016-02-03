@@ -18,7 +18,7 @@ class Router extends ApplicationComponent {
             $root->load( $this->file );
 
             //no need to validate every time if in production environment
-            if(DEVELOPMENT_ENVIRONMENT && !$root->validate()) {
+            if (DEVELOPMENT_ENVIRONMENT && !$root->validate()) {
                 trigger_error("Failed to validate route definitions", E_USER_ERROR);
             }
 
@@ -29,7 +29,7 @@ class Router extends ApplicationComponent {
 
     public function getUrl() {
         //remove '/' at beginning & end of the url
-        if(isset($_GET[$this->app()->getParamName()]))
+        if (isset($_GET[$this->app()->getParamName()]))
             $url = trim($_GET[$this->app()->getParamName()],"/");
         else
             $url = "";
@@ -47,7 +47,7 @@ class Router extends ApplicationComponent {
      * @return boolean            true if a route was found
      */
     public function getRoute(&$controller, &$action, &$parameters, &$url, $variables) {
-        if(is_null($url)) {
+        if (is_null($url)) {
             $url = $this->getUrl();
         }
 
@@ -67,9 +67,9 @@ class Router extends ApplicationComponent {
                         $required[] = $matches[2];
 
                         //handle parameter type
-                        if($matches[1] == 'int') {
+                        if ($matches[1] == 'int') {
                             return '(\d+)';
-                        } elseif($matches[1] == 'string') {
+                        } elseif ($matches[1] == 'string') {
                             return '(.+)';
                         } else {
                             return $matches[0];
@@ -88,7 +88,7 @@ class Router extends ApplicationComponent {
                 );
 
                 //match route including required parameters
-                if( preg_match('%^'.$regexp.'(/.*)?$%i', $url, $matches) ) {
+                if ( preg_match('%^'.$regexp.'(/.*)?$%i', $url, $matches) ) {
                     $foundRoute = true;
                     $parameters = array();
                     $optional = array();
@@ -98,35 +98,35 @@ class Router extends ApplicationComponent {
                     //remove unecessary match
                     unset($matches[0]);
                     //pop optional parameters if they exists
-                    if(count($matches) > count($required)) {
+                    if (count($matches) > count($required)) {
                     	$optional = array_pop($matches);
                     }
                     //combine required parameter values and names
-                    if(!empty($required)) {
+                    if (!empty($required)) {
                         $parameters = array_combine($required, $matches);
                     }
 
                     //handle additional parameters (constants given via the route definition)
                     $additionalParameters = $route->getElementsByTagName('additional');
-                    foreach($additionalParameters as $param) {
+                    foreach ($additionalParameters as $param) {
                         $parameters[$param->getAttribute('name')] = $param->getAttribute('value');
                     }
 
                     //handle optional parameters
                     $optionalParameters = $route->getElementsByTagName('optional');
-                    if(!empty($optional)) {
+                    if (!empty($optional)) {
                         //if there's a "/" between required & optional part
-                        if($optional{0} == "/") {
+                        if ($optional{0} == "/") {
                             $optional = preg_split('%\|%', trim($optional, '/?'));
-                            if(count($optional) == 1 && empty($optional[0])) {
+                            if (count($optional) == 1 && empty($optional[0])) {
                                 unset($optional[0]);
                             }
                             $nbOptParam = $optionalParameters->length;
 
-                            if(count($optional) <= $nbOptParam) {
+                            if (count($optional) <= $nbOptParam) {
                                 //match the remaining ones to optional parameters
-                                for($i = 0; $i < $nbOptParam; $i++) {
-                                    if(isset($optional[$i])) {
+                                for ($i = 0; $i < $nbOptParam; $i++) {
+                                    if (isset($optional[$i])) {
                                         $parameters[$optionalParameters->item($i)->getAttribute('name')] = $optional[$i];
                                     }
                                 }
@@ -144,8 +144,8 @@ class Router extends ApplicationComponent {
 
         //add other parameters given after '?' in a subarray
         $parameters['get'] = array();
-        foreach($_GET as $key => $getParam) {
-            if($key != 'url') {
+        foreach ($_GET as $key => $getParam) {
+            if ($key != 'url') {
                 $parameters['get'][$key] = $getParam;
             }
         }

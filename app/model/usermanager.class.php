@@ -18,7 +18,7 @@ class UserManager extends WatameloManager  {
     public function getList($quantity = 0, $offset = 0, $sort = "", $order = "", $filters = array(), $resultCount = false) {
         $qry = $this->newSqlGenerator();
 
-        if($resultCount) {
+        if ($resultCount) {
             $qry->select('user', 'u', array('count' => 'count(u.id)'));
         } else {
             $qry->select('user', 'u', array('u.*'));
@@ -27,15 +27,15 @@ class UserManager extends WatameloManager  {
             ));
         }
 
-        foreach($filters as $field => $value) {
-            if($field == 'level') {
+        foreach ($filters as $field => $value) {
+            if ($field == 'level') {
                 $qry->where('ul.name = :level', 'level', $value, \PDO::PARAM_INT);
             }
         }
 
-        if(empty($sort))
+        if (empty($sort))
             $sort = 'u.login';
-        if(empty($order))
+        if (empty($order))
             $order = 'asc';
 
         $qry->orderBy($sort, $order);
@@ -55,9 +55,9 @@ class UserManager extends WatameloManager  {
         $qry = $this->newSqlGenerator();
         $qry->select('user', 'u', array('u.*'));
 
-        if($type == 'id') {
+        if ($type == 'id') {
             $qry->where('u.id = :id', 'level', $value, \PDO::PARAM_INT);
-        } elseif($type == 'login') {
+        } elseif ($type == 'login') {
             $qry->where('LOWER(u.login) = LOWER(:login)', 'login', $value, \PDO::PARAM_STR);
         } else {
             //don't return anything if $type is not valid
@@ -67,7 +67,7 @@ class UserManager extends WatameloManager  {
         try {
             $user = $qry->execute('fetch');
 
-            if(!$includeSecureInfo) {
+            if (!$includeSecureInfo) {
                 unset($user->password);
             }
 

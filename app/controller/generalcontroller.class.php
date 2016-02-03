@@ -46,7 +46,7 @@ class GeneralController extends WatameloController {
     public function executeExport() {
         $data = array();
 
-        if($this->parameters['type'] == 'csv') {
+        if ($this->parameters['type'] == 'csv') {
             //the data array must be bidimensional and every item must have the same form:
             $data = array(
                 array(
@@ -75,7 +75,7 @@ class GeneralController extends WatameloController {
         $data = array();
         $type = $this->parameters['type'];
 
-        if(isset($_GET['url'])) {
+        if (isset($_GET['url'])) {
             $self = $this->app()->view()->baseUrl().$_GET['url'];
         } else {
             $self = $this->app()->view()->baseUrl().$_GET['p'];
@@ -89,7 +89,7 @@ class GeneralController extends WatameloController {
         $data['language'] = 'en-en';
 
         //atom feed
-        if($type == RESPONSE_ATOM) {
+        if ($type == RESPONSE_ATOM) {
             $data['update'] = date(DATE_ATOM); //watch out for the date format!
 
         //rss feed
@@ -97,7 +97,7 @@ class GeneralController extends WatameloController {
             //nothing here, yet
         }
 
-        for($i = 5; $i > 0; $i--) {
+        for ($i = 5; $i > 0; $i--) {
             $item = array();
 
             $item['link'] = $this->app()->view()->baseUrl().$i;
@@ -105,7 +105,7 @@ class GeneralController extends WatameloController {
             $item['summary'] = 'Content of my feed item #'.$i;
 
             //atom feed
-            if($type == 'atom') {
+            if ($type == 'atom') {
                 $item['update'] = date(DATE_ATOM); //watch out for the date format!
                 $item['author'] = array(
                     'name' => 'bob',

@@ -9,14 +9,14 @@
         <language><?php echo $feed['language']; ?></language>
         <copyright><?php echo $feed['copyright']; ?></copyright>
         <atom:link href="<?php echo $feed['self']; ?>" rel="self" type="application/rss+xml" /><?php
-        foreach($feed['items'] as $key => $value) { ?>
+        foreach ($feed['items'] as $key => $value) { ?>
 
         <item>
             <title><?php echo $value['title']; ?></title>
             <guid isPermaLink="<?php echo (isset($value['link']))?'false':'true'; ?>"><?php
                 echo $value['guid'];
             ?></guid><?php
-            if(isset($value['link'])) { ?>
+            if (isset($value['link'])) { ?>
 
             <link><?php echo $value['link']; ?></link><?php
             } //if ?>

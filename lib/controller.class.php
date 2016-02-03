@@ -16,7 +16,7 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * @param  array  $parameters request parameters
      */
     public function execute($action, $parameters) {
-        if(empty($action)) {
+        if (empty($action)) {
             $action = "index";
         }
         $this->setAction($action);
@@ -35,7 +35,7 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * @return string the response type (base on "RESPONS_xxx" constants)
      */
     public function responseType() {
-        if(isset($this->actions[$this->action]) && isset($this->actions[$this->action]['responseType'])) {
+        if (isset($this->actions[$this->action]) && isset($this->actions[$this->action]['responseType'])) {
             $responseType = $this->actions[$this->action]['responseType'];
         } else {
             $responseType = RESPONSE_HTML;
@@ -56,7 +56,7 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * @param array $parameters request parameters
      */
     public function setParameters($parameters) {
-        if(is_array($parameters))
+        if (is_array($parameters))
             $this->parameters = $parameters;
         else
             $this->parameters = array();
