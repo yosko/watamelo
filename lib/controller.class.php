@@ -5,7 +5,8 @@ namespace Watamelo\Controllers;
  * Abstract class
  * Base for all controllers
  */
-abstract class Controller extends \Watamelo\App\ApplicationComponent {
+abstract class Controller extends \Watamelo\App\ApplicationComponent
+{
     protected $action = '';
     protected $parameters = array();
     protected $actions;
@@ -15,7 +16,8 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * @param  string $action     action name
      * @param  array  $parameters request parameters
      */
-    public function execute($action, $parameters) {
+    public function execute($action, $parameters)
+    {
         if (empty($action)) {
             $action = "index";
         }
@@ -34,7 +36,8 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * Returns the response type for the current action
      * @return string the response type (base on "RESPONS_xxx" constants)
      */
-    public function responseType() {
+    public function responseType()
+    {
         if (isset($this->actions[$this->action]) && isset($this->actions[$this->action]['responseType'])) {
             $responseType = $this->actions[$this->action]['responseType'];
         } else {
@@ -47,7 +50,8 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * Set the current action to the given action
      * @param string $action action name
      */
-    public function setAction($action) {
+    public function setAction($action)
+    {
         $this->action = $action;
     }
 
@@ -55,7 +59,8 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      * Set the request parameters
      * @param array $parameters request parameters
      */
-    public function setParameters($parameters) {
+    public function setParameters($parameters)
+    {
         if (is_array($parameters))
             $this->parameters = $parameters;
         else

@@ -7,7 +7,8 @@ define('WATAMELO_VERSION', '0.9');
  * Abstract class
  * Main application, will be called from index.php
  */
-abstract class Application {
+abstract class Application
+{
     protected $appName = '';
     protected $view;
     protected $useDefaultRoutes = true;
@@ -17,7 +18,8 @@ abstract class Application {
     protected $getParamName;
 
 
-    public function __construct($appName = '') {
+    public function __construct($appName = '')
+    {
         //handle errors and warnings
         $this->setErrorReporting(DEVELOPMENT_ENVIRONMENT);
 
@@ -55,7 +57,8 @@ abstract class Application {
      * @param  string $module manager name (case insensitive)
      * @return object         manager
      */
-    public function getManagerOf($module) {
+    public function getManagerOf($module)
+    {
         if (!is_string($module) || empty($module)) {
             throw new InvalidArgumentException('Invalid module');
         }
@@ -71,7 +74,8 @@ abstract class Application {
     /**
      * Initialise the View object
      */
-    public function initView($template, $rootUrl, $ApacheURLRewriting) {
+    public function initView($template, $rootUrl, $ApacheURLRewriting)
+    {
         $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
     }
 
@@ -79,7 +83,8 @@ abstract class Application {
      * Returns the application name
      * @return string name
      */
-    public function appName() {
+    public function appName()
+    {
         return $this->appName;
     }
 
@@ -87,7 +92,8 @@ abstract class Application {
      * Returns the application view
      * @return object view
      */
-    public function view() {
+    public function view()
+    {
         return $this->view;
     }
 
@@ -95,7 +101,8 @@ abstract class Application {
      * Returns the application data access object
      * @return string name
      */
-    public function dao() {
+    public function dao()
+    {
         return $this->dao;
     }
 
@@ -103,14 +110,16 @@ abstract class Application {
      * Returns the application parameter name used in $_GET
      * @return string name
      */
-    public function getParamName() {
+    public function getParamName()
+    {
         return $this->getParamName;
     }
 
     /**
      * Set the application parameter name used in $_GET
      */
-    public function setGetParamName($getParamName) {
+    public function setGetParamName($getParamName)
+    {
         $this->getParamName = $getParamName;
     }
 
@@ -118,7 +127,8 @@ abstract class Application {
      * Returns the application flag 'useDefaultRoutes'
      * @return boolean useDefaultRoutes
      */
-    public function useDefaultRoutes() {
+    public function useDefaultRoutes()
+    {
         return $this->useDefaultRoutes;
     }
 
@@ -126,20 +136,23 @@ abstract class Application {
      * Returns the application default controller name
      * @return string defaultControllerName
      */
-    public function defaultControllerName() {
+    public function defaultControllerName()
+    {
         return $this->defaultControllerName;
     }
 
     /**
      * Explicitely log errors/exceptions that where already catched
      */
-    public function logException($e, $string = '') {
+    public function logException($e, $string = '')
+    {
         return error_log(
             ' (manually logged) '.$e->getMessage().(empty($string)?'':' ['.$string.']')
         );
     }
 
-    public function setErrorReporting($isDebug) {
+    public function setErrorReporting($isDebug)
+    {
         error_reporting(E_ALL | E_STRICT);
         if ($isDebug) {
             ini_set('display_errors','On');
@@ -149,7 +162,8 @@ abstract class Application {
         }
     }
 
-    public function exceptionHandler($e) {
+    public function exceptionHandler($e)
+    {
         d($e->getMessage(), $e->getTrace());
     }
 }

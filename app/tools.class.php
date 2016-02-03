@@ -12,7 +12,8 @@ require_once( ROOT.'/app/ext/easydump.php');
 /**
  * Utility functions (static methods)
  */
-class Tools {
+class Tools
+{
     const PAGINATION_CURRENT = "current";
     const PAGINATION_LINK = "link";
     const PAGINATION_FIRST = "first";
@@ -24,7 +25,8 @@ class Tools {
      * @param  [type] $path [description]
      * @return [type]       [description]
      */
-    public static function convertPath($path) {
+    public static function convertPath($path)
+    {
         if (DIRECTORY_SEPARATOR == "\\") {
             $path = str_replace("/","\\",$path);
         }
@@ -38,7 +40,8 @@ class Tools {
      * @param  integer $max      maximum value (or false to avoid restriction)
      * @return boolean           result of the check
      */
-    public static function isInt($value, $min = false, $max = false) {
+    public static function isInt($value, $min = false, $max = false)
+    {
         $options = array();
         if ($min !== false) { $options["min_range"] = $min; }
         if ($max !== false) { $options["max_range"] = $max; }
@@ -54,7 +57,8 @@ class Tools {
      * @param  string  $url Url passed by reference
      * @return boolean
      */
-    public static function validateUrl(&$url) {
+    public static function validateUrl(&$url)
+    {
         if (!empty($url) && !preg_match("%^https?://%i", $url)) {
             $url .= 'http://';
         }
@@ -66,7 +70,8 @@ class Tools {
      * @param  string  $path path to control
      * @return boolean
      */
-    public static function validatePath($path) {
+    public static function validatePath($path)
+    {
         return (preg_match("%^[a-z0-9_-]+$%", $path) != false);
     }
 
@@ -76,7 +81,8 @@ class Tools {
      * @param  string  $format Format the date should respect
      * @return boolean
      */
-    public static function validateDate($date, $format = 'Y-m-d H:i:s') {
+    public static function validateDate($date, $format = 'Y-m-d H:i:s')
+    {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
     }
@@ -89,7 +95,8 @@ class Tools {
      *                                   eg: lower case, upper case, digits, symbols
      * @return boolean                   true if password checks all requirements
      */
-    public static function checkPasswordFormat($password, $minLength = 6, $reqDiffCharTypes = 2) {
+    public static function checkPasswordFormat($password, $minLength = 6, $reqDiffCharTypes = 2)
+    {
         $diffCharTypes = 0;
 
         //lower case
@@ -122,12 +129,14 @@ class Tools {
      * @param  integer $maxLength maximum length required
      * @return boolean            true if login checks requirements
      */
-    public static function checkLoginFormat($login, $minLength = 3, $maxLength = 100) {
+    public static function checkLoginFormat($login, $minLength = 3, $maxLength = 100)
+    {
         //only letters (lower or upper) and the symbols . and - and _
         return (preg_match("%^[a-zA-Z0-9_\-\.]{".$minLength.",".$maxLength."}$%", $login) != false);
     }
 
-    public static function checkPhoneFormat($phone) {
+    public static function checkPhoneFormat($phone)
+    {
         //only numbers and separators (spaces or . or - or _) and an optional leading +
         return (preg_match("%^\+?[0-9 _\-\.]{1,50}$%", $phone) != false);
     }
@@ -137,7 +146,8 @@ class Tools {
      * @param  [type] $email [description]
      * @return [type]        [description]
      */
-    public static function validateEmail($email) {
+    public static function validateEmail($email)
+    {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
@@ -146,7 +156,8 @@ class Tools {
      * @param  string  $value text to convert
      * @return string         text converted
      */
-    public static function htmlentities($value) {
+    public static function htmlentities($value)
+    {
         return htmlentities($value, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
     }
 
@@ -155,7 +166,8 @@ class Tools {
      * @param  string  $value text to convert
      * @return string         text converted
      */
-    public static function html_entity_decode($value) {
+    public static function html_entity_decode($value)
+    {
         return html_entity_decode($value, ENT_NOQUOTES | ENT_HTML5, 'UTF-8');
     }
 
@@ -165,7 +177,8 @@ class Tools {
      * @param  array  $available list of available languages (first one is considered default)
      * @return string            language that is considered the best match for this visitor
      */
-    public static function negotiateLanguage( $available ) {
+    public static function negotiateLanguage( $available )
+    {
         $accepted = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
 
         preg_match_all("/([[:alpha:]]{1,8})(-([[:alpha:]|-]{1,8}))?" .
@@ -203,28 +216,32 @@ class Tools {
      * @param  string  $value text to convert
      * @return string         text converted
      */
-    public static function htmlspecialchars($value) {
+    public static function htmlspecialchars($value)
+    {
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
 
     /**
      * check if string starts with given substring
      */
-    public static function startsWith($haystack, $needle) {
+    public static function startsWith($haystack, $needle)
+    {
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
 
     /**
      * check if string ends with given substring
      */
-    public static function endsWith($haystack, $needle) {
+    public static function endsWith($haystack, $needle)
+    {
         return substr($haystack, - strlen($needle), strlen($needle)) === $needle;
     }
 
     /**
      * Starts the time measurement chrono
      */
-    public static function startChrono() {
+    public static function startChrono()
+    {
         self::$startTime = microtime(true);
     }
 
@@ -232,7 +249,8 @@ class Tools {
      * Reads the time measurement chrono
      * @return string Formated time in ms
      */
-    public static function readChrono() {
+    public static function readChrono()
+    {
         return number_format(microtime(true)-self::$startTime, 6);
     }
 
@@ -244,7 +262,8 @@ class Tools {
      * @param  boolean $useMonthNames if true, month number will be replaced by its name
      * @return string                 formatted date
      */
-    public static function formatSqliteDate($date, $format = "d/m/Y", $useMonthNames = false) {
+    public static function formatSqliteDate($date, $format = "d/m/Y", $useMonthNames = false)
+    {
         if (!$useMonthNames) {
             $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
             $result = $dateTime->format($format);
@@ -287,7 +306,8 @@ class Tools {
     * @param integer $nbPagesAround the maximum number of links (excluding first/last) that should be displayed before or after the current page
     * @return array the pagination array (key = page to link to, value = type of link)
     */
-    public static function generatePagination($currentPage, $totalPages = 0, $itemPerPage = 0, $totalItems = 0, $nbPagesAround = 2) {
+    public static function generatePagination($currentPage, $totalPages = 0, $itemPerPage = 0, $totalItems = 0, $nbPagesAround = 2)
+    {
         $pagination = array();
 
         if ($totalPages == 0) {
@@ -327,7 +347,8 @@ class Tools {
     /**
      * Simplify a fraction (divise both numbers by their greitest common divisor)
      */
-    public static function simplify($numerator, $denominator) {
+    public static function simplify($numerator, $denominator)
+    {
         $g = Tools::gcd($numerator, $denominator);
         return array('numerator' => $numerator/$g, 'denominator' => $denominator/$g);
     }
@@ -335,7 +356,8 @@ class Tools {
     /**
      * Find the GCD (greatest common divisor) of the two given numbers
      */
-    public static function gcd($a, $b) {
+    public static function gcd($a, $b)
+    {
         $a = abs($a); $b = abs($b);
         if ( $a < $b) list($b,$a) = Array($a,$b);
         if ( $b == 0) return $a;
@@ -352,7 +374,8 @@ class Tools {
      * Returns the number of days in a given month
      * Used in place of PHP's cal_days_in_month() that might be absent of installation
      */
-    public static function cal_days_in_month($month, $year) {
+    public static function cal_days_in_month($month, $year)
+    {
         return date('t', mktime(0, 0, 0, $month+1, 0, $year));
     }
 
@@ -361,7 +384,8 @@ class Tools {
     * @param string $dir       path to directory
     * @param string $recursive true to delete recursively
      */
-    public static function rmdir($dir, $recursive = false) {
+    public static function rmdir($dir, $recursive = false)
+    {
         if (is_dir($dir)) {
             if ($recursive === false) {
                 $objects = scandir($dir);
@@ -385,7 +409,8 @@ class Tools {
      * Dumps variables in a log file
      * Based on EasyDump
      */
-    public static function dumpLog() {
+    public static function dumpLog()
+    {
         $args = func_get_args();
         array_unshift($args, date('Y-m-d H:i:s'));
 
@@ -406,7 +431,8 @@ class Tools {
      * Empty the dump log file
      * Based on EasyDump
      */
-    public static function emptyDumpLog() {
+    public static function emptyDumpLog()
+    {
         return file_put_contents(DUMP_PATH, '');
     }
 
@@ -420,7 +446,8 @@ class Tools {
      * @param  string  $bcc     possible bcc destination emails
      * @return boolean          true if email successfully accepted for delivery
      */
-    public static function sendHTMLMail($to, $from, $subject, $message, $cc = '', $bcc = '') {
+    public static function sendHTMLMail($to, $from, $subject, $message, $cc = '', $bcc = '')
+    {
         $headers = "From: " . $from . "\r\n";
         $headers .= "Reply-To: ". $from . "\r\n";
         if (!empty($cc))
@@ -438,7 +465,8 @@ class Tools {
      * @param  string  $bcc     possible bcc destination emails
      * @return boolean          true if email successfully accepted for delivery
      */
-    public static function formatFloatForDisplay($value, $digits = 2, $hideZeros = true) {
+    public static function formatFloatForDisplay($value, $digits = 2, $hideZeros = true)
+    {
         $value = round($value, $digits);
         if ($hideZeros && $value == round($value, 0)) {
             $value = (int)$value;

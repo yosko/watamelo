@@ -4,10 +4,12 @@ namespace Watamelo\Managers;
 /**
  * Abstract manager to handle common tasks
  */
-class WatameloManager extends Manager  {
+class WatameloManager extends Manager
+{
     protected $tables, $prefix;
 
-    public function __construct(\Watamelo\App\Application $app) {
+    public function __construct(\Watamelo\App\Application $app)
+    {
         parent::__construct($app);
 
         $this->prefix = $this->app()->config()->get('db.prefix');
@@ -26,7 +28,8 @@ class WatameloManager extends Manager  {
      * Initialize a SqlGenerator object with the default db access and table list
      * @return SqlGenerator object
      */
-    public function newSqlGenerator() {
+    public function newSqlGenerator()
+    {
         return new \Watamelo\Utils\SqlGenerator($this->app, $this->dao, $this->tables);
     }
 
@@ -34,7 +37,8 @@ class WatameloManager extends Manager  {
      * Execute given SqlGenerator query within a transaction
      * @return misc true or last inserted id on success, false on failure
      */
-    public function executeTransaction($sql, $returnLastInsertId = false) {
+    public function executeTransaction($sql, $returnLastInsertId = false)
+    {
         $sql->beginTransaction();
         try {
             $result = $sql->execute();

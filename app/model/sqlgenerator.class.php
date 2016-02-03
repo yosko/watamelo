@@ -4,7 +4,8 @@ namespace Watamelo\Utils;
 /**
  * Generate sql queries
  */
-class SqlGenerator {
+class SqlGenerator
+{
     protected
         $app,
         $dao,
@@ -33,7 +34,8 @@ class SqlGenerator {
      * @param object $dao    PDO data access object
      * @param array  $tables list of tables (keys without prefix, value with prefix)
      */
-    public function __construct($app, $dao, $tables) {
+    public function __construct($app, $dao, $tables)
+    {
         $this->app = $app;
         $this->dao = $dao;
         $this->tables = $tables;
@@ -56,7 +58,8 @@ class SqlGenerator {
      *                         - classic array item: no alias
      * @return void
      */
-    public function select($table, $alias, $fields, $distinct = false) {
+    public function select($table, $alias, $fields, $distinct = false)
+    {
         $this->type = 'select';
         $this->table = $table;
         $this->alias = $alias;
@@ -75,11 +78,13 @@ class SqlGenerator {
      *                      - classic array item: no alias
      * @return void
      */
-    public function addSelectFields($fields) {
+    public function addSelectFields($fields)
+    {
         $this->selectFields = array_merge($this->selectFields, $fields);
     }
 
-    public function insert($table, $params = array()) {
+    public function insert($table, $params = array())
+    {
         $this->type = 'insert';
         $this->table = $table;
         //TODO
@@ -90,7 +95,8 @@ class SqlGenerator {
      * @param  string $table   name of main table to select
      * @return void
      */
-    public function update($table) {
+    public function update($table)
+    {
         $this->type = 'update';
         $this->table = $table;
     }
@@ -102,19 +108,22 @@ class SqlGenerator {
      * @param  int    $type  type of parameter handled by PDO (such as PDO::PARAM_INT,  PDO::PARAM_STR, PDO::PARAM_NULL)
      * @return void
      */
-    public function setField($field, $value, $type = \PDO::PARAM_STR) {
+    public function setField($field, $value, $type = \PDO::PARAM_STR)
+    {
         $this->setFields[] = $field;
         $this->bindParam($field, $value, $type);
     }
 
 
-    public function delete($table) {
+    public function delete($table)
+    {
         $this->type = 'delete';
         $this->table = $table;
         //TODO
     }
 
-    public function join($table, $alias, $clause, $fields = array(), $type = '') {
+    public function join($table, $alias, $clause, $fields = array(), $type = '')
+    {
         $this->joins[] = array(
             'type' => $type,
             'table' => $table,
@@ -124,19 +133,23 @@ class SqlGenerator {
         $this->addSelectFields($fields);
     }
 
-    public function innerJoin($table, $alias, $clause, $fields = array()) {
+    public function innerJoin($table, $alias, $clause, $fields = array())
+    {
         $this->join($table, $alias, $clause, $fields, 'INNER');
     }
 
-    public function outerJoin($table, $alias, $clause, $fields = array()) {
+    public function outerJoin($table, $alias, $clause, $fields = array())
+    {
         $this->join($table, $alias, $clause, $fields, 'FULL OUTER');
     }
 
-    public function leftJoin($table, $alias, $clause, $fields = array()) {
+    public function leftJoin($table, $alias, $clause, $fields = array())
+    {
         $this->join($table, $alias, $clause, $fields, 'LEFT');
     }
 
-    public function rightJoin($table, $alias, $clause, $fields = array()) {
+    public function rightJoin($table, $alias, $clause, $fields = array())
+    {
         $this->join($table, $alias, $clause, $fields, 'RIGHT');
     }
 
@@ -145,22 +158,26 @@ class SqlGenerator {
      * @param  string $clause Sql where clause. It might contain a PDO assignation name ( field = :value ).
      * @return void
      */
-    public function where($clause, $name = null, $value = null, $type = null) {
+    public function where($clause, $name = null, $value = null, $type = null)
+    {
         $this->where[] = $clause;
         if (!is_null($name)) {
             $this->bindParam($name, $value, $type);
         }
     }
 
-    public function whereArray($clauseArray) {
+    public function whereArray($clauseArray)
+    {
         //TODO
     }
 
-    public function whereArrayOr($clauseArray) {
+    public function whereArrayOr($clauseArray)
+    {
         //TODO
     }
 
-    public function groupBy($field) {
+    public function groupBy($field)
+    {
         $this->groupBy[] = $field;
     }
 
@@ -170,7 +187,8 @@ class SqlGenerator {
      * @param  string $order order (asc or desc, case insensitive)
      * @return void
      */
-    public function orderBy($sort, $order = 'asc') {
+    public function orderBy($sort, $order = 'asc')
+    {
 
         // 'asc' by default, 'desc' if explicitely requested
         $order = strtolower($order);
@@ -184,15 +202,18 @@ class SqlGenerator {
         );
     }
 
-    public function orderByArray($clauseArray) {
+    public function orderByArray($clauseArray)
+    {
         //TODO
     }
 
-    public function having() {
+    public function having()
+    {
         //TODO
     }
 
-    public function limit($quantity = 0, $offset = 0) {
+    public function limit($quantity = 0, $offset = 0)
+    {
         $this->limitQuantity = $quantity;
         $this->limitOffset = $offset;
     }
@@ -205,7 +226,8 @@ class SqlGenerator {
      * @param  int    $type  type of parameter handled by PDO (such as PDO::PARAM_INT,  PDO::PARAM_STR, PDO::PARAM_NULL)
      * @return void
      */
-    public function bindParam($name, $value, $type = \PDO::PARAM_STR) {
+    public function bindParam($name, $value, $type = \PDO::PARAM_STR)
+    {
         $this->params[$name] = array(
             'bind' => 'param',
             'value' => $value,
@@ -220,7 +242,8 @@ class SqlGenerator {
      * @return boolean              execution state
      * @throws LogicException If undefined type of statement
      */
-    public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ) {
+    public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ)
+    {
         if (empty($this->type)) {
             throw new LogicException('No query to execute');
         }
@@ -250,7 +273,8 @@ class SqlGenerator {
         return $result;
     }
 
-    public function toString($replaceValues = true) {
+    public function toString($replaceValues = true)
+    {
         $sql = $this->buildQuery();
         if ($replaceValues) {
             foreach ($this->params as $name => $param) {
@@ -266,11 +290,13 @@ class SqlGenerator {
         return $sql;
     }
 
-    public function getParams() {
+    public function getParams()
+    {
         return $this->params;
     }
 
-    protected function buildQuery() {
+    protected function buildQuery()
+    {
         if ($this->type == 'select') {
             $sql = 'SELECT ';
             if ($this->selectDistinct)
@@ -376,7 +402,8 @@ class SqlGenerator {
      * Execute an SQL file
      * @param string $filePath path to SQL file
      */
-    public function executeFile($filePath) {
+    public function executeFile($filePath)
+    {
         if (!file_exists($filePath)) {
             throw new Exception('SQL file not found');
         }
@@ -392,8 +419,20 @@ class SqlGenerator {
     /**
      * Call to PDO methods
      */
-    public function beginTransaction() {    return $this->dao->beginTransaction(); }
-    public function commit() {              return $this->dao->commit(); }
-    public function rollback() {            return $this->dao->rollback(); }
-    public function lastInsertId() {        return $this->dao->lastInsertId(); }
+    public function beginTransaction()
+    {
+        return $this->dao->beginTransaction();
+    }
+    public function commit()
+    {
+        return $this->dao->commit();
+    }
+    public function rollback()
+    {
+        return $this->dao->rollback();
+    }
+    public function lastInsertId()
+    {
+        return $this->dao->lastInsertId();
+    }
 }

@@ -27,7 +27,8 @@ namespace Yosko;
  * You need to implement the abstract method to handle the way you retrieve
  * user information
  */
-class YosLogin {
+class YosLogin
+{
     protected $sessionName;
     protected $LTSessionName;
     protected $LTDuration;
@@ -48,7 +49,8 @@ class YosLogin {
      * @param misc   $getUserCallback callback to get a user from its login
      * @param int    $logFile         name and path to a log file to keep trace of every action
      */
-    public function __construct($sessionName, $getUserCallback, $logFile='') {
+    public function __construct($sessionName, $getUserCallback, $logFile='')
+    {
         $this->version = 'v6';
         $this->useLTSessions = false;
 
@@ -73,7 +75,8 @@ class YosLogin {
      *                                empty or null to redirect to self (default)
      *                                url of the destination
      */
-    public function setRedirectionPage($redirectionPage) {
+    public function setRedirectionPage($redirectionPage)
+    {
         if (!empty($redirectionPage) || $redirectionPage === false) {
             $this->redirectionPage = $redirectionPage;
         } else {
@@ -85,7 +88,8 @@ class YosLogin {
      * Gives the current version number of YosLogin
      * @return string version number (v1, v2, v3...)
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
 
@@ -95,7 +99,8 @@ class YosLogin {
      *                        or array with object + method name
      *                        or arrawy with class name + method name
      */
-    public function getUserCallback($callback) {
+    public function getUserCallback($callback)
+    {
         $this->getUserCallback = $callback;
     }
 
@@ -103,7 +108,8 @@ class YosLogin {
      * Whether local address should be allowed to identify secure session
      * @param int $allowLocalIp true to handle properly localhost & 127.0.0.1 (but a bit less secure: for dev/debug purpose only)
      */
-    public function setAllowLocalIp($allowLocalIp) {
+    public function setAllowLocalIp($allowLocalIp)
+    {
         $this->allowLocalIp = $allowLocalIp;
     }
 
@@ -119,7 +125,8 @@ class YosLogin {
      * @return array()       required items: array("login" => <login>, "password" => <password hash>)
      *                       or empty array if user not found
      */
-    protected function getUser($login) {
+    protected function getUser($login)
+    {
         return call_user_func($this->getUserCallback, $login);
     }
 
@@ -139,7 +146,8 @@ class YosLogin {
      *                                - flushOldLTSessions()
      * @param int    $LTDuration      duration (in seconds) for long-term sessions
      */
-    public function ltSessionConfig($callbacks, $LTDuration) {
+    public function ltSessionConfig($callbacks, $LTDuration)
+    {
         $this->useLTSessions = true;
         $this->LTSessionName = $this->sessionName.'lt';
 
@@ -153,7 +161,8 @@ class YosLogin {
     /**
      * Initialize and configure the PHP (short-term) session
      */
-    protected function initPHPSession() {
+    protected function initPHPSession()
+    {
         if (!$this->isPHPSessionStarted()) {
             //force cookie path
             $cookie=session_get_cookie_params();
@@ -179,7 +188,8 @@ class YosLogin {
      * Avoid calling initPHPSession() multiple times by checking if session is already started
      * @return boolean session status
      */
-    protected function isPHPSessionStarted() {
+    protected function isPHPSessionStarted()
+    {
         if (php_sapi_name() !== 'cli') {
             if (version_compare(phpversion(), '5.4.0', '>=')) {
                 return session_status() === PHP_SESSION_ACTIVE ? true : false;
@@ -190,7 +200,8 @@ class YosLogin {
         return false;
     }
 
-    protected function unsetSessionVar($var) {
+    protected function unsetSessionVar($var)
+    {
         if (isset($_SESSION[$var]))
             unset($_SESSION[$var]);
     }
@@ -201,7 +212,8 @@ class YosLogin {
      * @param string $sid    long-term session id (stored in a cookie too)
      * @param array() $value optional: array of data you want to keep in long-term session on server side
      */
-    protected function setLTSession($login, $sid, $value) {
+    protected function setLTSession($login, $sid, $value)
+    {
         if (isset($this->ltSessionCallbacks['setLTSession']))
             return call_user_func($this->ltSessionCallbacks['setLTSession'], $login, $sid, $value);
     }
@@ -212,7 +224,8 @@ class YosLogin {
      * @return array()             optional: array of data stored in the session (empty if no data)
      *                             or false if long-term session not found or expired
      */
-    protected function getLTSession($cookieValue) {
+    protected function getLTSession($cookieValue)
+    {
         $cookieValues = explode('_', $cookieValue, 2);
         if (isset($this->ltSessionCallbacks['getLTSession']))
             return call_user_func($this->ltSessionCallbacks['getLTSession'], $cookieValues[0], $cookieValues[1]);
@@ -222,7 +235,8 @@ class YosLogin {
      * Remove a long-term session based on the cookie value
      * @param  string $cookieValue the concatenation of <login>_<id> used in the cookie value
      */
-    protected function unsetLTSession($cookieValue) {
+    protected function unsetLTSession($cookieValue)
+    {
         $cookieValues = explode('_', $cookieValue, 2);
         if (isset($this->ltSessionCallbacks['unsetLTSession']))
             return call_user_func($this->ltSessionCallbacks['unsetLTSession'], $cookieValues[0], $cookieValues[1]);
@@ -232,7 +246,8 @@ class YosLogin {
      * Remove all existing long-term sessions for a given user
      * @param  string $login user login
      */
-    protected function unsetLTSessions($login) {
+    protected function unsetLTSessions($login)
+    {
         if (isset($this->ltSessionCallbacks['unsetLTSessions']))
             return call_user_func($this->ltSessionCallbacks['unsetLTSessions'], $login);
     }
@@ -240,7 +255,8 @@ class YosLogin {
     /**
      * Remove all expired or exceeding long-term sessions
      */
-    protected function flushOldLTSessions() {
+    protected function flushOldLTSessions()
+    {
         if (isset($this->ltSessionCallbacks['flushOldLTSessions']))
             return call_user_func($this->ltSessionCallbacks['flushOldLTSessions']);
     }
@@ -256,7 +272,8 @@ class YosLogin {
      * @param string $login user login
      * @param string $sid    session id
      */
-    protected function setLTCookie($login, $sid) {
+    protected function setLTCookie($login, $sid)
+    {
         $this->ltCookie = new \stdClass;
         $this->ltCookie->login = $login;
         $this->ltCookie->sid = $sid;
@@ -276,7 +293,8 @@ class YosLogin {
     /**
      * Delete the long-term cookie on client side
      */
-    protected function unsetLTCookie() {
+    protected function unsetLTCookie()
+    {
         //delete long-term cookie client-side
         setcookie(
             $this->LTSessionName,
@@ -293,7 +311,8 @@ class YosLogin {
     /**
      * Load long-term cookie informations
      */
-    protected function loadLTCookie() {
+    protected function loadLTCookie()
+    {
         if ( isset($_COOKIE[$this->LTSessionName]) ) {
             $this->ltCookie = new \stdClass;
             $cookieValues = explode('_', $_COOKIE[$this->LTSessionName], 2);
@@ -306,7 +325,8 @@ class YosLogin {
      * Test if the client has a long-term cookie set
      * @return bool if the cookie exists or not
      */
-    protected function issetLTCookie() {
+    protected function issetLTCookie()
+    {
         return isset($this->ltCookie->sid);
     }
 
@@ -319,7 +339,8 @@ class YosLogin {
     /**
      * For dev/debug purpose only: turn the current session to "non-secure"
      */
-    public function unsecure() {
+    public function unsecure()
+    {
         $this->initPHPSession();
         $_SESSION['secure'] = false;
 
@@ -330,7 +351,8 @@ class YosLogin {
     /**
      * Log the user out and redirect him
      */
-    public function logOut() {
+    public function logOut()
+    {
         $userName = '';
         $this->initPHPSession();
 
@@ -374,7 +396,8 @@ class YosLogin {
      * @param  boolean $rememberMe wether we should use a long-term session or not
      * @return array()             user informations (from getUser()) + the values of 'isLoggedIn' and optionally 'errors'
      */
-    public function logIn($login, $password, $rememberMe = false) {
+    public function logIn($login, $password, $rememberMe = false)
+    {
         $user = new \stdClass;
 
         $this->initPHPSession();
@@ -430,7 +453,8 @@ class YosLogin {
      * @param  string $password if user reentered his/her password (example: for admin actions)
      * @return array()          user informations (from getUser()) + the values of 'isLoggedIn'
      */
-    public function authUser($password = '') {
+    public function authUser($password = '')
+    {
         $user = new \stdClass;
         $this->initPHPSession();
 
@@ -511,7 +535,8 @@ class YosLogin {
 /**
  * Useful generic utility functions used in YosLogin
  */
-class YosLoginTools {
+class YosLoginTools
+{
     /**
      * Generate a random 42 long string with [ . - A-Z a-z 0-9]
      * @param  int    $length        length of the returned string
@@ -520,7 +545,8 @@ class YosLoginTools {
      * @return string                the random string
      *                               or an empty string if no id was generated
      */
-    public static function generateRandomString($length = 22, $pathCompliant = false) {
+    public static function generateRandomString($length = 22, $pathCompliant = false)
+    {
         //number of bytes needed to generate a $length long string
         $nbBytes = ceil($length * 6 / 8);
 
@@ -550,7 +576,8 @@ class YosLoginTools {
      * @return string the salt
      *                or false if salt malformed
      */
-    public static function generateSalt() {
+    public static function generateSalt()
+    {
         $random = self::generateRandomString();
 
         if ( version_compare(PHP_VERSION, '5.3.7') >= 0 ) {
@@ -573,7 +600,8 @@ class YosLoginTools {
      * @param  string $password the password (clear)
      * @return string           the salt and the hashed password concatenated
      */
-    public static function hashPassword($password) {
+    public static function hashPassword($password)
+    {
         $hash = '';
 
         $salt = self::generateSalt();
@@ -593,7 +621,8 @@ class YosLoginTools {
      * @param  string $hash     the salt and the right hashed password concatenated
      * @return bool             true if the passwords match
      */
-    public static function checkPassword($password, $hash) {
+    public static function checkPassword($password, $hash)
+    {
         //crypt with blowfish takes approximately 0.05 s
         $newHash = crypt($password, $hash);
 
@@ -605,14 +634,16 @@ class YosLoginTools {
      * based on: http://stackoverflow.com/questions/1634782/what-is-the-most-accurate-way-to-retrieve-a-users-correct-ip-address-in-php
      * @return string ip address (ipv4 or ipv6)
      */
-    public static function getIpAddress($local=false) {
+    public static function getIpAddress($local=false)
+    {
         foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
-            if (array_key_exists($key, $_SERVER) === true){
-                foreach (explode(',', $_SERVER[$key]) as $ip){
+            if (array_key_exists($key, $_SERVER) === true) {
+                foreach (explode(',', $_SERVER[$key]) as $ip) {
                     $ip = trim($ip); // just to be safe
-                    if ($local === true && filter_var($ip, FILTER_VALIDATE_IP) !== false
+                    if (
+                        $local === true && filter_var($ip, FILTER_VALIDATE_IP) !== false
                         || filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false
-                    ){
+                    ) {
                         return $ip;
                     }
                 }
@@ -620,7 +651,8 @@ class YosLoginTools {
         }
     }
 
-    public static function log($file, $message, $ltSession = false, $ip = false) {
+    public static function log($file, $message, $ltSession = false, $ip = false)
+    {
         $date = date("Y-m-d H:i:s");
         $message = $message." on ".$_SERVER['REQUEST_URI'];
         if (isset($_SESSION))
@@ -684,7 +716,8 @@ class YosLoginTools {
      * $len bytes of entropy under any PHP installation or operating system.
      * The execution time should be at most 10-20 ms in any system.
      */
-    public static function secure_random_bytes($len = 10) {
+    public static function secure_random_bytes($len = 10)
+    {
         /*
          * Our primary choice for a cryptographic strong randomness function is
          * openssl_random_pseudo_bytes.

@@ -4,11 +4,13 @@ namespace Watamelo\App;
 /**
  * Allmighty powerfull and wonderfull routing class
  */
-class Router extends ApplicationComponent {
+class Router extends ApplicationComponent
+{
     protected $routes = array();
     protected $file = "";
 
-    public function __construct(Application $app) {
+    public function __construct(Application $app)
+    {
         parent::__construct($app);
 
         //load configuration file
@@ -27,7 +29,8 @@ class Router extends ApplicationComponent {
         }
     }
 
-    public function getUrl() {
+    public function getUrl()
+    {
         //remove '/' at beginning & end of the url
         if (isset($_GET[$this->app()->getParamName()]))
             $url = trim($_GET[$this->app()->getParamName()],"/");
@@ -46,7 +49,8 @@ class Router extends ApplicationComponent {
      * @param  array  $variables  array of variable parts of path defined on app level
      * @return boolean            true if a route was found
      */
-    public function getRoute(&$controller, &$action, &$parameters, &$url, $variables) {
+    public function getRoute(&$controller, &$action, &$parameters, &$url, $variables)
+    {
         if (is_null($url)) {
             $url = $this->getUrl();
         }
@@ -159,7 +163,8 @@ class Router extends ApplicationComponent {
      * @param  string $controllerName controller name
      * @return object                 controller
      */
-    public function getController($controllerName) {
+    public function getController($controllerName)
+    {
         $classname = '\\Watamelo\\Controllers\\'.ucfirst($controllerName).'Controller';
         $controller = new $classname($this->app());
         return $controller;

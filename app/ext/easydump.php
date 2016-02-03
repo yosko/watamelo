@@ -9,7 +9,8 @@
  * @copyright   none: free and opensource
  * @link        https://github.com/yosko/easydump
  */
-class EasyDump {
+class EasyDump
+{
     //display configurattion
     public static $config = array(
         'showCall'      => true,    //true to show file name and line number of each call to EasyDump
@@ -30,7 +31,8 @@ class EasyDump {
      * For debug purpose only
      * @param  misc    $variables any number of variables of any type
      */
-    public static function debug() {
+    public static function debug()
+    {
         $trace = debug_backtrace();
         if (self::$config['showCall'] || self::$config['showVarNames'] || self::$config['showSource'])
             $call = self::readCall($trace);
@@ -65,7 +67,8 @@ class EasyDump {
      * For debug purpose only. Exits after dump
      * @param  misc    $variable the variable to dump
      */
-    public static function debugExit() {
+    public static function debugExit()
+    {
         call_user_func_array( array( __CLASS__, 'debug' ), func_get_args() );
         exit;
     }
@@ -79,7 +82,8 @@ class EasyDump {
      * @param  integer $level          for indentation purpose, used in recursion
      * @param  boolean $serializeArray force array serialization
      */
-    protected static function showVar($name, $value, $level = 0, $dumpArray = false) {
+    protected static function showVar($name, $value, $level = 0, $dumpArray = false)
+    {
         $indent = "    ";
         for ($lvl = 0; $lvl < $level; $lvl++) { echo $indent; }
         echo '<span style="color:'.self::$config['color']['name'].';">'.($level == 0?$name:(is_string($name)?'"'.$name.'"':'['.$name.']'))." </span>";
@@ -127,7 +131,8 @@ class EasyDump {
      * Display the filename and line number where EasyDump was called
      * @param  array $call informations about the call
      */
-    protected static function showCall($call) {
+    protected static function showCall($call)
+    {
         echo "<span style=\"color:".self::$config['color']['type'].";\">File \"".$call['file']."\" line ".$call['line'].":</span>\r\n";
     }
 
@@ -136,7 +141,8 @@ class EasyDump {
      * useful for tracking lots of different calls with values/functions as parameters
      * @param  array $call informations about the call
      */
-    protected static function showSource($call) {
+    protected static function showSource($call)
+    {
         echo $call['formatedCode']
         ."\r\n"
         ."<span style=\"color:".self::$config['color']['type'].";\">Results:</span>"
@@ -149,7 +155,8 @@ class EasyDump {
      * @param  array  $trace trace of nested calls
      * @return array         list of variable names (if available)
      */
-    protected static function guessVarName($trace, $call) {
+    protected static function guessVarName($trace, $call)
+    {
         $varNames = array();
 
         $results = self::parse($call['code']);
@@ -180,7 +187,8 @@ class EasyDump {
      * @param  string $code PHP code
      * @return array        list of elements
      */
-    protected static function parse($code) {
+    protected static function parse($code)
+    {
         $names = array();
         $currentName = '';
 
@@ -247,7 +255,8 @@ class EasyDump {
      * @param  array $trace backtrace executed PHP code
      * @return array        informations about the call
      */
-    protected static function readCall($trace) {
+    protected static function readCall($trace)
+    {
         //called de()
         if (count($trace) >= 5
                 && $trace[2]['function'] == 'debugExit'
@@ -299,7 +308,8 @@ class EasyDump {
      * @param  misc    $variable backtrace executed PHP code
      * @return boolean           informations about the call
      */
-    protected static function isTraversable($variable) {
+    protected static function isTraversable($variable)
+    {
         //most common cases
         if (is_array($variable) || $variable instanceof StdClass || $variable instanceof Traversable) {
             return true;
@@ -325,7 +335,8 @@ class EasyDump {
         return true;
     }
 
-    protected static function microDateTime() {
+    protected static function microDateTime()
+    {
       list($microSec, $timeStamp) = explode(' ', microtime());
       return date('Y-m-d H:i:s.', $timeStamp) . (int)($microSec * 1000000);
     }
@@ -336,7 +347,8 @@ class EasyDump {
  * Alias of EasyDump::debug()
  */
 if (!function_exists('d')) {
-    function d() {
+    function d()
+    {
         call_user_func_array( array( 'EasyDump', 'debug' ), func_get_args() );
     }
 }
@@ -346,7 +358,8 @@ if (!function_exists('d')) {
  * Alias of EasyDump::debugExit()
  */
 if (!function_exists('de')) {
-    function de() {
+    function de()
+    {
         call_user_func_array( array( 'EasyDump', 'debugExit' ), func_get_args() );
     }
 }

@@ -8,7 +8,8 @@ require_once(ROOT.'/app/ext/yoslogin.lib.php');
 /**
  * The application itself, called from the index.php and does everything else
  */
-class Watamelo extends Application {
+class Watamelo extends Application
+{
     protected $configManager;
     protected $authController;
     protected $user;
@@ -19,7 +20,8 @@ class Watamelo extends Application {
     /**
      * Prepare the application
      */
-    public function __construct($appName) {
+    public function __construct($appName)
+    {
         $this->useDefaultRoutes = true;
         $this->defaultControllerName = "general";
 
@@ -45,7 +47,8 @@ class Watamelo extends Application {
      * @return string name of dbms in PDO style
      *                possible values: sqlite, mysql, postgresql
      */
-    public function setDbms() {
+    public function setDbms()
+    {
         return 'sqlite';
     }
 
@@ -53,7 +56,8 @@ class Watamelo extends Application {
      * Gives the DBMS name
      * @return string dbms
      */
-    public function dbms() {
+    public function dbms()
+    {
         return $this->dbms;
     }
 
@@ -61,7 +65,8 @@ class Watamelo extends Application {
      * Return the Database Parameters (connection string)
      * @return StdClass parameters to connect to the database
      */
-    public function setDbParams() {
+    public function setDbParams()
+    {
         $params = new \StdClass;
         $params->dbName = $this->configManager->get('sessName').'.db';
         return $params;
@@ -71,14 +76,16 @@ class Watamelo extends Application {
      * Gives the DB parameters
      * @return StdClass dbParams
      */
-    public function dbParams() {
+    public function dbParams()
+    {
         return $this->dbParams;
     }
 
     /**
      * Run the application (call the proper controller and action)
      */
-    public function run() {
+    public function run()
+    {
 
         //prepare router
         $router = new Router($this);
@@ -153,7 +160,8 @@ class Watamelo extends Application {
      * Return an error (can be called from within controllers)
      * @param  string $error error number (403, 404, etc...)
      */
-    public function returnError($error="") {
+    public function returnError($error="")
+    {
         $router = new Router($this);
 
         $controllerName = "error";
@@ -169,7 +177,8 @@ class Watamelo extends Application {
      * Returns the application configuration
      * @return array config
      */
-    public function config() {
+    public function config()
+    {
         return $this->configManager;
     }
 
@@ -177,7 +186,8 @@ class Watamelo extends Application {
      * Returns the application configuration
      * @return array config
      */
-    public function auth() {
+    public function auth()
+    {
         return $this->authController;
     }
 
@@ -185,7 +195,8 @@ class Watamelo extends Application {
      * Return current user's information
      * @return array user information
      */
-    public function user() {
+    public function user()
+    {
         return $this->user;
     }
 
@@ -193,7 +204,8 @@ class Watamelo extends Application {
      * Return list of user levels
      * @return array levels
      */
-    public function userLevels() {
+    public function userLevels()
+    {
         return $this->userLevels;
     }
 }

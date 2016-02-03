@@ -4,13 +4,15 @@ namespace Watamelo\Controllers;
 /**
  * Controller for displaying global pages
  */
-class GeneralController extends WatameloController {
+class GeneralController extends WatameloController
+{
     protected $currentUser;
 
     //define specific behavior for some actions (here for action "executeAdmin")
     protected $actions;
 
-    public function __construct(\Watamelo\App\Application $app) {
+    public function __construct(\Watamelo\App\Application $app)
+    {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();
         $this->actions = array(
@@ -24,7 +26,8 @@ class GeneralController extends WatameloController {
     /**
      * Show application's homepage
      */
-    public function executeIndex() {
+    public function executeIndex()
+    {
         $userManager = $this->app()->getManagerOf('user');
 
         $users = $userManager->getList();
@@ -36,14 +39,16 @@ class GeneralController extends WatameloController {
     /**
      * Show an admin page (with secure access)
      */
-    public function executeAdmin() {
+    public function executeAdmin()
+    {
         $this->app()->view()->renderView( "admin" );
     }
 
     /**
      * Return a data file (CSV/JSON)
      */
-    public function executeExport() {
+    public function executeExport()
+    {
         $data = array();
 
         if ($this->parameters['type'] == 'csv') {
@@ -71,7 +76,8 @@ class GeneralController extends WatameloController {
     /**
      * Show an RSS/Atom feed
      */
-    public function executeFeed() {
+    public function executeFeed()
+    {
         $data = array();
         $type = $this->parameters['type'];
 

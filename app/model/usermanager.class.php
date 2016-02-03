@@ -4,7 +4,8 @@ namespace Watamelo\Managers;
 /**
  * Manage users data
  */
-class UserManager extends WatameloManager  {
+class UserManager extends WatameloManager
+{
     /**
      * Gives a list of users
      * @param  integer $quantity    Max number of items to be returned
@@ -15,7 +16,8 @@ class UserManager extends WatameloManager  {
      * @param  boolean $resultCount false to return the results, true to only give the count
      * @return array                array of items (each item is a subarray)
      */
-    public function getList($quantity = 0, $offset = 0, $sort = "", $order = "", $filters = array(), $resultCount = false) {
+    public function getList($quantity = 0, $offset = 0, $sort = "", $order = "", $filters = array(), $resultCount = false)
+    {
         $qry = $this->newSqlGenerator();
 
         if ($resultCount) {
@@ -51,7 +53,8 @@ class UserManager extends WatameloManager  {
      * @param  boolean $includeSecureInfo whether to return password hash & activation key
      * @return array                      user informations (or false if not found)
      */
-    public function get($value, $type = 'id', $includeSecureInfo = false) {
+    public function get($value, $type = 'id', $includeSecureInfo = false)
+    {
         $qry = $this->newSqlGenerator();
         $qry->select('user', 'u', array('u.*'));
 
@@ -83,7 +86,8 @@ class UserManager extends WatameloManager  {
      * @param  boolean $includeSecureInfo whether to return password hash & activation key
      * @return array                      user informations (or false if not found)
      */
-    public function getById($id, $includeSecureInfo = false) {
+    public function getById($id, $includeSecureInfo = false)
+    {
         return $this->get($id, 'id', $includeSecureInfo);
     }
 
@@ -93,7 +97,8 @@ class UserManager extends WatameloManager  {
      * @param  boolean $includeSecureInfor whether to return password hash & activation key
      * @return array                       user informations (or false if not found)
      */
-    public function getByLogin($login, $includeSecureInfo = false) {
+    public function getByLogin($login, $includeSecureInfo = false)
+    {
         return $this->get($login, 'login', $includeSecureInfo);
     }
 
@@ -102,11 +107,13 @@ class UserManager extends WatameloManager  {
      * @param  string $login user login
      * @return array         user informations (or false if not found)
      */
-    public function getForAuthentication($login) {
+    public function getForAuthentication($login)
+    {
         return $this->get($login, 'login', true);
     }
 
-    public function getLevels() {
+    public function getLevels()
+    {
         $qry = $this->newSqlGenerator();
         $qry->select('user_level', 'ul', array('ul.*'));
         $qry->orderBy('ul.level');
@@ -124,7 +131,8 @@ class UserManager extends WatameloManager  {
      * @param string   $hash hash of user's password
      * @return boolean       true on success
      */
-    public function setPassword($id, $hash) {
+    public function setPassword($id, $hash)
+    {
         $qry = $this->newSqlGenerator();
         $qry->update('user');
         $qry->setField('password', $hash);
@@ -143,7 +151,8 @@ class UserManager extends WatameloManager  {
      * @param string   $email new email
      * @return boolean        true on success
      */
-    public function setEmail($id, $email) {
+    public function setEmail($id, $email)
+    {
         $qry = $this->newSqlGenerator();
         $qry->update('user');
         $qry->setField('email', $email);
@@ -161,11 +170,13 @@ class UserManager extends WatameloManager  {
      * @param  integer $id user's id
      * @return boolean     whether the deletion was a success
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         //TODO
     }
 
-    public function getOrphans() {
+    public function getOrphans()
+    {
         //TODO: find orphan records
         return array();
     }

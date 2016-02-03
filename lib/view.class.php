@@ -14,7 +14,8 @@ define( 'RESPONSE_MAIL', 'mail' );
  * View manager
  * Class that handle the output of the application
  */
-class View extends ApplicationComponent {
+class View extends ApplicationComponent
+{
     protected $params;
     protected $rootUrl;
     protected $baseUrl;
@@ -25,7 +26,8 @@ class View extends ApplicationComponent {
     protected $templatePath;
     protected $ApacheURLRewriting;
 
-    public function __construct(Application $app, $template, $rootUrl, $ApacheURLRewriting) {
+    public function __construct(Application $app, $template, $rootUrl, $ApacheURLRewriting)
+    {
         parent::__construct($app);
 
         $this->params = array();
@@ -64,7 +66,8 @@ class View extends ApplicationComponent {
      * Returns the template
      * @return object template
      */
-    public function template() {
+    public function template()
+    {
         return $this->template;
     }
 
@@ -72,7 +75,8 @@ class View extends ApplicationComponent {
      * Return the currently used root url
      * @return string url
      */
-    public function rootUrl() {
+    public function rootUrl()
+    {
         return $this->baseUrl;
     }
 
@@ -80,7 +84,8 @@ class View extends ApplicationComponent {
      * Return the currently used base url
      * @return string url
      */
-    public function baseUrl() {
+    public function baseUrl()
+    {
         return $this->baseUrl;
     }
 
@@ -88,7 +93,8 @@ class View extends ApplicationComponent {
      * Returns the template url
      * @return string template url
      */
-    public function templateUrl() {
+    public function templateUrl()
+    {
         return $this->templateUrl;
     }
 
@@ -97,7 +103,8 @@ class View extends ApplicationComponent {
      * @param string $name  parameter name
      * @param misc   $value parameter value
      */
-    public function setParam($name, $value) {
+    public function setParam($name, $value)
+    {
         $this->params[$name] = $value;
     }
 
@@ -106,7 +113,8 @@ class View extends ApplicationComponent {
      * @param string $name  reference name
      * @param misc   $value parameter value
      */
-    public function setReference($name, &$value) {
+    public function setReference($name, &$value)
+    {
         $this->params[$name] = &$value;
     }
 
@@ -115,7 +123,8 @@ class View extends ApplicationComponent {
      * @param  string $name  parameter name
      * @return misc          parameter value
      */
-    public function getParam($name) {
+    public function getParam($name)
+    {
         return $this->params[$name];
     }
 
@@ -123,7 +132,8 @@ class View extends ApplicationComponent {
      * Get all parameters asigned to the view
      * @return array list of parameters
      */
-    public function getParams() {
+    public function getParams()
+    {
         return $this->params;
     }
 
@@ -132,7 +142,8 @@ class View extends ApplicationComponent {
      * @param string  $name         view name
      * @param boolean $directResult false to get result in the return
      */
-    public function renderView($name, $directResult = true, $templatePath = '') {
+    public function renderView($name, $directResult = true, $templatePath = '')
+    {
         //file path
         if (empty($templatePath)) {
             $templatePath = $this->templatePath;
@@ -172,7 +183,8 @@ class View extends ApplicationComponent {
      * @param string  $name         view name
      * @param boolean $directResult false to get result in the return
      */
-    public function renderCss($name, $directResult = true) {
+    public function renderCss($name, $directResult = true)
+    {
         //import the parameters into the current context
         extract($this->params);
 
@@ -199,7 +211,8 @@ class View extends ApplicationComponent {
      * @param string $feed values for feed items
      * @param string $type rss (default) or atom
      */
-    public function renderFeed($feed, $type=RESPONSE_RSS) {
+    public function renderFeed($feed, $type=RESPONSE_RSS)
+    {
         $viewName = $type == RESPONSE_ATOM?RESPONSE_ATOM:RESPONSE_RSS;
 
         //the view is defined on framework level
@@ -232,7 +245,8 @@ class View extends ApplicationComponent {
      *                                in Unix timestamp format, using filemtime()
      *                              - 'length': Http response length
      */
-    public function renderData($data, $responseType = RESPONSE_JSON, $options = array()) {
+    public function renderData($data, $responseType = RESPONSE_JSON, $options = array())
+    {
         ob_start();
 
         //handle client cache if a last-modified date is given
@@ -317,7 +331,8 @@ class View extends ApplicationComponent {
      * @param  string $name view name
      * @return string       view html content
      */
-    public function renderMail($name) {
+    public function renderMail($name)
+    {
         return $this->renderView($name, false);
     }
 }

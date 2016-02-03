@@ -5,14 +5,16 @@ namespace Watamelo\Managers;
  * Application configuration management
  * Is accessib
  */
-class ConfigManager extends Manager {
+class ConfigManager extends Manager
+{
     protected $params;
     protected $customParams;
     protected $globalFile = "";
     protected $defaultFile = "";
     protected $file = "";
 
-    public function __construct(\Watamelo\App\Application $app) {
+    public function __construct(\Watamelo\App\Application $app)
+    {
         parent::__construct($app);
 
         $this->param = new \StdClass();
@@ -34,7 +36,8 @@ class ConfigManager extends Manager {
      *                     or false for not found values
      *                     or array of all parameters
      */
-    public function get($key = null) {
+    public function get($key = null)
+    {
         if (is_null($key)) {
             return $this->params;
         } else {
@@ -56,7 +59,8 @@ class ConfigManager extends Manager {
      *                          or false for not found values
      *                          or array of all parameters
      */
-    public function getCustom($fileName, $key = null) {
+    public function getCustom($fileName, $key = null)
+    {
         if (!isset($this->customParams[$fileName])) {
             $this->loadCustom($fileName);
         }
@@ -77,7 +81,8 @@ class ConfigManager extends Manager {
      * @param  boolean $includeGlobal whether to include global config values
      * @return array                  configuration array
      */
-    public function getAll($type = 'current', $includeGlobal = true) {
+    public function getAll($type = 'current', $includeGlobal = true)
+    {
         //don't user $this->param her because it might contain user specific values & globals
         if ($type == 'default') {
             $params = $this->loadFile($this->defaultFile);
@@ -101,7 +106,8 @@ class ConfigManager extends Manager {
      * Returns all application configuration default values
      * @return array complete and default configuration array
      */
-    public function getAllDefault() {
+    public function getAllDefault()
+    {
         return $this->loadFile($this->defaultFile);
     }
 
@@ -111,7 +117,8 @@ class ConfigManager extends Manager {
      * @param  misc    $value value
      * @return boolean        whether the save was a success
      */
-    public function set($key, $value) {
+    public function set($key, $value)
+    {
         $this->params->$key = $value;
 
         return $this->save();
@@ -123,7 +130,8 @@ class ConfigManager extends Manager {
      * @param  misc    $value value
      * @return boolean        whether the save was a success
      */
-    public function setGlobal($key, $value) {
+    public function setGlobal($key, $value)
+    {
         $this->params->global->$key = $value;
 
         return $this->saveGlobal();
@@ -135,7 +143,8 @@ class ConfigManager extends Manager {
      * @param boolean $save   whether to save this configuration to the file
      * @return boolean        whether the save was a success
      */
-    public function setAll($object, $save = true) {
+    public function setAll($object, $save = true)
+    {
         //make sure that no key get lost by merging arrays
         //this way, keys not handle via the interface will be kept
         $this->params = (object)array_merge((array)$this->params, (array)$object);
@@ -147,7 +156,8 @@ class ConfigManager extends Manager {
      * Replace current configuration by the default one (and save!)
      * @return boolean whether the save was a success
      */
-    public function reset() {
+    public function reset()
+    {
         $this->loadDefault();
         return $this->save();
     }
@@ -156,7 +166,8 @@ class ConfigManager extends Manager {
      * Load the default configuration in app
      * @return boolean false if the configuration is empty afterwards
      */
-    private function loadDefault() {
+    private function loadDefault()
+    {
         $this->params = $this->loadFile($this->defaultFile);
         $this->params->global = $this->loadFile($this->globalFile);
 
@@ -167,7 +178,8 @@ class ConfigManager extends Manager {
      * Load the application configuration from file
      * @return boolean false if the configuration is empty afterwards
      */
-    private function load() {
+    private function load()
+    {
         $this->params = $this->loadFile($this->file);
         if (!empty($this->params)) {
             $this->params->global = $this->loadFile($this->globalFile);
@@ -177,7 +189,8 @@ class ConfigManager extends Manager {
         }
     }
 
-    private function loadCustom($fileName) {
+    private function loadCustom($fileName)
+    {
         $path = ROOT.'/data/config/'.$fileName.'.json';
         $this->customParams[$fileName] = $this->loadFile($path);
         if (!empty($this->customParams[$fileName])) {
@@ -192,7 +205,8 @@ class ConfigManager extends Manager {
      * @param  string $file file name
      * @return array        configuration parameters (or false if file not found)
      */
-    private function loadFile($file) {
+    private function loadFile($file)
+    {
         if (file_exists( $file )) {
             return json_decode(file_get_contents($file));
         } else {
@@ -205,7 +219,8 @@ class ConfigManager extends Manager {
      * Save the current configuration to file
      * @return boolean true if save was a success
      */
-    private function save() {
+    private function save()
+    {
         $params = clone $this->params;
         unset($params->global);
         return $this->saveFile($this->file, $params);
@@ -215,7 +230,8 @@ class ConfigManager extends Manager {
      * Save the current configuration to DEFAULT file
      * @return boolean true if save was a success
      */
-    private function saveDefault() {
+    private function saveDefault()
+    {
         $params = clone $this->params;
         unset($params->global);
         return $this->saveFile($this->defaultFile, $params);
@@ -225,7 +241,8 @@ class ConfigManager extends Manager {
      * Save the current GLOBAL configuration to GLOBAL file
      * @return boolean true if save was a success
      */
-    private function saveGlobal() {
+    private function saveGlobal()
+    {
         return $this->saveFile($this->globalFile, $this->params->global);
     }
 
@@ -235,7 +252,8 @@ class ConfigManager extends Manager {
      * @param  misc    $params params to put in the file (json encoded)
      * @return boolean        true if save was a success
      */
-    private function saveFile($file, $params) {
+    private function saveFile($file, $params)
+    {
         $fp = fopen( $file, 'w' );
         if ($fp) {
             fwrite($fp, json_encode($params));

@@ -4,7 +4,8 @@
  * Autoloads classes from library, controllers or models
  * @param  string $class class name (case insensitive)
  */
-function autoload($class) {
+function autoload($class)
+{
     $parts = explode('\\', $class);
     $className = strtolower(end($parts));
 

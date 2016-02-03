@@ -4,7 +4,8 @@ namespace Watamelo\Managers;
 /**
  * Manage PHP sessions and cookie based long term sessions
  */
-class SessionManager extends Manager  {
+class SessionManager extends Manager
+{
     protected $LTDir;
     protected $nbLTSession;
     protected $LTDuration;
@@ -19,7 +20,8 @@ class SessionManager extends Manager  {
      * @param string  $value    cookie value
      * @param integer $duration lifetime of the cookie (in seconds)
      */
-    public function setCookie($key, $value, $duration) {
+    public function setCookie($key, $value, $duration)
+    {
         setcookie(
             $key,
             $value,
@@ -34,7 +36,8 @@ class SessionManager extends Manager  {
     /**
      *
      */
-    public function unsetCookie($key) {
+    public function unsetCookie($key)
+    {
         $this->setCookie($key, '', time() - 86400);
     }
 
@@ -43,7 +46,8 @@ class SessionManager extends Manager  {
      * @param  string $key cookie name
      * @return misc        cookie value (a string) or false if cookie not found
      */
-    public function getCookie($key) {
+    public function getCookie($key)
+    {
         return isset($_COOKIE[$key])?$_COOKIE[$key]:false;
     }
 
@@ -56,7 +60,8 @@ class SessionManager extends Manager  {
      * @param string $key   key
      * @param misc   $value value
      */
-    public function setValue($key, $value) {
+    public function setValue($key, $value)
+    {
         $_SESSION[$key] = $value;
     }
 
@@ -65,7 +70,8 @@ class SessionManager extends Manager  {
      * @param  string $key key
      * @return misc        value
      */
-    public function getValue($key) {
+    public function getValue($key)
+    {
         return isset($_SESSION[$key])?$_SESSION[$key]:false;
     }
 
@@ -74,7 +80,8 @@ class SessionManager extends Manager  {
      * @param  string $key key
      * @return misc        value
      */
-    public function getAll() {
+    public function getAll()
+    {
         return isset($_SESSION)?$_SESSION:array();
     }
 
@@ -82,7 +89,8 @@ class SessionManager extends Manager  {
      * Remove a value from PHP session
      * @param  string $key key
      */
-    public function unsetValue($key) {
+    public function unsetValue($key)
+    {
         unset($_SESSION[$key]);
     }
 
@@ -91,7 +99,8 @@ class SessionManager extends Manager  {
      * @param  string $key key
      * @return misc        value
      */
-    public function retrieveValue($key) {
+    public function retrieveValue($key)
+    {
         $value = $this->getValue($key);
         $this->unsetValue($key);
         return $value;
@@ -106,7 +115,8 @@ class SessionManager extends Manager  {
      * @param string $key   key
      * @param misc   $value value
      */
-    public function setLTConfig($LTDir = 'tmp/sessions/', $nbLTSession = 200, $LTDuration = 2592000) {
+    public function setLTConfig($LTDir = 'tmp/sessions/', $nbLTSession = 200, $LTDuration = 2592000)
+    {
         if (!file_exists($LTDir)) {
             mkdir($LTDir, 0755, true);
         }
@@ -119,7 +129,8 @@ class SessionManager extends Manager  {
      * Set the long-term session
      * @param array $values possible values to save in session
      */
-    public function setLTSession($login, $sid, $value) {
+    public function setLTSession($login, $sid, $value)
+    {
         //create the session directory if needed
         if (!file_exists($this->LTDir)) { mkdir($this->LTDir, 0700, true); }
 
@@ -135,7 +146,8 @@ class SessionManager extends Manager  {
      * @return array         possible values stored in session or empty array
      *                       false if no session found
      */
-    public function getLTSession($login, $sid) {
+    public function getLTSession($login, $sid)
+    {
         $value = false;
         $file = $this->LTDir.$login.'_'.$sid.'.ses';
         if (file_exists($file)) {
@@ -158,7 +170,8 @@ class SessionManager extends Manager  {
      * @param  string $login login
      * @param  string $sid   session id
      */
-    public function unsetLTSession($login, $sid) {
+    public function unsetLTSession($login, $sid)
+    {
         $filePath = $this->LTDir.$login.'_'.$sid.'.ses';
         if (file_exists($filePath)) {
             unlink($filePath);
@@ -170,7 +183,8 @@ class SessionManager extends Manager  {
      * if no user is given, the current user's sessions are deleted
      * @param  string $userLogin only delete a specific user's sessions
      */
-    public function unsetLTSessions($login) {
+    public function unsetLTSessions($login)
+    {
         $files = glob( $this->LTDir.$login.'_*', GLOB_MARK );
         foreach ( $files as $file ) {
             unlink( $file );
@@ -180,7 +194,8 @@ class SessionManager extends Manager  {
     /**
      * Delete all expired or exceeding long-term sessions
      */
-    public function flushOldLTSessions() {
+    public function flushOldLTSessions()
+    {
         $dir = $this->LTDir;
 
         //list all the session files
