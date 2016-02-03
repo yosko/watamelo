@@ -1,6 +1,7 @@
 <?php
 namespace Watamelo\App;
 
+require_once(ROOT.'/app/ext/easydump.php');
 require_once(ROOT.'/app/ext/yoslogin.lib.php');
 
 /**
