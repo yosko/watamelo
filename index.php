@@ -22,5 +22,3 @@ require_once( ROOT.'/lib/autoload.php');
 //start the app
 $app = new \Watamelo\App\Watamelo('Wata');
 $app->run();
-
-?>
