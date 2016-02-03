@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\Controllers;
+
 /**
  * Controller for displaying general errors
  */

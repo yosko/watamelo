@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\App;
+
 /**
  * Allmighty powerfull and wonderfull routing class
  */
@@ -13,7 +15,7 @@ class Router extends ApplicationComponent {
         //load configuration file
         $this->file = ROOT.'/app/routes.xml';
         if (file_exists( $this->file )) {
-            $root = new DOMDocument('1.0', 'UTF-8');
+            $root = new \DOMDocument('1.0', 'UTF-8');
             $root->load( $this->file );
 
             //no need to validate every time if in production environment
@@ -159,7 +161,7 @@ class Router extends ApplicationComponent {
      * @return object                 controller
      */
     public function getController($controllerName) {
-        $classname = ucfirst($controllerName).'Controller';
+        $classname = '\\Watamelo\\Controllers\\'.ucfirst($controllerName).'Controller';
         $controller = new $classname($this->app());
         return $controller;
     }

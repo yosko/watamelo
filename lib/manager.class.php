@@ -1,15 +1,19 @@
 <?php
 
+use Watamelo\App;
+
+namespace Watamelo\Managers;
+
 /**
  * Abstract class
  * Base for all data managers
  */
-abstract class Manager extends ApplicationComponent {
+abstract class Manager extends \Watamelo\App\ApplicationComponent {
     protected $dao;
 
-    public function __construct(Application $app, $dao) {
+    public function __construct(\Watamelo\App\Application $app) {
         parent::__construct($app);
-        $this->dao = $dao;
+        $this->dao = $app->dao();
     }
 }
 

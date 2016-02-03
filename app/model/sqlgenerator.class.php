@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\Utils;
+
 /**
  * Generate sql queries
  */
@@ -101,7 +103,7 @@ class SqlGenerator {
      * @param  int    $type  type of parameter handled by PDO (such as PDO::PARAM_INT,  PDO::PARAM_STR, PDO::PARAM_NULL)
      * @return void
      */
-    public function setField($field, $value, $type = PDO::PARAM_STR) {
+    public function setField($field, $value, $type = \PDO::PARAM_STR) {
         $this->setFields[] = $field;
         $this->bindParam($field, $value, $type);
     }
@@ -204,11 +206,11 @@ class SqlGenerator {
      * @param  int    $type  type of parameter handled by PDO (such as PDO::PARAM_INT,  PDO::PARAM_STR, PDO::PARAM_NULL)
      * @return void
      */
-    public function bindParam($name, $value, $type = PDO::PARAM_STR) {
+    public function bindParam($name, $value, $type = \PDO::PARAM_STR) {
         $this->params[$name] = array(
             'bind' => 'param',
             'value' => $value,
-            'type' => is_null($value)?PDO::PARAM_NULL:$type
+            'type' => is_null($value)?\PDO::PARAM_NULL:$type
         );
     }
 
@@ -219,7 +221,7 @@ class SqlGenerator {
      * @return boolean              execution state
      * @throws LogicException If undefined type of statement
      */
-    public function execute($fetchMethod = 'fetchAll', $fetchParam = PDO::FETCH_OBJ) {
+    public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ) {
         if(empty($this->type)) {
             throw new LogicException('No query to execute');
         }
@@ -239,7 +241,7 @@ class SqlGenerator {
                 $result = $qry->$fetchMethod();
             else
                 $result = $qry->$fetchMethod($fetchParam);
-            //TODO check that fetchColumn can receive a PDO::FETCH_OBJ as parameter...
+            //TODO check that fetchColumn can receive a \PDO::FETCH_OBJ as parameter...
             // if($fetchColumn)
             //     $result = $qry->fetchColumn();
             // else
@@ -255,7 +257,7 @@ class SqlGenerator {
             foreach ($this->params as $name => $param) {
                 if(is_null($param['value'])) {
                     $sql = str_replace(':'.$name, 'NULL', $sql);
-                } elseif($param['type'] == PDO::PARAM_STR) {
+                } elseif($param['type'] == \PDO::PARAM_STR) {
                     $sql = str_replace(':'.$name, '"'.$param['value'].'"', $sql);
                 } else {
                     $sql = str_replace(':'.$name, $param['value'], $sql);

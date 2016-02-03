@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\App;
+
 /**
  * Database manager
  */
@@ -38,8 +40,8 @@ class DbFactory {
     public static function startSqliteConnexion($dbParam) {
         $db = false;
         try {
-            $db = new PDO('sqlite:'.DB_PATH.$dbParam->dbName);
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db = new \PDO('sqlite:'.DB_PATH.$dbParam->dbName);
+            $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
             echo $e->getMessage();
         }

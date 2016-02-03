@@ -1,20 +1,22 @@
 <?php
 
+namespace Watamelo\Managers;
+
 /**
  * Abstract manager to handle common tasks
  */
 class WatameloManager extends Manager  {
     protected $tables, $prefix;
 
-    public function __construct(Application $app, $dao) {
-        parent::__construct($app, $dao);
+    public function __construct(\Watamelo\App\Application $app) {
+        parent::__construct($app);
 
         $this->prefix = $this->app()->config()->get('db.prefix');
 
         $sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '".$this->prefix."%'";
         $qry = $this->dao->prepare( $sql );
         $qry->execute();
-        $result = $qry->fetchAll(PDO::FETCH_OBJ);
+        $result = $qry->fetchAll(\PDO::FETCH_OBJ);
 
         foreach ($result as $result) {
             $this->tables[substr($result->name, strlen($this->prefix))] = $result->name;
@@ -26,7 +28,7 @@ class WatameloManager extends Manager  {
      * @return SqlGenerator object
      */
     public function newSqlGenerator() {
-        return new SqlGenerator($this->app, $this->dao, $this->tables);
+        return new \Watamelo\Utils\SqlGenerator($this->app, $this->dao, $this->tables);
     }
 
     /**

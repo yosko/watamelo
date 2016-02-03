@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\Controllers;
+
 /**
  * Authentication handler
  */
@@ -7,7 +9,7 @@ class AuthController extends WatameloController {
     protected $currentUser;
     protected $logger;
 
-    public function __construct(Application $app) {
+    public function __construct(\Watamelo\App\Application $app) {
         parent::__construct($app);
 
         //get managers

@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\Managers;
+
 /**
  * Manage users data
  */
@@ -28,7 +30,7 @@ class UserManager extends WatameloManager  {
 
         foreach($filters as $field => $value) {
             if($field == 'level') {
-                $qry->where('ul.name = :level', 'level', $value, PDO::PARAM_INT);
+                $qry->where('ul.name = :level', 'level', $value, \PDO::PARAM_INT);
             }
         }
 
@@ -55,9 +57,9 @@ class UserManager extends WatameloManager  {
         $qry->select('user', 'u', array('u.*'));
 
         if($type == 'id') {
-            $qry->where('u.id = :id', 'level', $value, PDO::PARAM_INT);
+            $qry->where('u.id = :id', 'level', $value, \PDO::PARAM_INT);
         } elseif($type == 'login') {
-            $qry->where('LOWER(u.login) = LOWER(:login)', 'login', $value, PDO::PARAM_STR);
+            $qry->where('LOWER(u.login) = LOWER(:login)', 'login', $value, \PDO::PARAM_STR);
         } else {
             //don't return anything if $type is not valid
             $qry->where('0 = 1');
@@ -127,7 +129,7 @@ class UserManager extends WatameloManager  {
         $qry = $this->newSqlGenerator();
         $qry->update('user');
         $qry->setField('password', $hash);
-        $qry->where('id = :id', 'id', $id, PDO::PARAM_INT);
+        $qry->where('id = :id', 'id', $id, \PDO::PARAM_INT);
 
         try {
             return $user = $qry->execute();
@@ -146,7 +148,7 @@ class UserManager extends WatameloManager  {
         $qry = $this->newSqlGenerator();
         $qry->update('user');
         $qry->setField('email', $email);
-        $qry->where('id = :id', 'id', $id, PDO::PARAM_INT);
+        $qry->where('id = :id', 'id', $id, \PDO::PARAM_INT);
 
         try {
             return $user = $qry->execute();

@@ -1,5 +1,9 @@
 <?php
 
+namespace Watamelo\App;
+
+use Watamelo\Managers;
+
 define('WATAMELO_VERSION', '0.9');
 
 /**
@@ -60,8 +64,8 @@ abstract class Application {
         }
 
         if (!isset($this->managers[$module])) {
-            $manager = $module.'manager';
-            $this->managers[$module] = new $manager($this, $this->dao);
+            $manager = '\\Watamelo\\Managers\\'.$module.'manager';
+            $this->managers[$module] = new $manager($this);
         }
 
         return $this->managers[$module];
@@ -88,6 +92,14 @@ abstract class Application {
      */
     public function view() {
         return $this->view;
+    }
+
+    /**
+     * Returns the application data access object
+     * @return string name
+     */
+    public function dao() {
+        return $this->dao;
     }
 
     /**

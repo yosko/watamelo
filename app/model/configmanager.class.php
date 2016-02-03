@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\Managers;
+
 /**
  * Application configuration management
  * Is accessib
@@ -11,10 +13,10 @@ class ConfigManager extends Manager {
     protected $defaultFile = "";
     protected $file = "";
 
-    public function __construct(Application $app, $dao) {
-        parent::__construct($app, $dao);
+    public function __construct(\Watamelo\App\Application $app) {
+        parent::__construct($app);
 
-        $this->param = new StdClass();
+        $this->param = new \StdClass();
 
         $this->globalFile = ROOT.'/data/config/config.global.json';
         $this->defaultFile = ROOT.'/data/config/config.default.json';

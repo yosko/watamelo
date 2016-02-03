@@ -9,6 +9,8 @@
  * @link        https://github.com/yosko/watamelo
  */
 
+use Watamelo\App;
+
 define( 'DEVELOPMENT_ENVIRONMENT', true );
 define( 'APP_VERSION', '1.0' );
 define( 'ROOT', dirname(__FILE__) );
@@ -18,7 +20,7 @@ define( 'DB_PATH', ROOT.'/data/db/' );
 require_once( ROOT.'/app/watamelo.class.php');
 
 //start the app
-$app = new Watamelo('Wata');
+$app = new \Watamelo\App\Watamelo('Wata');
 $app->run();
 
 ?>

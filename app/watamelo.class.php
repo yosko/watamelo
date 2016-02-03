@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\App;
+
 require_once( ROOT.'/lib/autoload.php');
 require_once( ROOT.'/app/tools.class.php');
 require_once(ROOT.'/app/ext/yoslogin.lib.php');
@@ -61,7 +63,7 @@ class Watamelo extends Application {
      * @return StdClass parameters to connect to the database
      */
     public function setDbParams() {
-        $params = new StdClass;
+        $params = new \StdClass;
         $params->dbName = $this->configManager->get('sessName').'.db';
         return $params;
     }
@@ -113,7 +115,7 @@ class Watamelo extends Application {
         $this->view->setParam( "userLevels", $this->userLevels );
 
         //authenticate current user and get his/her/its informations
-        $this->authController = new AuthController($this);
+        $this->authController = new \Watamelo\Controllers\AuthController($this);
         $this->user = $this->authController->authenticateUser();
 
         //get controller corresponding to the user request

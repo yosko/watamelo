@@ -1,5 +1,7 @@
 <?php
 
+namespace Watamelo\Controllers;
+
 /**
  * Controller for displaying global pages
  */
@@ -9,7 +11,7 @@ class GeneralController extends WatameloController {
     //define specific behavior for some actions (here for action "executeAdmin")
     protected $actions;
 
-    public function __construct(Application $app) {
+    public function __construct(\Watamelo\App\Application $app) {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();
         $this->actions = array(
@@ -25,7 +27,7 @@ class GeneralController extends WatameloController {
      */
     public function executeIndex() {
         $userManager = $this->app()->getManagerOf('user');
-        
+
         $users = $userManager->getList();
 
         $this->app()->view()->setParam( "users", $users );
