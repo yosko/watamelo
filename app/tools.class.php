@@ -448,5 +448,3 @@ class Tools {
         return $value;
     }
 }
-
-?>

@@ -322,5 +322,3 @@ class View extends ApplicationComponent {
         return $this->renderView($name, false);
     }
 }
-
-?>

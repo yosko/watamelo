@@ -171,5 +171,3 @@ class UserManager extends WatameloManager  {
         return array();
     }
 }
-
-?>

@@ -156,5 +156,3 @@ abstract class Application {
         d($e->getMessage(), $e->getTrace());
     }
 }
-
-?>

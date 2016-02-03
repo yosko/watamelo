@@ -16,5 +16,3 @@ abstract class Manager extends \Watamelo\App\ApplicationComponent {
         $this->dao = $app->dao();
     }
 }
-
-?>

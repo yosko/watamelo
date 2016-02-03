@@ -398,5 +398,3 @@ class SqlGenerator {
     public function rollback() {            return $this->dao->rollback(); }
     public function lastInsertId() {        return $this->dao->lastInsertId(); }
 }
-
-?>

@@ -52,5 +52,3 @@ abstract class WatameloController extends Controller {
         return $secureNeeded;
     }
 }
-
-?>

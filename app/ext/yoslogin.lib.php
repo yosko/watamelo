@@ -781,5 +781,3 @@ class YosLoginTools {
         return substr($str, 0, $len);
     }
 }
-
-?>

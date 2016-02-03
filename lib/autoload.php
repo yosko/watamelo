@@ -21,5 +21,3 @@ function autoload($class) {
 
 //register the autoload function
 spl_autoload_register('autoload');
-
-?>

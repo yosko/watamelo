@@ -56,5 +56,3 @@ class WatameloManager extends Manager  {
         return $result;
     }
 }
-
-?>

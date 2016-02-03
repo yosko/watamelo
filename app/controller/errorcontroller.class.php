@@ -74,4 +74,3 @@ class ErrorController extends WatameloController {
 
     }
 }
-?>

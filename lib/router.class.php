@@ -166,5 +166,3 @@ class Router extends ApplicationComponent {
         return $controller;
     }
 }
-
-?>

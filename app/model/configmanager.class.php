@@ -245,5 +245,3 @@ class ConfigManager extends Manager {
         return $fp !== false;
     }
 }
-
-?>

@@ -68,5 +68,3 @@ abstract class Controller extends \Watamelo\App\ApplicationComponent {
      */
     public function executeIndex() {}
 }
-
-?>

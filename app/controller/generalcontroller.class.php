@@ -126,5 +126,3 @@ class GeneralController extends WatameloController {
         $this->app()->view()->renderFeed( $data, $type );
     }
 }
-
-?>

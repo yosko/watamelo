@@ -198,5 +198,3 @@ class Watamelo extends Application {
         return $this->userLevels;
     }
 }
-
-?>

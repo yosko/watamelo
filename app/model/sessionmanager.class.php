@@ -210,5 +210,3 @@ class SessionManager extends Manager  {
         }
     }
 }
-
-?>

@@ -174,5 +174,3 @@ class AuthController extends WatameloController {
         $this->app()->view()->renderData($data, RESPONSE_JSON);
     }
 }
-
-?>
