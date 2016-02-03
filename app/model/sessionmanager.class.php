@@ -4,7 +4,7 @@ namespace Watamelo\Managers;
 /**
  * Manage PHP sessions and cookie based long term sessions
  */
-class SessionManager extends Manager
+class SessionManager extends \Watamelo\Lib\Manager
 {
     protected $LTDir;
     protected $nbLTSession;

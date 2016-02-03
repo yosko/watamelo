@@ -4,11 +4,11 @@ namespace Watamelo\Managers;
 /**
  * Abstract manager to handle common tasks
  */
-class WatameloManager extends Manager
+class WatameloManager extends \Watamelo\Lib\Manager
 {
     protected $tables, $prefix;
 
-    public function __construct(\Watamelo\App\Application $app)
+    public function __construct(\Watamelo\Lib\Application $app)
     {
         parent::__construct($app);
 

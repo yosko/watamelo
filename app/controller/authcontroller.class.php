@@ -9,7 +9,7 @@ class AuthController extends WatameloController
     protected $currentUser;
     protected $logger;
 
-    public function __construct(\Watamelo\App\Application $app)
+    public function __construct(\Watamelo\Lib\Application $app)
     {
         parent::__construct($app);
 

@@ -11,7 +11,7 @@ class GeneralController extends WatameloController
     //define specific behavior for some actions (here for action "executeAdmin")
     protected $actions;
 
-    public function __construct(\Watamelo\App\Application $app)
+    public function __construct(\Watamelo\Lib\Application $app)
     {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();

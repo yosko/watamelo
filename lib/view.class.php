@@ -1,5 +1,5 @@
 <?php
-namespace Watamelo\App;
+namespace Watamelo\Lib;
 
 define( 'RESPONSE_CSV', 'csv' );
 define( 'RESPONSE_RSS', 'rss' );

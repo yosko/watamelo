@@ -1,5 +1,5 @@
 <?php
-namespace Watamelo\App;
+namespace Watamelo\Lib;
 
 /**
  * Allmighty powerfull and wonderfull routing class

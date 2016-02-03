@@ -5,7 +5,7 @@ namespace Watamelo\Controllers;
  * Proxy controller between the Controller class and your end controllers to define app specific settings
  * This is just part of the example but might be useful in any app using authentication
  */
-abstract class WatameloController extends Controller
+abstract class WatameloController extends \Watamelo\Lib\Controller
 {
     protected $currentUser;
     protected $userLevels;
@@ -17,7 +17,7 @@ abstract class WatameloController extends Controller
     //     )
     // );
 
-    public function __construct(\Watamelo\App\Application $app)
+    public function __construct(\Watamelo\Lib\Application $app)
     {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();

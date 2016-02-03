@@ -5,7 +5,7 @@
     <link href="<?php echo $feed['self']; ?>" rel="self" />
     <link href="<?php echo $feed['link']; ?>" />
     <id><?php echo $feed['self']; ?></id><?php
-    if (isset($feed['self'])) { ?>
+    if (isset($feed['updated'])) { ?>
 
     <updated><?php echo $feed['updated']; ?></updated><?php
     } //if

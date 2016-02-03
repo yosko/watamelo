@@ -1,5 +1,5 @@
 <?php
-namespace Watamelo\App;
+namespace Watamelo\Lib;
 
 /**
  * Database manager

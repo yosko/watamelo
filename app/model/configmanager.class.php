@@ -5,7 +5,7 @@ namespace Watamelo\Managers;
  * Application configuration management
  * Is accessib
  */
-class ConfigManager extends Manager
+class ConfigManager extends \Watamelo\Lib\Manager
 {
     protected $params;
     protected $customParams;
@@ -13,7 +13,7 @@ class ConfigManager extends Manager
     protected $defaultFile = "";
     protected $file = "";
 
-    public function __construct(\Watamelo\App\Application $app)
+    public function __construct(\Watamelo\Lib\Application $app)
     {
         parent::__construct($app);
 

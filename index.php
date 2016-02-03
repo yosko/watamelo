@@ -16,8 +16,8 @@ define( 'APP_VERSION', '1.0' );
 define( 'ROOT', dirname(__FILE__) );
 define( 'DB_PATH', ROOT.'/data/db/' );
 
-//include the app class
-require_once( ROOT.'/app/watamelo.class.php');
+//include autoloader
+require_once( ROOT.'/lib/autoload.php');
 
 //start the app
 $app = new \Watamelo\App\Watamelo('Wata');

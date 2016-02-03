@@ -1,11 +1,11 @@
 <?php
-namespace Watamelo\Controllers;
+namespace Watamelo\Lib;
 
 /**
  * Abstract class
  * Base for all controllers
  */
-abstract class Controller extends \Watamelo\App\ApplicationComponent
+abstract class Controller extends \Watamelo\Lib\ApplicationComponent
 {
     protected $action = '';
     protected $parameters = array();

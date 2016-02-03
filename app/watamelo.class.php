@@ -1,14 +1,12 @@
 <?php
 namespace Watamelo\App;
 
-require_once( ROOT.'/lib/autoload.php');
-require_once( ROOT.'/app/tools.class.php');
 require_once(ROOT.'/app/ext/yoslogin.lib.php');
 
 /**
  * The application itself, called from the index.php and does everything else
  */
-class Watamelo extends Application
+class Watamelo extends \Watamelo\Lib\Application
 {
     protected $configManager;
     protected $authController;
@@ -39,7 +37,7 @@ class Watamelo extends Application
 
         $this->dbms = $this->setDbms();
         $this->dbParams = $this->setDbParams();
-        $this->dao = DbFactory::getConnexion($this->dbms, $this->dbParams);
+        $this->dao = \Watamelo\Lib\DbFactory::getConnexion($this->dbms, $this->dbParams);
     }
 
     /**
@@ -88,7 +86,7 @@ class Watamelo extends Application
     {
 
         //prepare router
-        $router = new Router($this);
+        $router = new \Watamelo\Lib\Router($this);
         $controllerName = "";
         $actionName = "";
         $parameters = array();
@@ -162,7 +160,7 @@ class Watamelo extends Application
      */
     public function returnError($error="")
     {
-        $router = new Router($this);
+        $router = new \Watamelo\Lib\Router($this);
 
         $controllerName = "error";
         $actionName = $error;
