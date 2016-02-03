@@ -1,7 +1,4 @@
 <?php
-
-use Watamelo\App;
-
 namespace Watamelo\Managers;
 
 /**

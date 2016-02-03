@@ -1,8 +1,5 @@
 <?php
-
 namespace Watamelo\App;
-
-use Watamelo\Managers;
 
 define('WATAMELO_VERSION', '0.9');
 

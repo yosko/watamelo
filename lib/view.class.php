@@ -1,5 +1,4 @@
 <?php
-
 namespace Watamelo\App;
 
 define( 'RESPONSE_CSV', 'csv' );

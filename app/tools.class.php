@@ -1,5 +1,4 @@
 <?php
-
 namespace Watamelo\Utils;
 
 require_once( ROOT.'/lib/autoload.php');
