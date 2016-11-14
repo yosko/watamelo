@@ -148,7 +148,23 @@ If you have any question or suggestion, please feel free to contact me or post a
 
 ## Version History
 
-- v0.8 (2015-06-30)
+- v0.11 (2016-11-14)
+  - fixed cookie path errors
+  - minor rewrite and new useful functions in example classes
+  - fixed shorthand function ```executeTransaction``` to avoid transaction conflicts
+  - fixed missing explicit namespaces
+  - fixed syntax error in ```lib/application.class.php```
+- v0.10 (2016-02-04)
+  - introduction of namespace (now used everywhere)
+  - minor tweaks to .gitignore
+  - proper HTTPS handling in generated URLs
+  - auto create long-term sessions directory
+  - new $currentUrl parameters available to views
+  - fixed content-type headers for atom/rss
+  - exceptions and errors handling and logging
+  - lots of tweaking to comply to PSR-2
+  - edited autoloader to handle potential plugin classes
+- v0.8/0.9 (2015-06-30)
   - added rewrite rule to block access to ```lib/``` directory
   - added the ability to use template files stored outside of the ```tpl/``` directory
   - expanded ConfigManager to handle custom json config files
