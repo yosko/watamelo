@@ -59,7 +59,7 @@ class View extends ApplicationComponent
         $this->setParam( "templateUrl", $this->templateUrl );
         $this->setParam( "rootUrl", $this->rootUrl );
         $this->setParam( "baseUrl", $this->baseUrl );
-        $this->setParam( 'templateUrl', $this->templateUrl );
+        $this->setParam( 'currentUrl', $this->currentUrl );
     }
 
     /**
@@ -163,7 +163,7 @@ class View extends ApplicationComponent
 
         //file should always exists for direct results
         } elseif ($directResult) {
-            throw new Exception(sprintf('Template not found: "%s"', $name));
+            throw new \Exception(sprintf('Template not found: "%s"', $name));
 
         //return empty if file not found
         } else {

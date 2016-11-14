@@ -62,7 +62,7 @@ class Watamelo extends \Watamelo\Lib\Application
 
     /**
      * Return the Database Parameters (connection string)
-     * @return StdClass parameters to connect to the database
+     * @return \StdClass parameters to connect to the database
      */
     public function setDbParams()
     {
@@ -73,7 +73,7 @@ class Watamelo extends \Watamelo\Lib\Application
 
     /**
      * Gives the DB parameters
-     * @return StdClass dbParams
+     * @return \StdClass dbParams
      */
     public function dbParams()
     {

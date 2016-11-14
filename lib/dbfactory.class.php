@@ -58,8 +58,8 @@ class DbFactory
      */
     public static function startMysqlConnexion($dbParam)
     {
-        $db = new PDO('mysql:host=localhost;dbname='.$dbParam->dbName, 'root', '');
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db = new \PDO('mysql:host=localhost;dbname='.$dbParam->dbName, 'root', '');
+        $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $db;
     }

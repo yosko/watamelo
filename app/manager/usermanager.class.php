@@ -126,6 +126,63 @@ class UserManager extends WatameloManager
     }
 
     /**
+     * Add/Update a user's information
+     * On update: doesn't update the password (separate method)
+     * @param  object  $values user info
+     * @return misc            user id on success, false on error
+     */
+    public function set($values)
+    {
+        $isUpdate = false;
+
+        /**
+         * PREPARE STATEMENTS
+         */
+
+        if (isset($values->id) && $values->id !== false && \Watamelo\Utils\Tools::isInt($values->id)) {
+            $isUpdate = true;
+
+            $qry = $this->dao->prepare(
+                'UPDATE '.$this->tables['user']
+                .' SET level = :level, login = :login, name = :name, email = :email'
+                .' WHERE id = :id'
+            );
+            $qry->bindParam(':id', $values->id, \PDO::PARAM_INT);
+        } else {
+            $qry = $this->dao->prepare(
+                'INSERT INTO '.$this->tables['user']
+                .' (level, login, name, email, password)'
+                .' VALUES (:level, :login, :name, :email, :password)'
+            );
+            $qry->bindParam(':password', $values->hash, \PDO::PARAM_STR);
+        }
+        $qry->bindParam(':level', $values->level, \PDO::PARAM_INT);
+        $qry->bindParam(':login', $values->login, \PDO::PARAM_STR);
+        $qry->bindParam(':name', $values->name, \PDO::PARAM_STR);
+        $qry->bindParam(':email', $values->email, \PDO::PARAM_STR);
+
+        /**
+         * EXECUTE
+         */
+
+        $this->dao->beginTransaction();
+        try {
+            $qry->execute();
+            if(!$isUpdate) {
+                $values->id = $this->dao->lastInsertId();
+            }
+
+            $this->dao->commit();
+
+        } catch (PDOException $e) {
+            $this->dao->rollback();
+            return false;
+        }
+
+        return $values->id;
+    }
+
+    /**
      * Update a user's password
      * @param integer  $id   user's id
      * @param string   $hash hash of user's password
@@ -173,6 +230,57 @@ class UserManager extends WatameloManager
     public function delete($id)
     {
         //TODO
+    }
+
+    /**
+     * Add a role to an existing user
+     * @param integer  $userId User
+     * @param string   $name   Type of role
+     * @param string   $value  Optional value related to the type
+     * @return boolean         true on success
+     */
+    public function addRole($userId, $name, $value)
+    {
+        try {
+            $qry = $this->dao->prepare(
+                "INSERT INTO ".$this->tables['user_role'].' (userId_FK, name, value)'
+                .' VALUES (:userId, :name, :value)');
+            $qry->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $qry->bindParam(':name', $name, \PDO::PARAM_STR);
+            $qry->bindParam(':value', $value, \PDO::PARAM_STR);
+            return $qry->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Remove a role from a user
+     * @param integer  $userId User
+     * @param string   $name   Type of role
+     * @param string   $value  Optional value related to the type
+     * @return boolean         true on success
+     */
+    public function removeRole($userId, $name, $value = null)
+    {
+        try {
+
+            $sql = 'DELETE FROM '.$this->tables['user_role']
+                .' WHERE userId_FK = :userId AND name = :name';
+            if(!is_null($value)) {
+                $sql .= ' AND value = :value';
+            }
+
+            $qry = $this->dao->prepare( $sql );
+            $qry->bindParam(':userId', $userId, \PDO::PARAM_INT);
+            $qry->bindParam(':name', $name, \PDO::PARAM_STR);
+            if(!is_null($value)) {
+                $qry->bindParam(':value', $value, \PDO::PARAM_STR);
+            }
+            return $qry->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     public function getOrphans()

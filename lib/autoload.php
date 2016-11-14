@@ -18,6 +18,8 @@ spl_autoload_register(function ($class) {
 		} elseif($subNamespace == 'Controllers') {
 			$file = ROOT.'/app/controller/'.$className.'.class.php';
 		} elseif($subNamespace == 'Managers') {
+			$file = ROOT.'/app/manager/'.$className.'.class.php';
+		} elseif($subNamespace == 'Data') {
 			$file = ROOT.'/app/model/'.$className.'.class.php';
 		} elseif($subNamespace == 'Utils') {
 			$file = ROOT.'/app/utils/'.$className.'.class.php';

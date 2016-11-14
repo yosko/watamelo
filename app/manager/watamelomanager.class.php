@@ -39,7 +39,9 @@ class WatameloManager extends \Watamelo\Lib\Manager
      */
     public function executeTransaction($sql, $returnLastInsertId = false)
     {
-        $sql->beginTransaction();
+        $alreadyInTransaction = $sql->inTransaction();
+        if (!$alreadyInTransaction)
+            $sql->beginTransaction();
         try {
             $result = $sql->execute();
             if ($returnLastInsertId) {
@@ -48,14 +50,28 @@ class WatameloManager extends \Watamelo\Lib\Manager
                 $result = true;
             }
 
-            $sql->commit();
+            if (!$alreadyInTransaction)
+                $sql->commit();
 
         } catch (PDOException $e) {
-            $sql->rollback();
+            if (!$alreadyInTransaction)
+                $sql->rollback();
             $this->app()->logException($e);
             return false;
         }
 
+        return $result;
+    }
+
+    public function convertKeysToIds($rows)
+    {
+        $result = array();
+        foreach ($rows as $row) {
+            if (is_object($row))
+                $result[$row->id] = $row;
+            else
+                $result[$row['id']] = $row;
+        }
         return $result;
     }
 }

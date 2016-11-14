@@ -6,6 +6,11 @@ namespace Watamelo\Utils;
  */
 class SqlGenerator
 {
+	const TYPE_SELECT = 'select';
+	const TYPE_INSERT = 'insert';
+	const TYPE_UPDATE = 'update';
+	const TYPE_DELETE = 'delete';
+
     protected
         $app,
         $dao,
@@ -15,6 +20,7 @@ class SqlGenerator
         $alias,         //table alias
         $selectFields,  //(array) fields to select
         $selectDistinct,
+        $selectUnions,  //(array) other SqlGenerator select object to make a UNION SELECT query
         $insert,
         $update,
         $setFields,     //(array) fields to insert or update
@@ -50,6 +56,10 @@ class SqlGenerator
         $this->having = array();
     }
 
+    public function type() {
+        return $this->type;
+    }
+
     /**
      * Initialize a select statement
      * @param  string $table   name of main table to select
@@ -60,7 +70,7 @@ class SqlGenerator
      */
     public function select($table, $alias, $fields, $distinct = false)
     {
-        $this->type = 'select';
+        $this->type = self::TYPE_SELECT;
         $this->table = $table;
         $this->alias = $alias;
         $this->selectDistinct = $distinct;
@@ -83,9 +93,19 @@ class SqlGenerator
         $this->selectFields = array_merge($this->selectFields, $fields);
     }
 
+    /**
+     * Add another query in the form of a UNION SELECT (can be done multiple times)
+     * @param SqlGenerator $qry query to selection in union with the current one
+     * @return void
+     */
+    public function unionSelect(SqlGenerator $qry)
+    {
+        $this->selectUnions[] = $qry;
+    }
+
     public function insert($table, $params = array())
     {
-        $this->type = 'insert';
+        $this->type = self::TYPE_INSERT;
         $this->table = $table;
         //TODO
     }
@@ -97,7 +117,7 @@ class SqlGenerator
      */
     public function update($table)
     {
-        $this->type = 'update';
+        $this->type = self::TYPE_UPDATE;
         $this->table = $table;
     }
 
@@ -105,7 +125,7 @@ class SqlGenerator
      * on an insert/update statement: set the given field with the given value
      * @param  string $field field name
      * @param  misc   $value value to assign
-     * @param  int    $type  type of parameter handled by PDO (such as PDO::PARAM_INT,  PDO::PARAM_STR, PDO::PARAM_NULL)
+     * @param  int    $type  type of parameter handled by PDO (such as \PDO::PARAM_INT,  \PDO::PARAM_STR, \PDO::PARAM_NULL)
      * @return void
      */
     public function setField($field, $value, $type = \PDO::PARAM_STR)
@@ -117,7 +137,7 @@ class SqlGenerator
 
     public function delete($table)
     {
-        $this->type = 'delete';
+        $this->type = self::TYPE_DELETE;
         $this->table = $table;
         //TODO
     }
@@ -223,7 +243,7 @@ class SqlGenerator
      * Will be assigned via the PDO bindParam method during the execute()
      * @param  string $name  name of the value (a ':' will be appended) like the one used in any clause (such as where)
      * @param  misc   $value value to use in query
-     * @param  int    $type  type of parameter handled by PDO (such as PDO::PARAM_INT,  PDO::PARAM_STR, PDO::PARAM_NULL)
+     * @param  int    $type  type of parameter handled by PDO (such as \PDO::PARAM_INT,  \PDO::PARAM_STR, \PDO::PARAM_NULL)
      * @return void
      */
     public function bindParam($name, $value, $type = \PDO::PARAM_STR)
@@ -238,11 +258,12 @@ class SqlGenerator
     /**
      * Build and execute the query
      * @param  boolean $fetchMethod choice between fetch, fetchAll and fetchColumn
-     * @param  int     $fetchParam  PDO fetch constant
+     * @param  int     $fetchParam  PDO fetch
+     * @param  string  $className   class to use when $fetchParam is \PDO::FETCH_CLASS
      * @return boolean              execution state
      * @throws LogicException If undefined type of statement
      */
-    public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ)
+    public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ, $className = null)
     {
         if (empty($this->type)) {
             throw new LogicException('No query to execute');
@@ -258,11 +279,14 @@ class SqlGenerator
 
         $result = $qry->execute();
 
-        if ($this->type == 'select') {
-            if ($fetchMethod == 'fetchColumn')
+        if ($this->type == self::TYPE_SELECT) {
+            if ($fetchMethod == 'fetchColumn') {
                 $result = $qry->$fetchMethod();
-            else
+            } elseif ($fetchParam == \PDO::FETCH_CLASS && !empty($className)) {
+                    $result = $qry->$fetchMethod($fetchParam, $className);
+            } else {
                 $result = $qry->$fetchMethod($fetchParam);
+            }
             //TODO check that fetchColumn can receive a \PDO::FETCH_OBJ as parameter...
             // if ($fetchColumn)
             //     $result = $qry->fetchColumn();
@@ -297,12 +321,12 @@ class SqlGenerator
 
     protected function buildQuery()
     {
-        if ($this->type == 'select') {
+        if ($this->type == self::TYPE_SELECT) {
             $sql = 'SELECT ';
             if ($this->selectDistinct)
                 $sql .= 'DISTINCT ';
             foreach ($this->selectFields as $alias => $field) {
-                if (Tools::isInt($alias)) {
+                if (\Watamelo\Utils\Tools::isInt($alias)) {
                     $sql .= $field.', ';
                 } else {
                     $sql .= $field.' as '.$alias.', ';
@@ -321,25 +345,25 @@ class SqlGenerator
 
             if (!empty($this->alias))
                 $sql .= ' '.$this->alias;
-        } elseif ($this->type == 'insert') {
+        } elseif ($this->type == self::TYPE_INSERT) {
             $sql = 'INSERT INTO '.$this->tables[$this->table]."\n(".implode(', ', $this->setFields).")\nVALUES (";
             foreach ($this->setFields as $field) {
                 $sql .= ':'.$field.', ';
             }
             $sql = rtrim($sql, ', ');
             $sql .= ')';
-        } elseif ($this->type == 'update') {
+        } elseif ($this->type == self::TYPE_UPDATE) {
             $sql = 'UPDATE '.$this->tables[$this->table]."\nSET ";
             foreach ($this->setFields as $field) {
                 $sql .= $field.' = :'.$field.', ';
             }
             $sql = rtrim($sql, ', ');
-        } elseif ($this->type == 'delete') {
-            //TODO
+        } elseif ($this->type == self::TYPE_DELETE) {
+            $sql = 'DELETE FROM '.$this->tables[$this->table];
         }
 
         //joins
-        if (!empty($this->joins) && in_array($this->type, array('select')) ) {
+        if (!empty($this->joins) && in_array($this->type, array(self::TYPE_SELECT)) ) {
             foreach ($this->joins as $join) {
                 $sql .= "\n";
                 if (!empty($join['type']))
@@ -360,17 +384,17 @@ class SqlGenerator
         }
 
         //where clauses
-        if (!empty($this->where) && in_array($this->type, array('select', 'update', 'delete'))) {
+        if (!empty($this->where) && in_array($this->type, array(self::TYPE_SELECT, self::TYPE_UPDATE, self::TYPE_DELETE))) {
             $sql .= "\nWHERE ".implode(' AND ', $this->where);
         }
 
         //group by
-        if (!empty($this->groupBy) && $this->type == 'select') {
+        if (!empty($this->groupBy) && $this->type == self::TYPE_SELECT) {
             $sql .= "\nGROUP BY ".implode(', ', $this->groupBy);
         }
 
         //order by
-        if (!empty($this->orderBy) && $this->type == 'select') {
+        if (!empty($this->orderBy) && $this->type == self::TYPE_SELECT) {
             $sql .= "\nORDER BY ";
             foreach ($this->orderBy as $value) {
                 $sql .= $value['sort'].' '.$value['order'].', ';
@@ -379,18 +403,29 @@ class SqlGenerator
         }
 
         //having
-        if (!empty($this->having) && $this->type == 'select') {
+        if (!empty($this->having) && $this->type == self::TYPE_SELECT) {
             //TODO
         }
 
         //limit
-        if ((!empty($this->limitQuantity) || !empty($this->limitOffset)) && $this->type == 'select') {
+        if ((!empty($this->limitQuantity) || !empty($this->limitOffset)) && $this->type == self::TYPE_SELECT) {
             if ($this->limitQuantity > 0) {
                 $sql .= "\nLIMIT ";
                 if ($this->limitOffset > 0) {
                     $sql .= $this->limitOffset.', '.$this->limitQuantity;
                 } else {
                     $sql .= $this->limitQuantity;
+                }
+            }
+        }
+
+        //union
+        if (!empty($this->selectUnions)) {
+            foreach ($this->selectUnions as $unionQry) {
+                if($unionQry->type() == self::TYPE_SELECT) {
+                    $sql .= "\nUNION ".$unionQry->toString(false);
+                } else {
+                    throw new LogicException('Union must all be select queries.');
                 }
             }
         }
@@ -405,7 +440,7 @@ class SqlGenerator
     public function executeFile($filePath)
     {
         if (!file_exists($filePath)) {
-            throw new Exception('SQL file not found');
+            throw new RuntimeException('SQL file not found');
         }
 
         $sql = file_get_contents($filePath);
@@ -419,6 +454,10 @@ class SqlGenerator
     /**
      * Call to PDO methods
      */
+    public function inTransaction()
+    {
+        return $this->dao->inTransaction();
+    }
     public function beginTransaction()
     {
         return $this->dao->beginTransaction();

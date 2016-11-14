@@ -1,7 +1,7 @@
 <?php
 namespace Watamelo\Lib;
 
-define('WATAMELO_VERSION', '0.10';)
+define('WATAMELO_VERSION', '0.10');
 
 /**
  * Abstract class
@@ -60,7 +60,7 @@ abstract class Application
     public function getManagerOf($module)
     {
         if (!is_string($module) || empty($module)) {
-            throw new InvalidArgumentException('Invalid module');
+            throw new \InvalidArgumentException('Invalid module');
         }
 
         if (!isset($this->managers[$module])) {

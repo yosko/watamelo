@@ -22,11 +22,14 @@ class SessionManager extends \Watamelo\Lib\Manager
      */
     public function setCookie($key, $value, $duration)
     {
+        $dirname = dirname($_SERVER['SCRIPT_NAME']);
+        if(substr($dirname, -1) != '/')
+            $dirname .= '/';
         setcookie(
             $key,
             $value,
             time()+$duration,
-            dirname($_SERVER['SCRIPT_NAME']).'/',
+            $dirname,
             '',
             false,
             true
@@ -170,9 +173,11 @@ class SessionManager extends \Watamelo\Lib\Manager
      * @param  string $login login
      * @param  string $sid   session id
      */
-    public function unsetLTSession($login, $sid)
-    {
-        $filePath = $this->LTDir.$login.'_'.$sid.'.ses';
+    public function unsetLTSession($login, $sid = false) {
+        if($sid !== false) {
+            $login .= '_'.$sid;
+        }
+        $filePath = $this->LTDir.$login.'.ses';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
