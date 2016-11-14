@@ -1,7 +1,7 @@
 <?php
 namespace Watamelo\Lib;
 
-define('WATAMELO_VERSION', '0.10');
+define('WATAMELO_VERSION', '0.11');
 
 /**
  * Abstract class
