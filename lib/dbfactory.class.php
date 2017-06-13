@@ -44,7 +44,7 @@ class DbFactory
         try {
             $db = new \PDO('sqlite:'.DB_PATH.$dbParam->dbName);
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             echo $e->getMessage();
         }
 

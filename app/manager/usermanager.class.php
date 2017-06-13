@@ -75,7 +75,7 @@ class UserManager extends WatameloManager
             }
 
             return($user);
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return false;
         }
     }
@@ -120,7 +120,7 @@ class UserManager extends WatameloManager
 
         try {
             return $user = $qry->execute('fetchAll');
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return array();
         }
     }
@@ -174,7 +174,7 @@ class UserManager extends WatameloManager
 
             $this->dao->commit();
 
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             $this->dao->rollback();
             return false;
         }
@@ -197,7 +197,7 @@ class UserManager extends WatameloManager
 
         try {
             return $user = $qry->execute();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return false;
         }
     }
@@ -217,7 +217,7 @@ class UserManager extends WatameloManager
 
         try {
             return $user = $qry->execute();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return false;
         }
     }
@@ -249,7 +249,7 @@ class UserManager extends WatameloManager
             $qry->bindParam(':name', $name, \PDO::PARAM_STR);
             $qry->bindParam(':value', $value, \PDO::PARAM_STR);
             return $qry->execute();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return false;
         }
     }
@@ -278,7 +278,7 @@ class UserManager extends WatameloManager
                 $qry->bindParam(':value', $value, \PDO::PARAM_STR);
             }
             return $qry->execute();
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return false;
         }
     }

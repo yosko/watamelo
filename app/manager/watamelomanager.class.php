@@ -53,7 +53,7 @@ class WatameloManager extends \Watamelo\Lib\Manager
             if (!$alreadyInTransaction)
                 $sql->commit();
 
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             if (!$alreadyInTransaction)
                 $sql->rollback();
             $this->app()->logException($e);
