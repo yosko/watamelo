@@ -33,7 +33,7 @@ abstract class Application
         $today = date('Y-m-d');
         $errorFileYesterday = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -1 day' )).'.log';
         $errorFileAWeekAgo = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -8 day' )).'.log';
-        if (file_exists($errorFile) && !file_exists($errorFileYesterday)) {
+        if (file_exists($errorFile) && !file_exists($errorFileYesterday) && file_exists($errorFile) && filesize($errorFile) > 0) {
             rename(
                 $errorFile,
                 $errorFileYesterday

@@ -14,8 +14,8 @@ class AuthController extends \Watamelo\Controllers\WatameloController
         parent::__construct($app);
 
         //get managers
-        $userManager = $this->app()->manager('user');
-        $sessionManager = $this->app()->manager('session');
+        $userManager = $this->app()->manager('User');
+        $sessionManager = $this->app()->manager('Session');
         $sessionName = $this->app()->config()->get('sessName');
         $redirectUrl = isset($_POST['password'])?$_SERVER['REQUEST_URI']:$this->app()->view()->rootUrl();
 

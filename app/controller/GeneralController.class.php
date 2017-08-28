@@ -28,7 +28,7 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
      */
     public function executeIndex()
     {
-        $userManager = $this->app()->manager('user');
+        $userManager = $this->app()->manager('User');
 
         $users = $userManager->getList();
 
