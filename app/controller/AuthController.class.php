@@ -4,7 +4,7 @@ namespace Watamelo\Controllers;
 /**
  * Authentication handler
  */
-class AuthController extends WatameloController
+class AuthController extends \Watamelo\Controllers\WatameloController
 {
     protected $currentUser;
     protected $logger;
@@ -14,8 +14,8 @@ class AuthController extends WatameloController
         parent::__construct($app);
 
         //get managers
-        $userManager = $this->app()->getManagerOf('user');
-        $sessionManager = $this->app()->getManagerOf('session');
+        $userManager = $this->app()->manager('user');
+        $sessionManager = $this->app()->manager('session');
         $sessionName = $this->app()->config()->get('sessName');
         $redirectUrl = isset($_POST['password'])?$_SERVER['REQUEST_URI']:$this->app()->view()->rootUrl();
 
@@ -49,10 +49,10 @@ class AuthController extends WatameloController
 
         $this->actions = array(
             "secure" => array(
-                "level" => $this->userLevels['user']
+                "level" => isset($this->userLevels['user'])?$this->userLevels['user']:1
             ),
             "unsecure" => array(
-                "level" => $this->userLevels['admin']
+                "level" => isset($this->userLevels['admin'])?$this->userLevels['admin']:10
             ),
             "jsonAuthError" => array(
                 "responseType" => RESPONSE_JSON

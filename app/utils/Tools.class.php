@@ -14,6 +14,7 @@ require_once( ROOT.'/app/ext/easydump.php');
  */
 class Tools
 {
+    const DUMP_PATH = 'tmp/logs/dump.html';
     const PAGINATION_CURRENT = "current";
     const PAGINATION_LINK = "link";
     const PAGINATION_FIRST = "first";
@@ -83,7 +84,7 @@ class Tools
      */
     public static function validateDate($date, $format = 'Y-m-d H:i:s')
     {
-        $d = DateTime::createFromFormat($format, $date);
+        $d = \DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
     }
 
@@ -218,7 +219,7 @@ class Tools
      */
     public static function htmlspecialchars($value)
     {
-        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /**
@@ -257,7 +258,7 @@ class Tools
     /**
      * Format a date string coming from sqlite
      * @param  string  $date          sqlite date (yyyy-mm-dd hh:ii:ss)
-     * @param  string  $format        see format definition for date() or DateTime::createFromFormat() functions
+     * @param  string  $format        see format definition for date() or \DateTime::createFromFormat() functions
      *                                http://www.php.net/manual/en/function.date.php
      * @param  boolean $useMonthNames if true, month number will be replaced by its name
      * @return string                 formatted date
@@ -265,7 +266,7 @@ class Tools
     public static function formatSqliteDate($date, $format = "d/m/Y", $useMonthNames = false)
     {
         if (!$useMonthNames) {
-            $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+            $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
             $result = $dateTime->format($format);
 
             return $result;
@@ -284,7 +285,7 @@ class Tools
             );
             $replacements = array(
                 $values[0],
-                Tools::getMonthName($values[1]),
+                \Watamelo\Utils\Tools::getMonthName($values[1]),
                 $values[2],
                 $values[3],
                 $values[4],
@@ -349,7 +350,7 @@ class Tools
      */
     public static function simplify($numerator, $denominator)
     {
-        $g = Tools::gcd($numerator, $denominator);
+        $g = \Watamelo\Utils\Tools::gcd($numerator, $denominator);
         return array('numerator' => $numerator/$g, 'denominator' => $denominator/$g);
     }
 

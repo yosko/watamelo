@@ -99,6 +99,15 @@ class View extends ApplicationComponent
     }
 
     /**
+     * Returns the template path
+     * @return string template path
+     */
+    public function templatePath()
+    {
+        return $this->templatePath;
+    }
+
+    /**
      * Add or update a parameter to the view
      * @param string $name  parameter name
      * @param misc   $value parameter value

@@ -37,7 +37,7 @@ class EasyDump
         if (self::$config['showCall'] || self::$config['showVarNames'] || self::$config['showSource'])
             $call = self::readCall($trace);
 
-        echo '<pre class="easydump" style="border: 0.5em solid '.self::$config['color']['border'].'; color: '.self::$config['color']['text'].'; background-color: '.self::$config['color']['background'].'; margin: 0; padding: 0.5em; white-space: pre-wrap;font-family:\'DejaVu Sans Mono\',monospace;font-size:11px;">';
+        echo '<pre class="easydump" style="border: 0.5em solid '.self::$config['color']['border'].'; color: '.self::$config['color']['text'].'; background-color: '.self::$config['color']['background'].'; margin: 0; padding: 0.5em; white-space: pre-wrap;font-family:\'DejaVu Sans Mono\',monospace;font-size:11px;text-align:left;min-width:300px;">';
 
         //show file and line
         if (self::$config['showCall'])

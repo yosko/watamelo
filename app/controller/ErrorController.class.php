@@ -4,7 +4,7 @@ namespace Watamelo\Controllers;
 /**
  * Controller for displaying general errors
  */
-class ErrorController extends WatameloController
+class ErrorController extends \Watamelo\Controllers\WatameloController
 {
     public function issetHTTPError()
     {

@@ -11,7 +11,7 @@ spl_autoload_register(function ($class) {
 	if(count($parts) >= 3 && $parts[0] == 'Watamelo') {
 		$file = '';
 		$subNamespace = $parts[1];
-		$className = strtolower($parts[2]);
+		$className = $parts[2];
 
 		if($subNamespace == 'Lib') {
 			$file = ROOT.'/lib/'.$className.'.class.php';

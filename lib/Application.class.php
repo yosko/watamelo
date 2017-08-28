@@ -57,14 +57,14 @@ abstract class Application
      * @param  string $module manager name (case insensitive)
      * @return object         manager
      */
-    public function getManagerOf($module)
+    public function manager($module)
     {
         if (!is_string($module) || empty($module)) {
             throw new \InvalidArgumentException('Invalid module');
         }
 
         if (!isset($this->managers[$module])) {
-            $manager = '\\Watamelo\\Managers\\'.$module.'manager';
+            $manager = '\\Watamelo\\Managers\\'.$module.'Manager';
             $this->managers[$module] = new $manager($this);
         }
 

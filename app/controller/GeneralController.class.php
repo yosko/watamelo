@@ -4,7 +4,7 @@ namespace Watamelo\Controllers;
 /**
  * Controller for displaying global pages
  */
-class GeneralController extends WatameloController
+class GeneralController extends \Watamelo\Controllers\WatameloController
 {
     protected $currentUser;
 
@@ -28,7 +28,7 @@ class GeneralController extends WatameloController
      */
     public function executeIndex()
     {
-        $userManager = $this->app()->getManagerOf('user');
+        $userManager = $this->app()->manager('user');
 
         $users = $userManager->getList();
 

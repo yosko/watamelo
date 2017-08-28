@@ -261,12 +261,12 @@ class SqlGenerator
      * @param  int     $fetchParam  PDO fetch
      * @param  string  $className   class to use when $fetchParam is \PDO::FETCH_CLASS
      * @return boolean              execution state
-     * @throws LogicException If undefined type of statement
+     * @throws \LogicException If undefined type of statement
      */
     public function execute($fetchMethod = 'fetchAll', $fetchParam = \PDO::FETCH_OBJ, $className = null)
     {
         if (empty($this->type)) {
-            throw new LogicException('No query to execute');
+            throw new \LogicException('No query to execute');
         }
 
         $sql = $this->buildQuery();
@@ -280,18 +280,16 @@ class SqlGenerator
         $result = $qry->execute();
 
         if ($this->type == self::TYPE_SELECT) {
-            if ($fetchMethod == 'fetchColumn') {
-                $result = $qry->$fetchMethod();
-            } elseif ($fetchParam == \PDO::FETCH_CLASS && !empty($className)) {
-                    $result = $qry->$fetchMethod($fetchParam, $className);
+            //define fetching mode
+            if ($fetchParam == \PDO::FETCH_CLASS && !empty($className)) {
+                //PDO::FETCH_PROPS_LATE assigns properties AFTER executing object constructor
+                $qry->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, $className);
             } else {
-                $result = $qry->$fetchMethod($fetchParam);
+                $qry->setFetchMode($fetchParam);
             }
-            //TODO check that fetchColumn can receive a \PDO::FETCH_OBJ as parameter...
-            // if ($fetchColumn)
-            //     $result = $qry->fetchColumn();
-            // else
-            //     $result = $qry->fetchAll($fetchParam);
+
+            //fetch data using the method requested
+            $result = $qry->$fetchMethod();
         }
 
         return $result;
@@ -425,7 +423,7 @@ class SqlGenerator
                 if($unionQry->type() == self::TYPE_SELECT) {
                     $sql .= "\nUNION ".$unionQry->toString(false);
                 } else {
-                    throw new LogicException('Union must all be select queries.');
+                    throw new \LogicException('Union must all be select queries.');
                 }
             }
         }
@@ -440,7 +438,7 @@ class SqlGenerator
     public function executeFile($filePath)
     {
         if (!file_exists($filePath)) {
-            throw new RuntimeException('SQL file not found');
+            throw new \RuntimeException('SQL file not found');
         }
 
         $sql = file_get_contents($filePath);
