@@ -3,7 +3,7 @@ $pageTitle = "Login";
 include $templatePath.'header.tpl.php';
 ?>
 
-        <header><h3><?php echo $pageTitle; ?></h3></header>
+        <header><h2><?php echo $pageTitle; ?></h2></header>
         <form id="loginForm" method="post" action="">
             <fieldset>
                 <legend>Informations</legend>

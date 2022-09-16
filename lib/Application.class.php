@@ -1,5 +1,11 @@
 <?php
+
 namespace Watamelo\Lib;
+
+use Exception;
+use InvalidArgumentException;
+use PDO;
+use Throwable;
 
 define('WATAMELO_VERSION', '0.11');
 
@@ -9,13 +15,13 @@ define('WATAMELO_VERSION', '0.11');
  */
 abstract class Application
 {
-    protected $appName = '';
-    protected $view;
-    protected $useDefaultRoutes = true;
-    protected $defaultControllerName = '';
-    protected $dao = null;
-    protected $managers = array();
-    protected $getParamName;
+    protected string $appName = '';
+    protected View $view;
+    protected bool $useDefaultRoutes = true;
+    protected string $defaultControllerName = '';
+    protected ?PDO $dao = null;
+    protected array $managers = [];
+    protected string $getParamName;
 
 
     public function __construct($appName = '')
@@ -25,14 +31,14 @@ abstract class Application
 
         set_exception_handler(array($this, 'exceptionHandler'));
 
-        $errorFile = ROOT.'/tmp/logs/error.log';
+        $errorFile = ROOT . '/tmp/logs/error.log';
         ini_set('log_errors', 'On');
         ini_set('error_log', $errorFile);
 
         //purge old logs
         $today = date('Y-m-d');
-        $errorFileYesterday = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -1 day' )).'.log';
-        $errorFileAWeekAgo = ROOT.'/tmp/logs/error-'.date( 'Y-m-d', strtotime( $today.' -8 day' )).'.log';
+        $errorFileYesterday = ROOT . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -1 day')) . '.log';
+        $errorFileAWeekAgo = ROOT . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -8 day')) . '.log';
         if (file_exists($errorFile) && !file_exists($errorFileYesterday) && file_exists($errorFile) && filesize($errorFile) > 0) {
             rename(
                 $errorFile,
@@ -44,7 +50,18 @@ abstract class Application
         }
 
         $this->getParamName = 'url';
-        $this->appName = empty($appName)?get_called_class():$appName;
+        $this->appName = empty($appName) ? get_called_class() : $appName;
+    }
+
+    public function setErrorReporting($isDebug)
+    {
+        error_reporting(E_ALL | E_STRICT);
+        if ($isDebug) {
+            ini_set('display_errors', 'On');
+        } else {
+            error_reporting(E_ALL | E_STRICT);
+            ini_set('display_errors', 'Off');
+        }
     }
 
     /**
@@ -54,17 +71,17 @@ abstract class Application
 
     /**
      * Returns a manager (loads it if not already loaded)
-     * @param  string $module manager name (case insensitive)
-     * @return object         manager
+     * @param string $module manager name (case insensitive)
+     * @return Manager
      */
-    public function manager($module)
+    public function manager(string $module): Manager
     {
         if (!is_string($module) || empty($module)) {
-            throw new \InvalidArgumentException('Invalid module');
+            throw new InvalidArgumentException('Invalid module');
         }
 
         if (!isset($this->managers[$module])) {
-            $manager = '\\Watamelo\\Managers\\'.$module.'Manager';
+            $manager = '\\Watamelo\\Managers\\' . $module . 'Manager';
             $this->managers[$module] = new $manager($this);
         }
 
@@ -73,8 +90,11 @@ abstract class Application
 
     /**
      * Initialise the View object
+     * @param string $template
+     * @param string $rootUrl
+     * @param bool $ApacheURLRewriting
      */
-    public function initView($template, $rootUrl, $ApacheURLRewriting)
+    public function initView(string $template, string $rootUrl, bool $ApacheURLRewriting)
     {
         $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
     }
@@ -83,9 +103,78 @@ abstract class Application
      * Returns the application name
      * @return string name
      */
-    public function appName()
+    public function appName(): string
     {
         return $this->appName;
+    }
+
+    /**
+     * Returns the application data access object
+     * @return PDO name
+     */
+    public function dao(): ?PDO
+    {
+        return $this->dao;
+    }
+
+    /**
+     * Returns the application parameter name used in $_GET
+     * @return string name
+     */
+    public function getParamName(): string
+    {
+        return $this->getParamName;
+    }
+
+    /**
+     * Set the application parameter name used in $_GET
+     * @param string $getParamName
+     */
+    public function setGetParamName(string $getParamName)
+    {
+        $this->getParamName = $getParamName;
+    }
+
+    /**
+     * Returns the application flag 'useDefaultRoutes'
+     * @return bool useDefaultRoutes
+     */
+    public function useDefaultRoutes(): bool
+    {
+        return $this->useDefaultRoutes;
+    }
+
+    /**
+     * Returns the application default controller name
+     * @return string defaultControllerName
+     */
+    public function defaultControllerName(): string
+    {
+        return $this->defaultControllerName;
+    }
+
+    /**
+     * Explicitly log errors/exceptions that where already caught
+     * @param Exception $e
+     * @param string $string
+     * @return bool
+     */
+    public function logException(Exception $e, string $string = ''): bool
+    {
+        return error_log(
+            ' (manually logged) ' . $e->getMessage() . (empty($string) ? '' : ' [' . $string . ']')
+        );
+    }
+
+    /**
+     * Display exceptions and errors in a nicely manner
+     * @param Throwable $e
+     * @throws Exception
+     */
+    public function exceptionHandler(Throwable $e)
+    {
+        $this->view()->setParam('exception', $e);
+        echo $this->view()->renderView('exception', false);
     }
 
     /**
@@ -95,75 +184,5 @@ abstract class Application
     public function view()
     {
         return $this->view;
-    }
-
-    /**
-     * Returns the application data access object
-     * @return string name
-     */
-    public function dao()
-    {
-        return $this->dao;
-    }
-
-    /**
-     * Returns the application parameter name used in $_GET
-     * @return string name
-     */
-    public function getParamName()
-    {
-        return $this->getParamName;
-    }
-
-    /**
-     * Set the application parameter name used in $_GET
-     */
-    public function setGetParamName($getParamName)
-    {
-        $this->getParamName = $getParamName;
-    }
-
-    /**
-     * Returns the application flag 'useDefaultRoutes'
-     * @return boolean useDefaultRoutes
-     */
-    public function useDefaultRoutes()
-    {
-        return $this->useDefaultRoutes;
-    }
-
-    /**
-     * Returns the application default controller name
-     * @return string defaultControllerName
-     */
-    public function defaultControllerName()
-    {
-        return $this->defaultControllerName;
-    }
-
-    /**
-     * Explicitely log errors/exceptions that where already catched
-     */
-    public function logException($e, $string = '')
-    {
-        return error_log(
-            ' (manually logged) '.$e->getMessage().(empty($string)?'':' ['.$string.']')
-        );
-    }
-
-    public function setErrorReporting($isDebug)
-    {
-        error_reporting(E_ALL | E_STRICT);
-        if ($isDebug) {
-            ini_set('display_errors','On');
-        } else {
-            error_reporting(E_ALL | E_STRICT);
-            ini_set('display_errors','Off');
-        }
-    }
-
-    public function exceptionHandler($e)
-    {
-        d($e->getMessage(), $e->getTrace());
     }
 }

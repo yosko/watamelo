@@ -1,15 +1,18 @@
 <?php
+
 namespace Watamelo\Lib;
+
+use PDO;
 
 /**
  * Abstract class
  * Base for all data managers
  */
-abstract class Manager extends \Watamelo\Lib\ApplicationComponent
+abstract class Manager extends ApplicationComponent
 {
-    protected $dao;
+    protected ?PDO $dao;
 
-    public function __construct(\Watamelo\Lib\Application $app)
+    public function __construct(Application $app)
     {
         parent::__construct($app);
         $this->dao = $app->dao();

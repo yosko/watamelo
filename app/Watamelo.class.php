@@ -1,25 +1,37 @@
 <?php
+
 namespace Watamelo\App;
 
-require_once(ROOT.'/app/ext/easydump.php');
-require_once(ROOT.'/app/ext/yoslogin.lib.php');
+use StdClass;
+use Watamelo\Controllers\AuthController;
+use Watamelo\Lib\Application;
+use Watamelo\Lib\Controller;
+use Watamelo\Lib\DbFactory;
+use Watamelo\Lib\Manager;
+use Watamelo\Lib\Router;
+use Yosko\Loggable;
+
+require_once(ROOT . '/app/ext/easydump.php');
+require_once(ROOT . '/app/ext/yoslogin.lib.php');
 
 /**
  * The application itself, called from the index.php and does everything else
  */
-class Watamelo extends \Watamelo\Lib\Application
+class Watamelo extends Application
 {
-    protected $configManager;
-    protected $authController;
-    protected $user;
-    protected $userLevels;
-    protected $dbms;
-    protected $dbParams;
+    protected Manager $configManager;
+    protected Controller $authController;
+    protected ?Loggable $user = null;
+    protected array $userLevels;
+    protected string $dbms;
+    protected StdClass $dbParams;
+    private DataView $dataView;
 
     /**
      * Prepare the application
+     * @param string $appName
      */
-    public function __construct($appName)
+    public function __construct(string $appName)
     {
         $this->useDefaultRoutes = true;
         $this->defaultControllerName = "general";
@@ -36,9 +48,13 @@ class Watamelo extends \Watamelo\Lib\Application
             $this->configManager->get('ApacheURLRewriting')
         );
 
+        // Data managers encapsulator for the view
+        $this->dataView = new DataView($this);
+        $this->view->setParam('dataView', $this->dataView);
+
         $this->dbms = $this->setDbms();
         $this->dbParams = $this->setDbParams();
-        $this->dao = \Watamelo\Lib\DbFactory::getConnexion($this->dbms, $this->dbParams);
+        $this->dao = DbFactory::getConnection($this->dbms, $this->dbParams);
     }
 
     /**
@@ -46,36 +62,36 @@ class Watamelo extends \Watamelo\Lib\Application
      * @return string name of dbms in PDO style
      *                possible values: sqlite, mysql, postgresql
      */
-    public function setDbms()
+    public function setDbms(): string
     {
         return 'sqlite';
+    }
+
+    /**
+     * Return the Database Parameters (connection string)
+     * @return StdClass parameters to connect to the database
+     */
+    public function setDbParams(): StdClass
+    {
+        $params = new StdClass();
+        $params->dbName = $this->configManager->get('sessName') . '.db';
+        return $params;
     }
 
     /**
      * Gives the DBMS name
      * @return string dbms
      */
-    public function dbms()
+    public function dbms(): string
     {
         return $this->dbms;
     }
 
     /**
-     * Return the Database Parameters (connection string)
-     * @return \StdClass parameters to connect to the database
-     */
-    public function setDbParams()
-    {
-        $params = new \StdClass;
-        $params->dbName = $this->configManager->get('sessName').'.db';
-        return $params;
-    }
-
-    /**
      * Gives the DB parameters
-     * @return \StdClass dbParams
+     * @return StdClass dbParams
      */
-    public function dbParams()
+    public function dbParams(): StdClass
     {
         return $this->dbParams;
     }
@@ -87,12 +103,12 @@ class Watamelo extends \Watamelo\Lib\Application
     {
 
         //prepare router
-        $router = new \Watamelo\Lib\Router($this);
+        $router = new Router($this);
         $controllerName = "";
         $actionName = "";
         $parameters = array();
         $variables = array();
-        $url = "";
+        //$url = "";
 
         //if you don't use ApacheUrlRewriting, you can optionally define the name
         //of the $_GET parameter to use for your route
@@ -117,10 +133,10 @@ class Watamelo extends \Watamelo\Lib\Application
         foreach ($levels as $level) {
             $this->userLevels[$level->name] = (int)$level->level;
         }
-        $this->view->setParam( "userLevels", $this->userLevels );
+        $this->view->setParam("userLevels", $this->userLevels);
 
-        //authenticate current user and get his/her/its informations
-        $this->authController = new \Watamelo\Controllers\AuthController($this);
+        //authenticate current user and get his/her/its information
+        $this->authController = new AuthController($this);
         $this->user = $this->authController->authenticateUser();
 
         //get controller corresponding to the user request
@@ -134,22 +150,22 @@ class Watamelo extends \Watamelo\Lib\Application
             $actionName = 'login';
             $controller = $router->getController($controllerName);
 
-        //if the user is authenticated but doesn't have the right level of permission
+            //if the user is authenticated but doesn't have the right level of permission
         } elseif ($this->user->level < $controller->userLevelNeeded()) {
             $controllerName = 'error';
             $actionName = '403';
             $controller = $router->getController($controllerName);
 
-        } elseif ($controller->secureNeeded() && !$this->user->secure) {
+        } elseif ($controller->secureNeeded() && !$this->user->isSecure()) {
             $controllerName = 'auth';
             $actionName = 'secure';
             $controller = $router->getController($controllerName);
         }
 
         //add config last state to the view
-        $this->view->setParam( "variables", $variables );
-        $this->view->setParam( "user", $this->user );
-        $this->view->setParam( "config", $this->configManager );
+        $this->view->setParam("variables", $variables);
+        $this->view->setParam("user", $this->user);
+        $this->view->setParam("config", $this->configManager);
 
         //execute controller/action
         $controller->execute($actionName, $parameters);
@@ -157,11 +173,11 @@ class Watamelo extends \Watamelo\Lib\Application
 
     /**
      * Return an error (can be called from within controllers)
-     * @param  string $error error number (403, 404, etc...)
+     * @param string $error error number (403, 404, etc...)
      */
-    public function returnError($error="")
+    public function returnError($error = "")
     {
-        $router = new \Watamelo\Lib\Router($this);
+        $router = new Router($this);
 
         $controllerName = "error";
         $actionName = $error;
@@ -174,27 +190,27 @@ class Watamelo extends \Watamelo\Lib\Application
 
     /**
      * Returns the application configuration
-     * @return array config
+     * @return Manager config
      */
-    public function config()
+    public function config(): Manager
     {
         return $this->configManager;
     }
 
     /**
      * Returns the application configuration
-     * @return array config
+     * @return Controller config
      */
-    public function auth()
+    public function auth(): Controller
     {
         return $this->authController;
     }
 
     /**
      * Return current user's information
-     * @return array user information
+     * @return ?Loggable user information
      */
-    public function user()
+    public function user(): ?Loggable
     {
         return $this->user;
     }
@@ -203,8 +219,13 @@ class Watamelo extends \Watamelo\Lib\Application
      * Return list of user levels
      * @return array levels
      */
-    public function userLevels()
+    public function userLevels(): array
     {
         return $this->userLevels;
+    }
+
+    public function dataView(): DataView
+    {
+        return $this->dataView;
     }
 }

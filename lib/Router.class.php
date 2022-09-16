@@ -1,23 +1,27 @@
 <?php
+
 namespace Watamelo\Lib;
 
+use DOMDocument;
+use DOMNodeList;
+
 /**
- * Allmighty powerfull and wonderfull routing class
+ * Almighty powerful and wonderful routing class
  */
 class Router extends ApplicationComponent
 {
-    protected $routes = array();
-    protected $file = "";
+    protected DOMNodeList $routes;
+    protected string $file = "";
 
     public function __construct(Application $app)
     {
         parent::__construct($app);
 
         //load configuration file
-        $this->file = ROOT.'/app/routes.xml';
-        if (file_exists( $this->file )) {
-            $root = new \DOMDocument('1.0', 'UTF-8');
-            $root->load( $this->file );
+        $this->file = ROOT . '/app/routes.xml';
+        if (file_exists($this->file)) {
+            $root = new DOMDocument('1.0', 'UTF-8');
+            $root->load($this->file);
 
             //no need to validate every time if in production environment
             if (DEVELOPMENT_ENVIRONMENT && !$root->validate()) {
@@ -29,36 +33,24 @@ class Router extends ApplicationComponent
         }
     }
 
-    public function getUrl()
-    {
-        //remove '/' at beginning & end of the url
-        if (isset($_GET[$this->app()->getParamName()]))
-            $url = trim($_GET[$this->app()->getParamName()],"/");
-        else
-            $url = "";
-
-        return $url;
-    }
-
     /**
      * Returns a route based requested URL
-     * @param  string $controller name of the found controller (if route found)
-     * @param  string $action     name of the found action (if route found)
-     * @param  array  $parameters array of correctly mapped parameters (if route found)
-     * @param  string $url        meaningful part of the url
-     * @param  array  $variables  array of variable parts of path defined on app level
-     * @return boolean            true if a route was found
+     * @param string $controller name of the found controller (if route found)
+     * @param string $action name of the found action (if route found)
+     * @param array $parameters array of correctly mapped parameters (if route found)
+     * @param string $url meaningful part of the url
+     * @param array $variables array of variable parts of path defined on app level
+     * @return bool            true if a route was found
      */
-    public function getRoute(&$controller, &$action, &$parameters, &$url, $variables)
+    public function getRoute(string &$controller, string &$action, array &$parameters, string &$url, array $variables): bool
     {
         if (is_null($url)) {
             $url = $this->getUrl();
         }
 
         $foundRoute = false;
-        $remainingUrl = "";
 
-        //check for a predifined route
+        //check for a predefined route
         foreach ($this->routes as $route) {
             if ($route->nodeType != XML_TEXT_NODE) {
                 $required = array();
@@ -92,18 +84,18 @@ class Router extends ApplicationComponent
                 );
 
                 //match route including required parameters
-                if ( preg_match('%^'.$regexp.'(/.*)?$%i', $url, $matches) ) {
+                if (preg_match('%^' . $regexp . '(/.*)?$%i', $url, $matches)) {
                     $foundRoute = true;
                     $parameters = array();
-                    $optional = array();
+                    $optional = '';
                     $controller = $route->getAttribute('controller');
                     $action = $route->getAttribute('action');
 
-                    //remove unecessary match
+                    //remove unnecessary match
                     unset($matches[0]);
                     //pop optional parameters if they exists
                     if (count($matches) > count($required)) {
-                    	$optional = array_pop($matches);
+                        $optional = array_pop($matches);
                     }
                     //combine required parameter values and names
                     if (!empty($required)) {
@@ -120,7 +112,7 @@ class Router extends ApplicationComponent
                     $optionalParameters = $route->getElementsByTagName('optional');
                     if (!empty($optional)) {
                         //if there's a "/" between required & optional part
-                        if ($optional{0} == "/") {
+                        if ($optional[0] == "/") {
                             $optional = preg_split('%\|%', trim($optional, '/?'));
                             if (count($optional) == 1 && empty($optional[0])) {
                                 unset($optional[0]);
@@ -158,15 +150,26 @@ class Router extends ApplicationComponent
         return $foundRoute;
     }
 
+    public function getUrl(): string
+    {
+        //remove '/' at beginning & end of the url
+        if (isset($_GET[$this->app()->getParamName()])) {
+            $url = trim($_GET[$this->app()->getParamName()], "/");
+        } else {
+            $url = "";
+        }
+
+        return $url;
+    }
+
     /**
      * Returns a controller based on its name
-     * @param  string $controllerName controller name
+     * @param string $controllerName controller name
      * @return object                 controller
      */
-    public function getController($controllerName)
+    public function getController(string $controllerName): object
     {
-        $classname = '\\Watamelo\\Controllers\\'.ucfirst($controllerName).'Controller';
-        $controller = new $classname($this->app());
-        return $controller;
+        $classname = '\\Watamelo\\Controllers\\' . ucfirst($controllerName) . 'Controller';
+        return new $classname($this->app());
     }
 }

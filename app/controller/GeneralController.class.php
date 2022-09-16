@@ -1,17 +1,22 @@
 <?php
+
 namespace Watamelo\Controllers;
+
+use Exception;
+use Watamelo\Lib\Application;
+use Yosko\Loggable;
 
 /**
  * Controller for displaying global pages
  */
-class GeneralController extends \Watamelo\Controllers\WatameloController
+class GeneralController extends WatameloController
 {
-    protected $currentUser;
+    protected ?Loggable $currentUser;
 
     //define specific behavior for some actions (here for action "executeAdmin")
-    protected $actions;
+    protected array $actions;
 
-    public function __construct(\Watamelo\Lib\Application $app)
+    public function __construct(Application $app)
     {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();
@@ -25,6 +30,7 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
 
     /**
      * Show application's homepage
+     * @throws Exception
      */
     public function executeIndex()
     {
@@ -32,16 +38,17 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
 
         $users = $userManager->getList();
 
-        $this->app()->view()->setParam( "users", $users );
-        $this->app()->view()->renderView( "home" );
+        $this->app()->view()->setParam("users", $users);
+        $this->app()->view()->renderView("home");
     }
 
     /**
      * Show an admin page (with secure access)
+     * @throws Exception
      */
     public function executeAdmin()
     {
-        $this->app()->view()->renderView( "admin" );
+        $this->app()->view()->renderView("admin");
     }
 
     /**
@@ -49,10 +56,8 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
      */
     public function executeExport()
     {
-        $data = array();
-
         if ($this->parameters['type'] == 'csv') {
-            //the data array must be bidimensional and every item must have the same form:
+            //the data array must be two-dimensional and every item must have the same form:
             $data = array(
                 array(
                     'column1' => 1,
@@ -63,11 +68,11 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
                     'column2' => 'text "2"'
                 )
             );
-            $this->app()->view()->renderData( $data, RESPONSE_CSV );
+            $this->app()->view()->renderData($data, RESPONSE_CSV);
         } else {
             //the $data array can have any number of dimension
             $data = $this->app()->config()->getAll();
-            $this->app()->view()->renderData( $data, RESPONSE_JSON, array('fileName' => 'test.json') );
+            $this->app()->view()->renderData($data, RESPONSE_JSON, array('fileName' => 'test.json'));
 
             //Note: to use json data in an ajax request, don't use the "fileName" parameter
         }
@@ -82,9 +87,9 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
         $type = $this->parameters['type'];
 
         if (isset($_GET['url'])) {
-            $self = $this->app()->view()->baseUrl().$_GET['url'];
+            $self = $this->app()->view()->baseUrl() . $_GET['url'];
         } else {
-            $self = $this->app()->view()->baseUrl().$_GET['p'];
+            $self = $this->app()->view()->baseUrl() . $_GET['p'];
         }
 
         $data['title'] = 'Watamelo useless feed';
@@ -98,7 +103,7 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
         if ($type == RESPONSE_ATOM) {
             $data['update'] = date(DATE_ATOM); //watch out for the date format!
 
-        //rss feed
+            //rss feed
         } else {
             //nothing here, yet
         }
@@ -106,9 +111,9 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
         for ($i = 5; $i > 0; $i--) {
             $item = array();
 
-            $item['link'] = $this->app()->view()->baseUrl().$i;
-            $item['title'] = 'Item #'.$i;
-            $item['summary'] = 'Content of my feed item #'.$i;
+            $item['link'] = $this->app()->view()->baseUrl() . $i;
+            $item['title'] = 'Item #' . $i;
+            $item['summary'] = 'Content of my feed item #' . $i;
 
             //atom feed
             if ($type == 'atom') {
@@ -118,7 +123,7 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
                     'email' => 'bob@example.com'
                 );
 
-            //rss feed
+                //rss feed
             } else {
                 $guid = number_format(hexdec(md5($item['link'])), 0, '.', '');
                 $item['guid'] = $guid;
@@ -128,6 +133,6 @@ class GeneralController extends \Watamelo\Controllers\WatameloController
             $data['items'][] = $item;
         }
 
-        $this->app()->view()->renderFeed( $data, $type );
+        $this->app()->view()->renderFeed($data, $type);
     }
 }

@@ -1,15 +1,22 @@
 <?php
+
 namespace Watamelo\Controllers;
+
+use Exception;
+use Watamelo\Data\User;
+use Watamelo\Lib\Application;
+use Yosko\Loggable;
+use Yosko\YosLogin;
 
 /**
  * Authentication handler
  */
-class AuthController extends \Watamelo\Controllers\WatameloController
+class AuthController extends WatameloController
 {
-    protected $currentUser;
-    protected $logger;
+    protected ?Loggable $currentUser;
+    protected YosLogin $logger;
 
-    public function __construct(\Watamelo\Lib\Application $app)
+    public function __construct(Application $app)
     {
         parent::__construct($app);
 
@@ -17,12 +24,13 @@ class AuthController extends \Watamelo\Controllers\WatameloController
         $userManager = $this->app()->manager('User');
         $sessionManager = $this->app()->manager('Session');
         $sessionName = $this->app()->config()->get('sessName');
-        $redirectUrl = isset($_POST['password'])?$_SERVER['REQUEST_URI']:$this->app()->view()->rootUrl();
+        $redirectUrl = isset($_POST['password']) ? $_SERVER['REQUEST_URI'] : $this->app()->view()->rootUrl();
 
-        $this->logger = new \Yosko\YosLogin(
+        $this->logger = new YosLogin(
             $sessionName,
-            array($userManager, 'getForAuthentication')
-            // , DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
+            array($userManager, 'getForAuthentication'),
+            new User()
+        // , DEVELOPMENT_ENVIRONMENT?ROOT.'/tmp/logs/auth.log':''
         );
 
         $this->logger->setRedirectionPage($redirectUrl);
@@ -49,10 +57,10 @@ class AuthController extends \Watamelo\Controllers\WatameloController
 
         $this->actions = array(
             "secure" => array(
-                "level" => isset($this->userLevels['user'])?$this->userLevels['user']:1
+                "level" => isset($this->userLevels['user']) ? $this->userLevels['user'] : 1
             ),
             "unsecure" => array(
-                "level" => isset($this->userLevels['admin'])?$this->userLevels['admin']:10
+                "level" => isset($this->userLevels['admin']) ? $this->userLevels['admin'] : 10
             ),
             "jsonAuthError" => array(
                 "responseType" => RESPONSE_JSON
@@ -63,17 +71,17 @@ class AuthController extends \Watamelo\Controllers\WatameloController
         );
     }
 
-    public function logger()
+    public function logger(): YosLogin
     {
         return $this->logger;
     }
 
-    public function userLevelNeeded()
+    public function userLevelNeeded(): int
     {
         return $this->userLevels['visitor'];
     }
 
-    public function secureNeeded()
+    public function secureNeeded(): bool
     {
         return false;
     }
@@ -81,14 +89,14 @@ class AuthController extends \Watamelo\Controllers\WatameloController
     /**
      * Authenticate user (whether there is a login/secure form sent or not)
      * This method will be called by the application BEFORE any other controller/action
-     * @return array user informations if found. Always include the 'level' key
+     * @return Loggable user information if found. Always include the 'level' key
      */
-    public function authenticateUser()
+    public function authenticateUser(): ?Loggable
     {
         $values = array();
         $errors = array();
 
-        if (isset($_POST['login']) && isset($_POST['password'])) {
+        if (isset($_POST['login'], $_POST['password'])) {
             $values['login'] = $_POST['login'];
             $values['password'] = $_POST['password'];
             $values['remember'] = isset($_POST['remember']);
@@ -99,35 +107,22 @@ class AuthController extends \Watamelo\Controllers\WatameloController
             $this->currentUser = $this->logger->authUser();
         }
 
-        if ($this->currentUser->isLoggedIn === false) {
+        if ($this->currentUser->isLoggedIn() === false) {
             $this->currentUser->level = $this->userLevels['visitor'];
         }
 
-        if (isset($this->currentUser->errors))
-            $errors = $this->currentUser->errors;
-        $this->app()->view()->setParam( "values", $values );
-        $this->app()->view()->setParam( "errors", $errors );
-        $this->app()->view()->setParam( "currentUser", $this->currentUser );
+        if (!empty($this->currentUser->getErrors())) {
+            $errors = $this->currentUser->getErrors();
+        }
+        $this->app()->view()->setParam("values", $values);
+        $this->app()->view()->setParam("errors", $errors);
+        $this->app()->view()->setParam("currentUser", $this->currentUser);
         return $this->currentUser;
     }
 
     /**
      * Show login form for unauthenticated users
-     */
-    public function executeIndex()
-    {
-        if ($this->currentUser->level >= $this->userLevels['user']) {
-            header( 'Location: '.$this->app()->view()->rootUrl() );
-        } else {
-            if (isset($this->parameters['login'])) {
-                $this->app()->view()->setParam( "values", array("login" => $this->parameters['login']) );
-            }
-            $this->app()->view()->renderView( "auth.login.form" );
-        }
-    }
-
-    /**
-     * Show login form for unauthenticated users
+     * @throws Exception
      */
     public function executeLogin()
     {
@@ -135,11 +130,28 @@ class AuthController extends \Watamelo\Controllers\WatameloController
     }
 
     /**
+     * Show login form for unauthenticated users
+     * @throws Exception
+     */
+    public function executeIndex()
+    {
+        if ($this->currentUser->level >= $this->userLevels['user']) {
+            header('Location: ' . $this->app()->view()->rootUrl());
+        } else {
+            if (isset($this->parameters['login'])) {
+                $this->app()->view()->setParam("values", array("login" => $this->parameters['login']));
+            }
+            $this->app()->view()->renderView("auth.login.form");
+        }
+    }
+
+    /**
      * Show the secure form (asks password for already authenticated users)
+     * @throws Exception
      */
     public function executeSecure()
     {
-        $this->app()->view()->renderView( "auth.secure.form" );
+        $this->app()->view()->renderView("auth.secure.form");
     }
 
     /**
@@ -148,7 +160,7 @@ class AuthController extends \Watamelo\Controllers\WatameloController
     public function executeLogout()
     {
         $this->logger->logOut();
-        header( 'Location: '.$this->app()->view()->rootUrl() );
+        header('Location: ' . $this->app()->view()->rootUrl());
     }
 
     /**
@@ -159,7 +171,7 @@ class AuthController extends \Watamelo\Controllers\WatameloController
     public function executeUnsecure()
     {
         $this->logger->unsecure();
-        header( 'Location: '.$this->app()->view()->baseUrl().'admin' );
+        header('Location: ' . $this->app()->view()->buildRoute('admin'));
     }
 
     /**

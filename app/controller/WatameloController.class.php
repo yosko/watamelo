@@ -1,14 +1,19 @@
 <?php
+
 namespace Watamelo\Controllers;
+
+use Watamelo\Lib\Application;
+use Watamelo\Lib\Controller;
+use Yosko\Loggable;
 
 /**
  * Proxy controller between the Controller class and your end controllers to define app specific settings
  * This is just part of the example but might be useful in any app using authentication
  */
-abstract class WatameloController extends \Watamelo\Lib\Controller
+abstract class WatameloController extends Controller
 {
-    protected $currentUser;
-    protected $userLevels;
+    protected ?Loggable $currentUser;
+    protected array $userLevels;
     // protected $actions = array(
     //     "" => array(
     //         "secureNeeded" => false,
@@ -17,7 +22,7 @@ abstract class WatameloController extends \Watamelo\Lib\Controller
     //     )
     // );
 
-    public function __construct(\Watamelo\Lib\Application $app)
+    public function __construct(Application $app)
     {
         parent::__construct($app);
         $this->currentUser = $this->app()->user();
@@ -27,11 +32,11 @@ abstract class WatameloController extends \Watamelo\Lib\Controller
     /**
      * Return the user level required for the current action
      * Based on the $userLevels array defined in application, from database
-     * @return integer the minimum user level required for this action
+     * @return int the minimum user level required for this action
      */
-    public function userLevelNeeded()
+    public function userLevelNeeded(): int
     {
-        if (isset($this->actions[$this->action]) && isset($this->actions[$this->action]['level'])) {
+        if (isset($this->actions[$this->action]['level'])) {
             $level = $this->actions[$this->action]['level'];
         } else {
             $level = $this->userLevels['visitor'];
@@ -40,13 +45,13 @@ abstract class WatameloController extends \Watamelo\Lib\Controller
     }
 
     /**
-     * Check wether the current action needs a secure authentication
-     * @return boolean true if action needs a secure authentication
+     * Check whether the current action needs a secure authentication
+     * @return bool true if action needs a secure authentication
      *                 false by default
      */
-    public function secureNeeded()
+    public function secureNeeded(): bool
     {
-        if (isset($this->actions[$this->action]) && isset($this->actions[$this->action]['secureNeeded'])) {
+        if (isset($this->actions[$this->action]['secureNeeded'])) {
             $secureNeeded = $this->actions[$this->action]['secureNeeded'];
         } else {
             $secureNeeded = false;

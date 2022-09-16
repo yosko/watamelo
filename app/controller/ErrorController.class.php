@@ -1,10 +1,13 @@
 <?php
+
 namespace Watamelo\Controllers;
+
+use Exception;
 
 /**
  * Controller for displaying general errors
  */
-class ErrorController extends \Watamelo\Controllers\WatameloController
+class ErrorController extends WatameloController
 {
     public function issetHTTPError()
     {
@@ -19,7 +22,6 @@ class ErrorController extends \Watamelo\Controllers\WatameloController
                 case 502:
                 case 504:
                     return $_SERVER['REDIRECT_STATUS'];
-                    break;
                 default:
                     return "index";
             }
@@ -44,14 +46,20 @@ class ErrorController extends \Watamelo\Controllers\WatameloController
     public function execute403()
     {
         header("HTTP/1.0 403 Forbidden");
-        $this->app()->view()->renderView( "error.403" );
+        try {
+            $this->app()->view()->renderView("error.403");
+        } catch (Exception $e) {
+        }
     }
 
     //Not Found
     public function execute404()
     {
         header("HTTP/1.0 404 Not Found");
-        $this->app()->view()->renderView( "error.404" );
+        try {
+            $this->app()->view()->renderView("error.404");
+        } catch (Exception $e) {
+        }
     }
 
     //Method Not Allowed

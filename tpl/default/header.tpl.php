@@ -9,7 +9,7 @@
 <body>
 <header>
     <div id="title">
-        <a id="home" href="<?php echo $rootUrl; ?>">
+        <a id="home" href="<?php echo $baseUrl; ?>">
             <h1>Watamelo</h1>
             <em>small PHP MVC framework</em>
         </a>

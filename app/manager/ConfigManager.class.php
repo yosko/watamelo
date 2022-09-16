@@ -1,27 +1,32 @@
 <?php
+
 namespace Watamelo\Managers;
+
+use http\Exception\RuntimeException;
+use StdClass;
+use Watamelo\Lib\Application;
+use Watamelo\Lib\Manager;
 
 /**
  * Application configuration management
- * Is accessib
  */
-class ConfigManager extends \Watamelo\Lib\Manager
+class ConfigManager extends Manager
 {
-    protected $params;
-    protected $customParams;
-    protected $globalFile = "";
-    protected $defaultFile = "";
-    protected $file = "";
+    protected StdClass $params;
+    protected array $customParams = [];
+    protected string $globalFile = '';
+    protected string $defaultFile = '';
+    protected string $file = '';
 
-    public function __construct(\Watamelo\Lib\Application $app)
+    public function __construct(Application $app)
     {
         parent::__construct($app);
 
-        $this->param = new \StdClass();
+        $this->params = new StdClass();
 
-        $this->globalFile = ROOT.'/data/config/config.global.json';
-        $this->defaultFile = ROOT.'/data/config/config.default.json';
-        $this->file = ROOT.'/data/config/config.json';
+        $this->globalFile = ROOT . '/data/config/config.global.json';
+        $this->defaultFile = ROOT . '/data/config/config.default.json';
+        $this->file = ROOT . '/data/config/config.json';
 
         if (!$this->load()) {
             $this->loadDefault();
@@ -31,66 +36,68 @@ class ConfigManager extends \Watamelo\Lib\Manager
     /**
      * Returns an application configuration parameter
      * or the complete configuration array if no key is given
-     * @param  string $key key to search for
-     * @return misc        value for the given key
+     * @param string|null $key key to search for
+     * @return mixed       value for the given key
      *                     or false for not found values
      *                     or array of all parameters
      */
-    public function get($key = null)
+    public function get(string $key = null)
     {
         if (is_null($key)) {
             return $this->params;
-        } else {
-            if (isset($this->params->$key)) {
-                return $this->params->$key;
-            } elseif (isset($this->params->global->$key)) {
-                return $this->params->global->$key;
-            } else {
-                return null;
-            }
         }
+
+        if (isset($this->params->$key)) {
+            return $this->params->$key;
+        }
+
+        if (isset($this->params->global->$key)) {
+            return $this->params->global->$key;
+        }
+
+        return null;
     }
 
     /**
      * Returns a configuration parameter from a custom file
-     * @param  string @fileName custom file name (without path, without extension)
-     * @param  string @key      key to search for
-     * @return misc             value of the given key
+     * @param string @fileName custom file name (without path, without extension)
+     * @param string|null $key
+     * @return mixed            value of the given key
      *                          or false for not found values
      *                          or array of all parameters
      */
-    public function getCustom($fileName, $key = null)
+    public function getCustom(string $fileName, string $key = null)
     {
         if (!isset($this->customParams[$fileName])) {
             $this->loadCustom($fileName);
         }
         if (is_null($key)) {
             return $this->customParams[$fileName];
-        } else {
-            if (isset($this->customParams[$fileName]->$key)) {
-                return $this->customParams[$fileName]->$key;
-            } else {
-                return null;
-            }
         }
+
+        if (isset($this->customParams[$fileName]->$key)) {
+            return $this->customParams[$fileName]->$key;
+        }
+
+        return null;
     }
 
     /**
      * Returns all application configuration parameters
-     * @param  string  $type          whether the values returned should be 'default', 'app' or 'current' specific
-     * @param  boolean $includeGlobal whether to include global config values
-     * @return array                  configuration array
+     * @param string $type whether the values returned should be 'default', 'app' or 'current' specific
+     * @param bool $includeGlobal whether to include global config values
+     * @return StdClass configuration data
      */
-    public function getAll($type = 'current', $includeGlobal = true)
+    public function getAll($type = 'current', $includeGlobal = true): StdClass
     {
-        //don't user $this->param her because it might contain user specific values & globals
-        if ($type == 'default') {
+        //don't user $this->params her because it might contain user specific values & globals
+        if ($type === 'default') {
             $params = $this->loadFile($this->defaultFile);
-        } elseif ($type == 'app') {
+        } elseif ($type === 'app') {
             $params = $this->loadFile($this->file);
         } else {
             //current params: may be modified within app for different reasons
-            //suchs as user specific parameters
+            //such as user specific parameters
             $params = clone $this->params;
         }
 
@@ -104,20 +111,20 @@ class ConfigManager extends \Watamelo\Lib\Manager
 
     /**
      * Returns all application configuration default values
-     * @return array complete and default configuration array
+     * @return StdClass complete and default configuration data
      */
-    public function getAllDefault()
+    public function getAllDefault(): StdClass
     {
         return $this->loadFile($this->defaultFile);
     }
 
     /**
      * Add or edit an application configuration parameter and save it to the file
-     * @param  string  $key   key
-     * @param  misc    $value value
-     * @return boolean        whether the save was a success
+     * @param string $key key
+     * @param mixed $value value
+     * @return bool        whether the save was a success
      */
-    public function set($key, $value)
+    public function set(string $key, $value): bool
     {
         $this->params->$key = $value;
 
@@ -126,11 +133,11 @@ class ConfigManager extends \Watamelo\Lib\Manager
 
     /**
      * Add or edit a global configuration parameter and save it to the file
-     * @param  string  $key   key
-     * @param  misc    $value value
-     * @return boolean        whether the save was a success
+     * @param string $key key
+     * @param mixed $value value
+     * @return bool        whether the save was a success
      */
-    public function setGlobal($key, $value)
+    public function setGlobal(string $key, $value): bool
     {
         $this->params->global->$key = $value;
 
@@ -139,24 +146,24 @@ class ConfigManager extends \Watamelo\Lib\Manager
 
     /**
      * Use the given application configuration array as is
-     * @param object  $object configuration
-     * @param boolean $save   whether to save this configuration to the file
-     * @return boolean        whether the save was a success
+     * @param object $object configuration
+     * @param bool $save whether to save this configuration to the file
+     * @return bool        whether the save was a success
      */
-    public function setAll($object, $save = true)
+    public function setAll(object $object, bool $save = true): bool
     {
         //make sure that no key get lost by merging arrays
         //this way, keys not handle via the interface will be kept
         $this->params = (object)array_merge((array)$this->params, (array)$object);
 
-        return $save?$this->save():true;
+        return $save ? $this->save() : true;
     }
 
     /**
      * Replace current configuration by the default one (and save!)
-     * @return boolean whether the save was a success
+     * @return bool whether the save was a success
      */
-    public function reset()
+    public function reset(): bool
     {
         $this->loadDefault();
         return $this->save();
@@ -164,9 +171,9 @@ class ConfigManager extends \Watamelo\Lib\Manager
 
     /**
      * Load the default configuration in app
-     * @return boolean false if the configuration is empty afterwards
+     * @return bool false if the configuration is empty afterwards
      */
-    private function loadDefault()
+    private function loadDefault(): bool
     {
         $this->params = $this->loadFile($this->defaultFile);
         $this->params->global = $this->loadFile($this->globalFile);
@@ -176,50 +183,48 @@ class ConfigManager extends \Watamelo\Lib\Manager
 
     /**
      * Load the application configuration from file
-     * @return boolean false if the configuration is empty afterwards
+     * @return bool false if the configuration is empty afterwards
      */
-    private function load()
+    private function load(): bool
     {
         $this->params = $this->loadFile($this->file);
         if (!empty($this->params)) {
             $this->params->global = $this->loadFile($this->globalFile);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private function loadCustom($fileName)
     {
-        $path = ROOT.'/data/config/'.$fileName.'.json';
+        $path = ROOT . '/data/config/' . $fileName . '.json';
         $this->customParams[$fileName] = $this->loadFile($path);
         if (!empty($this->customParams[$fileName])) {
             return $this->customParams;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
      * Returns a configuration file content
-     * @param  string $file file name
-     * @return array        configuration parameters (or false if file not found)
+     * @param string $file file name
+     * @return StdClass configuration parameters (or false if file not found)
      */
-    private function loadFile($file)
+    private function loadFile(string $file): StdClass
     {
-        if (file_exists( $file )) {
-            return json_decode(file_get_contents($file));
-        } else {
-            touch($file);
-            return false;
+        if (!file_exists($file)) {
+            throw new RuntimeException(sprintf('Configuration file "%s" not found.', $file));
         }
+        return json_decode(file_get_contents($file));
     }
 
     /**
      * Save the current configuration to file
-     * @return boolean true if save was a success
+     * @return bool true if save was a success
      */
-    private function save()
+    private function save(): bool
     {
         $params = clone $this->params;
         unset($params->global);
@@ -227,34 +232,23 @@ class ConfigManager extends \Watamelo\Lib\Manager
     }
 
     /**
-     * Save the current configuration to DEFAULT file
-     * @return boolean true if save was a success
-     */
-    private function saveDefault()
-    {
-        $params = clone $this->params;
-        unset($params->global);
-        return $this->saveFile($this->defaultFile, $params);
-    }
-
-    /**
      * Save the current GLOBAL configuration to GLOBAL file
-     * @return boolean true if save was a success
+     * @return bool true if save was a success
      */
-    private function saveGlobal()
+    private function saveGlobal(): bool
     {
         return $this->saveFile($this->globalFile, $this->params->global);
     }
 
     /**
      * Save the current configuration to the given file
-     * @param  string  $file   file name
-     * @param  misc    $params params to put in the file (json encoded)
-     * @return boolean        true if save was a success
+     * @param string $file file name
+     * @param mixed $params params to put in the file (json encoded)
+     * @return bool        true if save was a success
      */
-    private function saveFile($file, $params)
+    private function saveFile(string $file, $params): bool
     {
-        $fp = fopen( $file, 'w' );
+        $fp = fopen($file, 'wb');
         if ($fp) {
             fwrite($fp, json_encode($params));
             fclose($fp);

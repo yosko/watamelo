@@ -1,23 +1,28 @@
 <?php
+
 namespace Watamelo\Lib;
+
+use PDO;
+use PDOException;
+use StdClass;
 
 /**
  * Database manager
  */
 class DbFactory
 {
-    private static $PDOInstance;
+    private static PDO $PDOInstance;
 
     /**
      * Get the connexion object
-     * @param  string  $dbms    type of database (sqlite, mysql, etc...)
-     * @param  object  $dbParam database parameters (connection string, etc...)
-     * @return object           connexion object (PDO instance)
+     * @param string $dbms type of database (sqlite, mysql, etc...)
+     * @param StdClass $dbParam database parameters (connection string, etc...)
+     * @return PDO|false           connexion object (PDO instance)
      */
-    public static function getConnexion($dbms = "sqlite", $dbParam)
+    public static function getConnection(string $dbms, StdClass $dbParam)
     {
-        //instanciate PDO singleton)
-        if (!self::$PDOInstance) {
+        //instantiate PDO singleton
+        if (!isset(self::$PDOInstance) || !self::$PDOInstance) {
             $db = false;
             if ($dbms == "sqlite") {
                 $db = self::startSqliteConnexion($dbParam);
@@ -35,16 +40,16 @@ class DbFactory
 
     /**
      * Start a sqlite connexion
-     * @param  object $dbParam database parameters (file name under ->dbName)
-     * @return object          connexion object (PDO instance)
+     * @param StdClass $dbParam database parameters (file name under ->dbName)
+     * @return PDO|false          connexion object (PDO instance)
      */
-    public static function startSqliteConnexion($dbParam)
+    public static function startSqliteConnexion(StdClass $dbParam)
     {
         $db = false;
         try {
-            $db = new \PDO('sqlite:'.DB_PATH.$dbParam->dbName);
-            $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch (\PDOException $e) {
+            $db = new PDO('sqlite:' . DB_PATH . $dbParam->dbName, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
             echo $e->getMessage();
         }
 
@@ -53,23 +58,23 @@ class DbFactory
 
     /**
      * Start a MySQL connexion
-     * @param  object $dbParam database parameters (connection string, etc...)
-     * @return object          connexion object (PDO instance)
+     * @param StdClass $dbParam database parameters (connection string, etc...)
+     * @return PDO|false          connexion object (PDO instance)
      */
-    public static function startMysqlConnexion($dbParam)
+    public static function startMysqlConnexion(StdClass $dbParam)
     {
-        $db = new \PDO('mysql:host=localhost;dbname='.$dbParam->dbName, 'root', '');
-        $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $db = new PDO('mysql:host=localhost;dbname=' . $dbParam->dbName, 'root', '');
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $db;
     }
 
     /**
      * Start a PostgreSQL connexion
-     * @param  object $dbParam database parameters (connection string, etc...)
-     * @return object          connexion object (PDO instance)
+     * @param StdClass $dbParam database parameters (connection string, etc...)
+     * @return PDO|false          connexion object (PDO instance)
      */
-    public static function startPostgresConnexion()
+    public static function startPostgresConnexion(StdClass $dbParam)
     {
         return false;
     }

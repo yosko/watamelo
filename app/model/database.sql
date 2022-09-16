@@ -20,7 +20,7 @@ CREATE TABLE wa_user (
     'creation'          DATETIME NOT NULL DEFAULT current_timestamp,
     'bio'               TEXT
 );
-INSERT INTO "wa_user" ("id","level","login","password","creation","bio") VALUES ('1','2','admin','$2y$10$DM3DucHoLtyP08CU1h95WOwVlwYkWtP4ITzdC4y3YGzr2/VxH9PGC','Application administrator');
+INSERT INTO "wa_user" ("id","level","login","password","bio") VALUES ('1','2','admin','$2y$10$DM3DucHoLtyP08CU1h95WOwVlwYkWtP4ITzdC4y3YGzr2/VxH9PGC','Application administrator');
 
 ----
 -- Indexes

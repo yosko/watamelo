@@ -1,34 +1,46 @@
 <?php
+
 namespace Watamelo\Managers;
+
+use Watamelo\Lib\Manager;
 
 /**
  * Manage PHP sessions and cookie based long term sessions
  */
-class SessionManager extends \Watamelo\Lib\Manager
+class SessionManager extends Manager
 {
-    protected $LTDir;
-    protected $nbLTSession;
-    protected $LTDuration;
+    protected string $LTDir;
+    protected int $nbLTSession;
+    protected int $LTDuration;
 
     /**
      * COOKIES
      */
 
     /**
-     * Set a value for a cookie
-     * @param string  $key      cookie name
-     * @param string  $value    cookie value
-     * @param integer $duration lifetime of the cookie (in seconds)
+     * @param string $key
      */
-    public function setCookie($key, $value, $duration)
+    public function unsetCookie(string $key)
+    {
+        $this->setCookie($key, '', time() - 86400);
+    }
+
+    /**
+     * Set a value for a cookie
+     * @param string $key cookie name
+     * @param string $value cookie value
+     * @param int $duration lifetime of the cookie (in seconds)
+     */
+    public function setCookie(string $key, string $value, int $duration)
     {
         $dirname = dirname($_SERVER['SCRIPT_NAME']);
-        if(substr($dirname, -1) != '/')
+        if (substr($dirname, -1) != '/') {
             $dirname .= '/';
+        }
         setcookie(
             $key,
             $value,
-            time()+$duration,
+            time() + $duration,
             $dirname,
             '',
             false,
@@ -37,21 +49,13 @@ class SessionManager extends \Watamelo\Lib\Manager
     }
 
     /**
-     *
-     */
-    public function unsetCookie($key)
-    {
-        $this->setCookie($key, '', time() - 86400);
-    }
-
-    /**
      * Get the value of a cookie
-     * @param  string $key cookie name
-     * @return misc        cookie value (a string) or false if cookie not found
+     * @param string $key cookie name
+     * @return string|false cookie value (a string) or false if cookie not found
      */
-    public function getCookie($key)
+    public function getCookie(string $key)
     {
-        return isset($_COOKIE[$key])?$_COOKIE[$key]:false;
+        return isset($_COOKIE[$key]) ? $_COOKIE[$key] : false;
     }
 
     /**
@@ -60,53 +64,52 @@ class SessionManager extends \Watamelo\Lib\Manager
 
     /**
      * Set a value in PHP session
-     * @param string $key   key
-     * @param misc   $value value
+     * @param string $key key
+     * @param mixed $value value
      */
-    public function setValue($key, $value)
+    public function setValue(string $key, $value)
     {
         $_SESSION[$key] = $value;
     }
 
     /**
-     * Get a value from PHP session
-     * @param  string $key key
-     * @return misc        value
-     */
-    public function getValue($key)
-    {
-        return isset($_SESSION[$key])?$_SESSION[$key]:false;
-    }
-
-    /**
      * Get all PHP session variables
-     * @param  string $key key
-     * @return misc        value
+     * @return mixed        value
      */
-    public function getAll()
+    public function getAll(): array
     {
-        return isset($_SESSION)?$_SESSION:array();
-    }
-
-    /**
-     * Remove a value from PHP session
-     * @param  string $key key
-     */
-    public function unsetValue($key)
-    {
-        unset($_SESSION[$key]);
+        return isset($_SESSION) ? $_SESSION : array();
     }
 
     /**
      * Get AND remove at the same time a value from PHP session
-     * @param  string $key key
-     * @return misc        value
+     * @param string $key key
+     * @return mixed        value
      */
-    public function retrieveValue($key)
+    public function retrieveValue(string $key): bool
     {
         $value = $this->getValue($key);
         $this->unsetValue($key);
         return $value;
+    }
+
+    /**
+     * Get a value from PHP session
+     * @param string $key key
+     * @return mixed        value
+     */
+    public function getValue(string $key): bool
+    {
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : false;
+    }
+
+    /**
+     * Remove a value from PHP session
+     * @param string $key key
+     */
+    public function unsetValue(string $key)
+    {
+        unset($_SESSION[$key]);
     }
 
     /**
@@ -115,8 +118,9 @@ class SessionManager extends \Watamelo\Lib\Manager
 
     /**
      * Set configuration for long-term session handling
-     * @param string $key   key
-     * @param misc   $value value
+     * @param string $LTDir local directory
+     * @param int $nbLTSession maximum number of active long-term sessions
+     * @param int $LTDuration maximum duration of a long-term session
      */
     public function setLTConfig($LTDir = 'tmp/sessions/', $nbLTSession = 200, $LTDuration = 2592000)
     {
@@ -130,33 +134,37 @@ class SessionManager extends \Watamelo\Lib\Manager
 
     /**
      * Set the long-term session
-     * @param array $values possible values to save in session
+     * @param string $login
+     * @param string $sid
+     * @param mixed $values
      */
-    public function setLTSession($login, $sid, $value)
+    public function setLTSession(string $login, string $sid, $values)
     {
         //create the session directory if needed
-        if (!file_exists($this->LTDir)) { mkdir($this->LTDir, 0700, true); }
+        if (!file_exists($this->LTDir)) {
+            mkdir($this->LTDir, 0700, true);
+        }
 
-        $fp = fopen($this->LTDir.$login.'_'.$sid.'.ses', 'w');
-        fwrite($fp, gzdeflate(json_encode($value)));
+        $fp = fopen($this->LTDir . $login . '_' . $sid . '.ses', 'w');
+        fwrite($fp, gzdeflate(json_encode($values)));
         fclose($fp);
     }
 
     /**
      * Get the long-term session values or false if no session is found
-     * @param  string $login login
-     * @param  string $sid   session id
+     * @param string $login login
+     * @param string $sid session id
      * @return array         possible values stored in session or empty array
      *                       false if no session found
      */
-    public function getLTSession($login, $sid)
+    public function getLTSession(string $login, string $sid)
     {
         $value = false;
-        $file = $this->LTDir.$login.'_'.$sid.'.ses';
+        $file = $this->LTDir . $login . '_' . $sid . '.ses';
         if (file_exists($file)) {
 
             //unset long-term session if expired
-            if (filemtime($file)+$this->LTDuration <= time()) {
+            if (filemtime($file) + $this->LTDuration <= time()) {
                 $this->unsetLTSession($login, $sid);
                 $value = false;
             } else {
@@ -170,14 +178,15 @@ class SessionManager extends \Watamelo\Lib\Manager
 
     /**
      * Delete a long-term session on server side
-     * @param  string $login login
-     * @param  string $sid   session id
+     * @param string $login login
+     * @param string|false $sid session id
      */
-    public function unsetLTSession($login, $sid = false) {
-        if($sid !== false) {
-            $login .= '_'.$sid;
+    public function unsetLTSession(string $login, $sid = false)
+    {
+        if ($sid !== false) {
+            $login .= '_' . $sid;
         }
-        $filePath = $this->LTDir.$login.'.ses';
+        $filePath = $this->LTDir . $login . '.ses';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -186,14 +195,15 @@ class SessionManager extends \Watamelo\Lib\Manager
     /**
      * Delete all long-term sessions of a user
      * if no user is given, the current user's sessions are deleted
-     * @param  string $userLogin only delete a specific user's sessions
+     * @param string $login only delete a specific user's sessions
      */
-    public function unsetLTSessions($login)
+    public function unsetLTSessions(string $login)
     {
-        $files = glob( $this->LTDir.$login.'_*', GLOB_MARK );
-        foreach ( $files as $file ) {
-            unlink( $file );
+        $files = glob($this->LTDir . $login . '_*', GLOB_MARK);
+        foreach ($files as $file) {
+            unlink($file);
         }
+        return true;
     }
 
     /**
@@ -207,9 +217,9 @@ class SessionManager extends \Watamelo\Lib\Manager
         $files = array();
         if ($dh = opendir($dir)) {
             while ($file = readdir($dh)) {
-                if (!is_dir($dir.$file)) {
+                if (!is_dir($dir . $file)) {
                     if ($file != "." && $file != "..") {
-                        $files[$file] = filemtime($dir.$file);
+                        $files[$file] = filemtime($dir . $file);
                     }
                 }
             }
@@ -222,7 +232,7 @@ class SessionManager extends \Watamelo\Lib\Manager
         //check each file
         $i = 1;
         foreach ($files as $file => $date) {
-            if ($i > $this->nbLTSession || $date+$this->LTDuration <= time()) {
+            if ($i > $this->nbLTSession || $date + $this->LTDuration <= time()) {
                 $this->unsetLTSession(basename($file));
             }
             ++$i;
