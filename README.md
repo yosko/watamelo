@@ -33,10 +33,15 @@ You should only add or edit content in the following directories. Everything tha
 ### Controllers & Models
 
 * ```GeneralController```: example of a classic controller, used to display most of the views existing in the example
-* ```UserManager```: example of a classic manager using queries
-* ```SqlGenerator```: utility class to build SQL queries
+* ```User``` and ```UserManager```: example of a classic manager using queries
+* ```UserLevel``` and ```UserLevelManager```
 * ```ConfigManager```: example of a classic manager using JSON files
 * ```AuthController```, ```SessionManager``` and part of the ```UserManager``` are used to handle authentication and user sessions here.
+
+* ```SqlGenerator```: utility class to build SQL queries
+* ```Data```, ```DataManager``` and ```DataView```: generic classes allowing CRUD actions with configuration instead of code.
+* ```SqlManager```: generic class handling the use of base SQL for CRUD actions
+* ``````: 
 
 ### Data
 
@@ -148,6 +153,12 @@ If you have any question or suggestion, please feel free to contact me or post a
 
 ## Version History
 
+- v0.12 (2022-09-16)
+  - migrated to PHP 7.4
+  - enabled strict types
+  - cleaned/formatted code
+  - updated external libraries
+  - added Data* and other facilitators in example app
 - v0.11 (2016-11-14)
   - fixed cookie path errors
   - minor rewrite and new useful functions in example classes

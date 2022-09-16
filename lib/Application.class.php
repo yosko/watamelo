@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use PDO;
 use Throwable;
 
-define('WATAMELO_VERSION', '0.11');
+define('WATAMELO_VERSION', '0.12');
 
 /**
  * Abstract class
