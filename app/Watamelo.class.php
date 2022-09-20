@@ -11,9 +11,6 @@ use Watamelo\Lib\Manager;
 use Watamelo\Lib\Router;
 use Yosko\Loggable;
 
-require_once(ROOT . '/app/ext/easydump.php');
-require_once(ROOT . '/app/ext/yoslogin.lib.php');
-
 /**
  * The application itself, called from the index.php and does everything else
  */

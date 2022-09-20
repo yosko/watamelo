@@ -1,0 +1,21 @@
+{
+    "name": "yosko/watamelo",
+    "description": "small PHP MVC Framework",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "yosko/easydump": "dev-main",
+        "yosko/yoslogin": "dev-main"
+    },
+    "license": "LGPL",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/yosko/easydump.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/yosko/yoslogin.git"
+        },
+    ],
+}

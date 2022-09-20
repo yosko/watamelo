@@ -8,12 +8,6 @@ use EasyDump;
 require_once(ROOT . '/lib/autoload.php');
 
 /**
- * https://github.com/yosko/easydump
- * use it for debugging your app by displaying your variables
- */
-require_once(ROOT . '/app/ext/easydump.php');
-
-/**
  * Utility functions (static methods)
  */
 class Tools

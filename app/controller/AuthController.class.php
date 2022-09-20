@@ -122,16 +122,6 @@ class AuthController extends WatameloController
 
     /**
      * Show login form for unauthenticated users
-     * @throws Exception
-     */
-    public function executeLogin()
-    {
-        $this->executeIndex();
-    }
-
-    /**
-     * Show login form for unauthenticated users
-     * @throws Exception
      */
     public function executeIndex()
     {
@@ -143,6 +133,14 @@ class AuthController extends WatameloController
             }
             $this->app()->view()->renderView("auth.login.form");
         }
+    }
+
+    /**
+     * Show login form for unauthenticated users
+     */
+    public function executeLogin()
+    {
+        $this->executeIndex();
     }
 
     /**
