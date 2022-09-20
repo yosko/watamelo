@@ -13,7 +13,7 @@ class Router extends ApplicationComponent
     protected DOMNodeList $routes;
     protected string $file = "";
 
-    public function __construct(Application $app)
+    public function __construct(AbstractApplication $app)
     {
         parent::__construct($app);
 

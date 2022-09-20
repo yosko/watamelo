@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Watamelo;
 
 use PDO;
 use PDOException;

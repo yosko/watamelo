@@ -3,30 +3,12 @@
     "description": "small PHP MVC Framework",
     "type": "library",
     "require": {
-        "php": ">=7.4",
-        "yosko/easydump": "dev-master",
-        "yosko/yoslogin": "dev-master"
+        "php": ">=7.4"
     },
     "autoload": {
         "psr-4": {
-            "Watamelo\\Lib\\": "lib/",
-            "Watamelo\\Controllers\\": "app/controller/",
-            "Watamelo\\Managers\\": "app/manager/",
-            "Watamelo\\Data\\": "app/model/",
-            "Watamelo\\Utils\\": "app/utils/",
-            "Watamelo\\App\\": "app/",
-            "Watamelo\\Plugin\\": "plugin/"
+            "Watamelo\\": "."
         }
     },
-    "license": "LGPL",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/yosko/easydump.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/yosko/yoslogin.git"
-        }
-    ]
+    "license": "LGPL"
 }

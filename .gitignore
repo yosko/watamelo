@@ -6,5 +6,5 @@ tmp/logs/*
 tmp/sessions/*
 *.sublime-project
 *.sublime-workspace
-composer.lock
-vendor
+/composer.lock
+/vendor/

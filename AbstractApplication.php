@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Watamelo;
 
 use Exception;
 use InvalidArgumentException;
@@ -13,7 +13,7 @@ define('WATAMELO_VERSION', '0.12');
  * Abstract class
  * Main application, will be called from index.php
  */
-abstract class Application
+abstract class AbstractApplication
 {
     protected string $appName = '';
     protected View $view;

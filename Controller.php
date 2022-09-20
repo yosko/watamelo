@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Watamelo;
 
 /**
  * Abstract class

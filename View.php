@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Watamelo;
 
 use Exception;
 
@@ -28,7 +28,7 @@ class View extends ApplicationComponent
     protected string $templatePath;
     protected $ApacheURLRewriting;
 
-    public function __construct(Application $app, $template, $rootUrl, $ApacheURLRewriting)
+    public function __construct(AbstractApplication $app, $template, $rootUrl, $ApacheURLRewriting)
     {
         parent::__construct($app);
 

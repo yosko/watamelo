@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Watamelo;
 
 /**
  * Abstract class
@@ -8,14 +8,14 @@ namespace Watamelo\Lib;
  */
 abstract class ApplicationComponent
 {
-    protected Application $app;
+    protected AbstractApplication $app;
 
-    public function __construct(Application $app)
+    public function __construct(AbstractApplication $app)
     {
         $this->app = $app;
     }
 
-    public function app(): Application
+    public function app(): AbstractApplication
     {
         return $this->app;
     }

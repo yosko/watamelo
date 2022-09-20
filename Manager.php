@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Watamelo;
 
 use PDO;
 
@@ -12,7 +12,7 @@ abstract class Manager extends ApplicationComponent
 {
     protected ?PDO $dao;
 
-    public function __construct(Application $app)
+    public function __construct(AbstractApplication $app)
     {
         parent::__construct($app);
         $this->dao = $app->dao();
