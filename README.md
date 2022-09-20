@@ -105,7 +105,7 @@ example given for the admin route.
 The default example is defined to use Apache **rewrite_mod**. If you don't want to use it or just can't, just do the following:
 
 * delete or rename the ```.htaccess``` file at the project root
-* in ```data/config/config.global.json```, change the parameter **ApacheURLRewriting** to false, or replace its calls in ```app/watamelo.class.php``` by the boolean of your choice.
+* in ```data/config/config.global.json```, change the parameter **ApacheURLRewriting** to false, or replace its calls in ```app/Watamelo.php``` by the boolean of your choice.
 
 The routes are always put in the **GET** parameter called **url** (whether you use basic or Apache Rewriting method):
 
@@ -133,7 +133,7 @@ As for the sqlite database file (```data/db/watamelo.db```) and session name, th
 
 ## Change DBMS
 
-Watamelo is currently given with a SQLite example, that can be adapted for any DBMS within the file ```lib/dbfactory.class.php``` and by changing the parameters given when instanciating Managers in ```lib/application.class.php```.
+Watamelo is currently given with a SQLite example, that can be adapted for any DBMS within the file ```lib/DbFactory.php``` and by changing the parameters given when instanciating Managers in ```lib/Application.php```.
 
 In a future version, it will be configurable without having to change the core's code.
 
@@ -164,7 +164,7 @@ If you have any question or suggestion, please feel free to contact me or post a
   - minor rewrite and new useful functions in example classes
   - fixed shorthand function ```executeTransaction``` to avoid transaction conflicts
   - fixed missing explicit namespaces
-  - fixed syntax error in ```lib/application.class.php```
+  - fixed syntax error in ```lib/Application.php```
 - v0.10 (2016-02-04)
   - introduction of namespace (now used everywhere)
   - minor tweaks to .gitignore

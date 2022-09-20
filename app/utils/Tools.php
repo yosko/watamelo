@@ -5,8 +5,6 @@ namespace Watamelo\Utils;
 use DateTime;
 use EasyDump;
 
-require_once(ROOT . '/lib/autoload.php');
-
 /**
  * Utility functions (static methods)
  */

@@ -4,8 +4,19 @@
     "type": "library",
     "require": {
         "php": ">=7.4",
-        "yosko/easydump": "dev-main",
-        "yosko/yoslogin": "dev-main"
+        "yosko/easydump": "dev-master",
+        "yosko/yoslogin": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Watamelo\\Lib\\": "lib/",
+            "Watamelo\\Controllers\\": "app/controller/",
+            "Watamelo\\Managers\\": "app/manager/",
+            "Watamelo\\Data\\": "app/model/",
+            "Watamelo\\Utils\\": "app/utils/",
+            "Watamelo\\App\\": "app/",
+            "Watamelo\\Plugin\\": "plugin/"
+        }
     },
     "license": "LGPL",
     "repositories": [
@@ -16,6 +27,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/yosko/yoslogin.git"
-        },
-    ],
+        }
+    ]
 }
