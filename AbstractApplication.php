@@ -16,6 +16,7 @@ define('WATAMELO_VERSION', '0.12');
 abstract class AbstractApplication
 {
     protected string $appName = '';
+    protected ExceptionHandler $exceptionHandler;
     protected View $view;
     protected bool $useDefaultRoutes = true;
     protected string $defaultControllerName = '';
@@ -28,8 +29,7 @@ abstract class AbstractApplication
     {
         //handle errors and warnings
         $this->setErrorReporting(DEVELOPMENT_ENVIRONMENT);
-
-        set_exception_handler(array($this, 'exceptionHandler'));
+        $this->exceptionHandler = new ExceptionHandler();
 
         $errorFile = ROOT . '/tmp/logs/error.log';
         ini_set('log_errors', 'On');
@@ -97,6 +97,7 @@ abstract class AbstractApplication
     public function initView(string $template, string $rootUrl, bool $ApacheURLRewriting)
     {
         $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
+        $this->exceptionHandler->setView($this->view);
     }
 
     /**
@@ -164,17 +165,6 @@ abstract class AbstractApplication
         return error_log(
             ' (manually logged) ' . $e->getMessage() . (empty($string) ? '' : ' [' . $string . ']')
         );
-    }
-
-    /**
-     * Display exceptions and errors in a nicely manner
-     * @param Throwable $e
-     * @throws Exception
-     */
-    public function exceptionHandler(Throwable $e)
-    {
-        $this->view()->setParam('exception', $e);
-        echo $this->view()->renderView('exception', false);
     }
 
     /**
