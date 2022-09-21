@@ -2,6 +2,10 @@
 
 namespace Watamelo;
 
+/**
+ * Exception handler using the View system if possible.
+ * Inspired by: https://stackoverflow.com/a/7939492/863323
+ */
 class ExceptionHandler {
     private $rethrow;
     private View $view;
