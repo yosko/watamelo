@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo;
+namespace Yosko\Watamelo;
 
 /**
  * Exception handler using the View system if possible.
@@ -28,8 +28,8 @@ class ExceptionHandler {
     {
 
         if (isset($this->view)) {
-            $this->view()->setParam('exception', exception);
-            echo $this->view()->renderView('exception', false);
+            $this->view->setParam('exception', $exception);
+            echo $this->view->renderView('exception', false);
         } else {
             $this->rethrow = $exception;
         }
