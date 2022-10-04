@@ -81,11 +81,15 @@ abstract class AbstractApplication
         }
 
         if (!isset($this->managers[$module])) {
-            $manager = '\\Watamelo\\Managers\\' . $module . 'Manager';
+            $manager = '\\'.$this->getConcreteNamespace().'\\Managers\\' . $module . 'Manager';
             $this->managers[$module] = new $manager($this);
         }
 
         return $this->managers[$module];
+    }
+
+    public function getConcreteNamespace() {
+        return (new \ReflectionClass($this))->getNamespaceName();
     }
 
     /**
