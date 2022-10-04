@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo;
+namespace Yosko\Watamelo;
 
 /**
  * Abstract class
