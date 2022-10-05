@@ -2,7 +2,8 @@
 
 namespace Yosko\Watamelo;
 
-use Exception;
+use DOMDocument;
+use LogicException;
 
 define('RESPONSE_CSV', 'csv');
 define('RESPONSE_RSS', 'rss');
@@ -24,15 +25,16 @@ class View extends ApplicationComponent
     protected string $baseUrl;
     protected string $currentUrl;
     protected string $templateName;
+    protected object $template;
     protected string $templateUrl;
     protected string $templatePath;
-    protected $ApacheURLRewriting;
+    protected bool $ApacheURLRewriting;
 
     public function __construct(AbstractApplication $app, $template, $rootUrl, $ApacheURLRewriting)
     {
         parent::__construct($app);
 
-        $this->params = array();
+        $this->params = [];
         $this->rootUrl = $rootUrl;
         $this->templateName = $template;
         $this->ApacheURLRewriting = $ApacheURLRewriting;
@@ -42,7 +44,7 @@ class View extends ApplicationComponent
             $this->templateName = "default";
         }
 
-        if ($this->rootUrl === false) {
+        if (empty($this->rootUrl)) {
             $protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'
             || !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
                 ? 'https://'
@@ -64,6 +66,15 @@ class View extends ApplicationComponent
         $this->setParam("rootUrl", $this->rootUrl);
         $this->setParam("baseUrl", $this->baseUrl);
         $this->setParam('currentUrl', $this->currentUrl);
+    }
+
+    /**
+     * Returns the template
+     * @return object template
+     */
+    public function template()
+    {
+        return $this->template;
     }
 
     /**
@@ -95,6 +106,17 @@ class View extends ApplicationComponent
     }
 
     /**
+     * Build a route based on the base URL and the given format and includes the arguments (based on sprintf() )
+     * @param string $routeFormat
+     * @param mixed ...$args
+     * @return string
+     */
+    public function buildRoute(string $routeFormat, ...$args): string
+    {
+        return $this->baseUrl() . sprintf(...func_get_args());
+    }
+
+    /**
      * Returns the template url
      * @return string template url
      */
@@ -123,7 +145,7 @@ class View extends ApplicationComponent
     }
 
     /**
-     * Get a parameter asigned to the view
+     * Get a parameter assigned to the view
      * @param string $name parameter name
      * @return mixed          parameter value
      */
@@ -133,7 +155,7 @@ class View extends ApplicationComponent
     }
 
     /**
-     * Get all parameters asigned to the view
+     * Get all parameters assigned to the view
      * @return array list of parameters
      */
     public function getParams(): array
@@ -150,6 +172,7 @@ class View extends ApplicationComponent
     public function renderCss(string $name, $directResult = true)
     {
         //import the parameters into the current context
+        $this->params['self'] = $name;
         extract($this->params);
 
         $templatePath = $this->templatePath;
@@ -174,7 +197,6 @@ class View extends ApplicationComponent
      * Render a rss/atom feed with the given falues
      * @param array $feed values for feed items
      * @param string $type rss (default) or atom
-     * @throws Exception
      */
     public function renderFeed(array $feed, $type = RESPONSE_RSS)
     {
@@ -202,24 +224,25 @@ class View extends ApplicationComponent
     /**
      * Assign all parameters to the view, then render it
      * @param string $name view name
-     * @param boolean $directResult false to get result in the return
+     * @param bool $directResult false to get result in the return
      * @param string $templatePath
      * @return false|string
-     * @throws Exception
      */
-    public function renderView(string $name, $directResult = true, $templatePath = '')
+    public function renderView(string $name, bool $directResult = true, string $templatePath = '')
     {
         //file path
         if (empty($templatePath)) {
             $templatePath = $this->templatePath;
         }
         $useTemplatePath = $templatePath;
-        $templatePath = $this->templatePath;
+        //$templatePath = $this->templatePath;
         $runtimeTemplateFile = $useTemplatePath . $name . '.tpl.php';
 
         //read the file
         if (file_exists($runtimeTemplateFile)) {
             //import the parameters into the current context
+            $this->setParam('self', $name);
+            $this->setParam('dom', new DOMDocument());
             extract($this->params);
 
             ob_start();
@@ -228,7 +251,7 @@ class View extends ApplicationComponent
 
             //file should always exists for direct results
         } elseif ($directResult) {
-            throw new Exception(sprintf('Template not found: "%s"', $name));
+            throw new LogicException(sprintf('Template not found: "%s"', $name));
 
             //return empty if file not found
         } else {
@@ -245,16 +268,16 @@ class View extends ApplicationComponent
 
     /**
      * Send a data response with the given data and response type
-     * @param $data the data to return
+     * @param array $data the data to return
      * @param string $responseType the type of response to use
      * @param array $options possible options:
-     *                              - 'fileName'='filname.extension' to make it a downloadable file
+     *                              - 'fileName'='filename.extension' to make it a downloadable file
      *                              - 'header'=false to hide CSV header line
      *                              - 'last-modified': date of last edition on page/file,
      *                                in Unix timestamp format, using filemtime()
      *                              - 'length': Http response length
      */
-    public function renderData($data, $responseType = RESPONSE_JSON, $options = array())
+    public function renderData(array $data, string $responseType = RESPONSE_JSON, array $options = [])
     {
         ob_start();
 
@@ -285,15 +308,16 @@ class View extends ApplicationComponent
             //format response and headers
             if ($responseType == RESPONSE_JSON) {
                 header('Content-type: application/json');
-                if (version_compare(PHP_VERSION, '5.4.0') >= 0)
+                if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
                     echo json_encode($data, JSON_PRETTY_PRINT);
-                else
+                } else {
                     echo json_encode($data);
+                }
             } elseif ($responseType == RESPONSE_CSV) {
                 header('Content-type: text/csv');
 
                 $header = array();
-                foreach ($data as $key => $row) {
+                foreach ($data as $row) {
                     //headers
                     if (empty($header)) {
                         $header = array_keys((array)$row);
@@ -336,10 +360,9 @@ class View extends ApplicationComponent
     }
 
     /**
-     * Assaign all parameters to the view and returns its content
+     * Assign all parameters to the view and returns its content
      * @param string $name view name
      * @return string       view html content
-     * @throws Exception
      */
     public function renderMail(string $name)
     {

@@ -81,7 +81,10 @@ abstract class AbstractApplication
         }
 
         if (!isset($this->managers[$module])) {
-            $manager = '\\'.$this->getConcreteNamespace().'\\Managers\\' . $module . 'Manager';
+            $manager = $module . 'Manager';
+            if(substr($module, 0,1) !== '\\') {
+                $manager = '\\'.$this->getConcreteNamespace().'\\Managers\\' . $manager;
+            }
             $this->managers[$module] = new $manager($this);
         }
 

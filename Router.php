@@ -1,6 +1,6 @@
 <?php
 
-namespace Watamelo\Lib;
+namespace Yosko\Watamelo;
 
 use DOMDocument;
 use DOMNodeList;
@@ -169,7 +169,11 @@ class Router extends ApplicationComponent
      */
     public function getController(string $controllerName): object
     {
-        $classname = '\\Watamelo\\Controllers\\' . ucfirst($controllerName) . 'Controller';
+        $classname = ucfirst($controllerName) . 'Controller';
+        if(substr($controllerName, 0,1) !== '\\') {
+            $classname = '\\'.$this->app()->getConcreteNamespace().'\\Controllers\\' . $classname;
+        }
+
         return new $classname($this->app());
     }
 }

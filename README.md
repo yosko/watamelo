@@ -39,7 +39,7 @@ You should only add or edit content in the following directories. Everything tha
 * ```AuthController```, ```SessionManager``` and part of the ```UserManager``` are used to handle authentication and user sessions here.
 
 * ```SqlGenerator```: utility class to build SQL queries
-* ```Data```, ```DataManager``` and ```DataView```: generic classes allowing CRUD actions with configuration instead of code.
+* ```Bread```, ```BreadManager``` and ```BreadView```: generic classes allowing CRUD actions with configuration instead of code.
 * ```SqlManager```: generic class handling the use of base SQL for CRUD actions
 * ``````: 
 
