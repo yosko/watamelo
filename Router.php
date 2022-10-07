@@ -18,7 +18,7 @@ class Router extends ApplicationComponent
         parent::__construct($app);
 
         //load configuration file
-        $this->file = ROOT . '/app/routes.xml';
+        $this->file = ROOT . '/'.$this->app()->configPath().'/routes.xml';
         if (file_exists($this->file)) {
             $root = new DOMDocument('1.0', 'UTF-8');
             $root->load($this->file);
