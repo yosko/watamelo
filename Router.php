@@ -4,6 +4,7 @@ namespace Yosko\Watamelo;
 
 use DOMDocument;
 use DOMNodeList;
+use LogicException;
 
 /**
  * Almighty powerful and wonderful routing class
@@ -19,18 +20,20 @@ class Router extends ApplicationComponent
 
         //load configuration file
         $this->file = ROOT . '/'.$this->app()->configPath().'/routes.xml';
-        if (file_exists($this->file)) {
-            $root = new DOMDocument('1.0', 'UTF-8');
-            $root->load($this->file);
-
-            //no need to validate every time if in production environment
-            if (DEVELOPMENT_ENVIRONMENT && !$root->validate()) {
-                trigger_error("Failed to validate route definitions", E_USER_ERROR);
-            }
-
-            //only keep the route elements (and their children)
-            $this->routes = $root->getElementsByTagName('route');
+        if (file_exists($this->file) == false) {
+            throw new LogicException(sprintf('Configuration file "%s" not found', $this->file));
         }
+
+        $root = new DOMDocument('1.0', 'UTF-8');
+        $root->load($this->file);
+
+        //no need to validate every time if in production environment
+        if (DEVELOPMENT_ENVIRONMENT && !$root->validate()) {
+            trigger_error("Failed to validate route definitions", E_USER_ERROR);
+        }
+
+        //only keep the route elements (and their children)
+        $this->routes = $root->getElementsByTagName('route');
     }
 
     /**
