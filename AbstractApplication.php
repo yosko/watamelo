@@ -15,7 +15,8 @@ define('WATAMELO_VERSION', '0.12');
  */
 abstract class AbstractApplication
 {
-    protected string $appName = '';
+    protected string $appName;
+    protected string $configPath;
     protected ExceptionHandler $exceptionHandler;
     protected View $view;
     protected bool $useDefaultRoutes = true;
@@ -25,7 +26,7 @@ abstract class AbstractApplication
     protected string $getParamName;
 
 
-    public function __construct($appName = '')
+    public function __construct(string $appName = '', string $configPath = 'Config')
     {
         //handle errors and warnings
         $this->setErrorReporting(DEVELOPMENT_ENVIRONMENT);
@@ -51,6 +52,7 @@ abstract class AbstractApplication
 
         $this->getParamName = 'url';
         $this->appName = empty($appName) ? get_called_class() : $appName;
+        $this->configPath = trim($configPath, '/');
     }
 
     public function setErrorReporting($isDebug)
@@ -114,6 +116,10 @@ abstract class AbstractApplication
     public function appName(): string
     {
         return $this->appName;
+    }
+
+    public function configPath(): string {
+        return $this->configPath;
     }
 
     /**

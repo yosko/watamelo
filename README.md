@@ -25,6 +25,7 @@ Optional (but recommended) elements:
 You should only add or edit content in the following directories. Everything that is already in it is just a complete example on how to use watamelo:
 
 * ```app/```: the logic of your project (your application, controllers, models and route definitions)
+* `Config/`:  where all configuration files related to Watamelo and its plugins must be located. If you choose another directory, you must specify its path when instancianting your `AbstractApplication`.
 * ```data/```: any file related to informations used in your app (database/flat files, any downloadable file)
 * ```tpl/```: the presentation of your project (views, javascript, CSS and any image for your design)
 
@@ -59,7 +60,7 @@ Finally, the ```tpl/default/``` directory is designated for your views, javascri
 
 ### Route definition
 
-The ```app/routes.xml``` file must list all the relative URL for every single page in your app (and for URLs requested through ajax too). In this file, each route can be configured with these options:
+The ```routes.xml``` file must list all the relative URL for every single page in your app (and for URLs requested through ajax too). It must be located in the configuration directory. In this file, each route can be configured with these options:
 
 ```xml
 <route path="relative/path/to/page/:int|param1:/:string|param2:" controller="myControllerName" action="myMethod">
@@ -74,7 +75,7 @@ The ```app/routes.xml``` file must list all the relative URL for every single pa
 * ```controller=```: required. Name of the controller (without the suffix "Controller")
 * ```action=```: required. Name of the controller method (without the prefix "execute")
 * ```"<additional/>"```: optional, can be used multiple times. Defines a parameter with a fixed value that will be accessible from your controller code even if it doesn't appear in the requested URL. Useful to identify multiple routes pointing to the same action of the same controller.
-* ```<optional/>```: optional, can be used multiple times. Defines an optional parameter that appear at the end of the URL, preceded by "/". Multiple optional parameters are then separated by "|". You can still use GET parameters at the end of your URLs with ```?param5=val5```, but these don't need to be declared in ```app/routes.xml```.
+* ```<optional/>```: optional, can be used multiple times. Defines an optional parameter that appear at the end of the URL, preceded by "/". Multiple optional parameters are then separated by "|". You can still use GET parameters at the end of your URLs with ```?param5=val5```, but these don't need to be declared in ```routes.xml```.
 
 Exemple of relative URLs matching the route above :
 
