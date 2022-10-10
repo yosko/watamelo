@@ -26,10 +26,9 @@ class ExceptionHandler {
      */
     public function handler($exception)
     {
-
         if (isset($this->view)) {
             $this->view->setParam('exception', $exception);
-            echo $this->view->renderView('exception', false);
+            echo $this->view->renderView(ROOT.'/vendor/yosko/watamelo/views/exception', false);
         } else {
             $this->rethrow = $exception;
         }
