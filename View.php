@@ -46,7 +46,7 @@ class View extends ApplicationComponent
 
         if (empty($this->rootUrl)) {
             $protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'
-            || !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
+                || !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
                 ? 'https://'
                 : "http://";
             $this->rootUrl = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
@@ -234,9 +234,14 @@ class View extends ApplicationComponent
         if (empty($templatePath)) {
             $templatePath = $this->templatePath;
         }
-        $useTemplatePath = $templatePath;
-        //$templatePath = $this->templatePath;
-        $runtimeTemplateFile = $useTemplatePath . $name . '.tpl.php';
+        
+        if (substr($name, 0, 1) == '/') {
+            $runtimeTemplateFile = $name . '.tpl.php';
+        } else {
+            $useTemplatePath = $templatePath;
+            //$templatePath = $this->templatePath;
+            $runtimeTemplateFile = $useTemplatePath . $name . '.tpl.php';
+        }
 
         //read the file
         if (file_exists($runtimeTemplateFile)) {
@@ -288,7 +293,8 @@ class View extends ApplicationComponent
             $headers = apache_request_headers();
 
             // Checking if the client is validating his cache and if it is current.
-            if (isset($headers['If-Modified-Since'])
+            if (
+                isset($headers['If-Modified-Since'])
                 && strtotime($headers['If-Modified-Since']) == $options['last-modified']
             ) {
                 // Client's cache IS current, so we just respond '304 Not Modified'.
