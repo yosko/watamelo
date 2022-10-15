@@ -228,19 +228,21 @@ class View extends AbstractComponent
      * @param string $templatePath
      * @return false|string
      */
-    public function renderView(string $name, bool $directResult = true, string $templatePath = '')
+    public function renderView(string $name, bool $directResult = true, string $customPath = '')
     {
-        //file path
-        if (empty($templatePath)) {
-            $templatePath = $this->templatePath;
+        // path for the main template for this app
+        $templatePath = $this->templatePath;
+
+        // if a custom path is given, use it to load the template
+        // (but keep the main template path for other includes)
+        if (empty($customPath) == false) {
+            $this->setParam('customPath', $customPath);
         }
         
         if (substr($name, 0, 1) == '/') {
             $runtimeTemplateFile = $name . '.tpl.php';
         } else {
-            $useTemplatePath = $templatePath;
-            //$templatePath = $this->templatePath;
-            $runtimeTemplateFile = $useTemplatePath . $name . '.tpl.php';
+            $runtimeTemplateFile = (empty($customPath) ? $templatePath : $customPath) . $name . '.tpl.php';
         }
 
         //read the file
