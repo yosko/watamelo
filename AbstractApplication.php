@@ -23,7 +23,7 @@ abstract class AbstractApplication
     protected string $defaultControllerName = '';
     protected ?PDO $dao = null;
     protected array $managers = [];
-    protected string $getParamName;
+    protected string $routeParamName;
 
 
     public function __construct(string $appName = '', string $configPath = 'Config')
@@ -50,7 +50,7 @@ abstract class AbstractApplication
             }
         }
 
-        $this->getParamName = 'url';
+        $this->routeParamName = 'url';
         $this->appName = empty($appName) ? get_called_class() : $appName;
         $this->configPath = trim($configPath, '/');
     }
@@ -135,18 +135,18 @@ abstract class AbstractApplication
      * Returns the application parameter name used in $_GET
      * @return string name
      */
-    public function getParamName(): string
+    public function routeParamName(): string
     {
-        return $this->getParamName;
+        return $this->routeParamName;
     }
 
     /**
      * Set the application parameter name used in $_GET
-     * @param string $getParamName
+     * @param string $routeParamName
      */
-    public function setGetParamName(string $getParamName)
+    public function setRouteParamName(string $routeParamName)
     {
-        $this->getParamName = $getParamName;
+        $this->routeParamName = $routeParamName;
     }
 
     /**

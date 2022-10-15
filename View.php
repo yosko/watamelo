@@ -58,7 +58,7 @@ class View extends AbstractComponent
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl ?: dirname($_SERVER['PHP_SELF']) . '/';
-        $this->baseUrl .= !$this->ApacheURLRewriting ? '?' . $this->app()->getParamName() . '=' : '';
+        $this->baseUrl .= !$this->ApacheURLRewriting ? '?' . $this->app()->routeParamName() . '=' : '';
 
         $this->currentUrl = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http') . '://' . $_SERVER['SERVER_NAME'] . (isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : '');
 
