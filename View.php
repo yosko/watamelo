@@ -18,7 +18,7 @@ define('RESPONSE_MAIL', 'mail');
  * View manager
  * Class that handle the output of the application
  */
-class View extends ApplicationComponent
+class View extends AbstractComponent
 {
     protected array $params;
     protected string $rootUrl;

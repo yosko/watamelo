@@ -3,10 +3,9 @@
 namespace Yosko\Watamelo;
 
 /**
- * Abstract class
  * Base for all controllers
  */
-abstract class Controller extends ApplicationComponent
+abstract class AbstractController extends AbstractComponent
 {
     protected string $action = '';
     protected array $parameters = [];

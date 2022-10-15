@@ -8,7 +8,7 @@ use PDO;
  * Abstract class
  * Base for all data managers
  */
-abstract class Manager extends ApplicationComponent
+abstract class AbstractManager extends AbstractComponent
 {
     protected ?PDO $dao;
 

@@ -6,7 +6,7 @@ namespace Yosko\Watamelo;
  * Abstract class
  * base for every application components
  */
-abstract class ApplicationComponent
+abstract class AbstractComponent
 {
     protected AbstractApplication $app;
 

@@ -74,9 +74,9 @@ abstract class AbstractApplication
     /**
      * Returns a manager (loads it if not already loaded)
      * @param string $module manager name (case insensitive)
-     * @return Manager
+     * @return AbstractManager
      */
-    public function manager(string $module): Manager
+    public function manager(string $module): AbstractManager
     {
         if (!is_string($module) || empty($module)) {
             throw new InvalidArgumentException('Invalid module');
