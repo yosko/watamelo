@@ -2,6 +2,10 @@
 
 namespace Yosko\Watamelo;
 
+use LogicException;
+use ReflectionClass;
+use RuntimeException;
+
 /**
  * Almighty powerful and wonderful routing class
  */
@@ -10,6 +14,16 @@ class Router extends AbstractComponent
     protected string $routeParamName;
     protected array $routes;
     protected string $file;
+
+    public const METHOD_GET = 'GET';
+    public const METHOD_HEAD = 'HEAD';
+    public const METHOD_POST = 'POST';
+    public const METHOD_PUT = 'PUT';
+    public const METHOD_DELETE = 'DELETE';
+    public const METHOD_CONNECT = 'CONNECT';
+    public const METHOD_OPTIONS = 'OPTIONS';
+    public const METHOD_TRACE = 'TRACE';
+    public const METHOD_PATCH = 'PATCH';
 
     public function __construct(AbstractApplication $app)
     {
@@ -25,6 +39,20 @@ class Router extends AbstractComponent
         $route = new Route($url, $controller, $action, $method);
         $this->routes[] = $route;
         return $route;
+    }
+
+    public function __call(string $name, array $arguments): Route
+    {
+        $reflection = new ReflectionClass($this);
+        $constants = $reflection->getConstants();
+
+        // if class method called is an HTTP method: call map()
+        if (isset($constants['METHOD_'.strtoupper($name)])) {
+            $arguments[] = strtoupper($name);
+            return $this->map(...$arguments);
+        } else {
+            throw new LogicException(sprintf('Unknown method %s.', $name));
+        }
     }
 
     /**
