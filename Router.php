@@ -48,8 +48,12 @@ class Router extends AbstractComponent
 
         // if class method called is an HTTP method: call map()
         if (isset($constants['METHOD_'.strtoupper($name)])) {
-            $arguments[] = strtoupper($name);
-            return $this->map(...$arguments);
+            return $this->map(
+                $arguments[0],
+                $arguments[1],
+                $arguments[2] ?? 'index',
+                strtoupper($name)
+            );
         } else {
             throw new LogicException(sprintf('Unknown method %s.', $name));
         }
