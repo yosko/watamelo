@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use PDO;
 use Throwable;
 
-define('WATAMELO_VERSION', '0.12');
+define('WATAMELO_VERSION', '1.0');
 
 /**
  * Abstract class
@@ -20,7 +20,6 @@ abstract class AbstractApplication
     protected ExceptionHandler $exceptionHandler;
     protected View $view;
     protected bool $useDefaultRoutes = true;
-    protected string $defaultControllerName = '';
     protected ?PDO $dao = null;
     protected array $managers = [];
     protected string $routeParamName;
@@ -50,7 +49,7 @@ abstract class AbstractApplication
             }
         }
 
-        $this->routeParamName = 'url';
+        $this->routeParamName = 'path';
         $this->appName = empty($appName) ? get_called_class() : $appName;
         $this->configPath = trim($configPath, '/');
     }
@@ -67,7 +66,7 @@ abstract class AbstractApplication
     }
 
     /**
-     * Run the application (will call the right controller and action)
+     * Run the application (will call the right class/controller and action)
      */
     abstract public function run();
 
@@ -156,15 +155,6 @@ abstract class AbstractApplication
     public function useDefaultRoutes(): bool
     {
         return $this->useDefaultRoutes;
-    }
-
-    /**
-     * Returns the application default controller name
-     * @return string defaultControllerName
-     */
-    public function defaultControllerName(): string
-    {
-        return $this->defaultControllerName;
     }
 
     /**

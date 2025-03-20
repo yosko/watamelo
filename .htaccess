@@ -1,4 +1,6 @@
 <IfModule mod_rewrite.c>
+# TODO: everything here is out of date since migration to Composer
+
 # activate URL Rewriting
 RewriteEngine On
 

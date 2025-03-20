@@ -8,15 +8,16 @@ namespace Yosko\Watamelo;
  */
 abstract class AbstractComponent
 {
-    protected AbstractApplication $app;
+    // protected AbstractApplication $app;
 
-    public function __construct(AbstractApplication $app)
-    {
-        $this->app = $app;
-    }
+    public function __construct() {}
+    // public function __construct(AbstractApplication $app)
+    // {
+    //     $this->app = $app;
+    // }
 
-    public function app(): AbstractApplication
-    {
-        return $this->app;
-    }
+    // public function app(): AbstractApplication
+    // {
+    //     return $this->app;
+    // }
 }
