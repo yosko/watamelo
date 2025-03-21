@@ -79,7 +79,12 @@ abstract class AbstractApplication
      */
     public function initView(string $template, string $rootUrl, bool $ApacheURLRewriting)
     {
-        $this->view = new View($this, $template, $rootUrl, $ApacheURLRewriting);
+        $this->view = new View(
+            $template,
+            $rootUrl,
+            $this->routeParamName,
+            $ApacheURLRewriting
+        );
         $this->exceptionHandler->setView($this->view);
     }
 
