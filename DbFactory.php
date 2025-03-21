@@ -2,6 +2,7 @@
 
 namespace Yosko\Watamelo;
 
+use Exception;
 use PDO;
 use PDOException;
 use StdClass;
@@ -47,7 +48,7 @@ class DbFactory
     {
         $db = false;
         try {
-            $db = new PDO('sqlite:' . DB_PATH . $dbParam->dbName, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            $db = new PDO('sqlite:' . $dbParam->dbPath . $dbParam->dbName, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -76,6 +77,6 @@ class DbFactory
      */
     public static function startPostgresConnexion(StdClass $dbParam)
     {
-        return false;
+        throw new Exception("PostgreSQL not implemented yet");
     }
 }
