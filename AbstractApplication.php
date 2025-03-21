@@ -3,9 +3,6 @@
 namespace Yosko\Watamelo;
 
 use Exception;
-use InvalidArgumentException;
-use PDO;
-use Throwable;
 
 define('WATAMELO_VERSION', '1.0');
 
@@ -20,7 +17,6 @@ abstract class AbstractApplication
     protected ExceptionHandler $exceptionHandler;
     protected View $view;
     protected bool $useDefaultRoutes = true;
-    protected ?PDO $dao = null;
     protected array $managers = [];
     protected string $routeParamName;
 
@@ -56,11 +52,11 @@ abstract class AbstractApplication
 
     public function setErrorReporting($isDebug)
     {
-        error_reporting(E_ALL | E_STRICT);
+        error_reporting(E_ALL);
         if ($isDebug) {
             ini_set('display_errors', 'On');
         } else {
-            error_reporting(E_ALL | E_STRICT);
+            error_reporting(E_ALL);
             ini_set('display_errors', 'Off');
         }
     }
@@ -70,29 +66,8 @@ abstract class AbstractApplication
      */
     abstract public function run();
 
-    /**
-     * Returns a manager (loads it if not already loaded)
-     * @param string $module manager name (case insensitive)
-     * @return AbstractManager
-     */
-    public function manager(string $module): AbstractManager
+    public function getConcreteNamespace()
     {
-        if (!is_string($module) || empty($module)) {
-            throw new InvalidArgumentException('Invalid module');
-        }
-
-        if (!isset($this->managers[$module])) {
-            $manager = $module . 'Manager';
-            if(substr($module, 0,1) !== '\\') {
-                $manager = '\\'.$this->getConcreteNamespace().'\\Managers\\' . $manager;
-            }
-            $this->managers[$module] = new $manager($this);
-        }
-
-        return $this->managers[$module];
-    }
-
-    public function getConcreteNamespace() {
         return (new \ReflectionClass($this))->getNamespaceName();
     }
 
@@ -117,17 +92,9 @@ abstract class AbstractApplication
         return $this->appName;
     }
 
-    public function configPath(): string {
-        return $this->configPath;
-    }
-
-    /**
-     * Returns the application data access object
-     * @return PDO name
-     */
-    public function dao(): ?PDO
+    public function configPath(): string
     {
-        return $this->dao;
+        return $this->configPath;
     }
 
     /**

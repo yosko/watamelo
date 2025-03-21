@@ -4,7 +4,6 @@ namespace Yosko\Watamelo;
 
 use BadMethodCallException;
 use LogicException;
-use ReflectionClass;
 use RuntimeException;
 
 /**
@@ -17,16 +16,6 @@ class Router extends AbstractComponent
     protected Route $defaultRoute;
     protected string $file;
     protected HttpRequest $request;
-
-    public const METHOD_GET = 'GET';
-    public const METHOD_HEAD = 'HEAD';
-    public const METHOD_POST = 'POST';
-    public const METHOD_PUT = 'PUT';
-    public const METHOD_DELETE = 'DELETE';
-    public const METHOD_CONNECT = 'CONNECT';
-    public const METHOD_OPTIONS = 'OPTIONS';
-    public const METHOD_TRACE = 'TRACE';
-    public const METHOD_PATCH = 'PATCH';
 
     public function __construct(string $routeParamName)
     {
