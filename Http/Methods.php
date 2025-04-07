@@ -1,8 +1,8 @@
 <?php
 
-namespace Yosko\Watamelo;
+namespace Yosko\Watamelo\Http;
 
-enum HttpMethods: string {
+enum Methods: string {
     case GET = 'GET';
     case HEAD = 'HEAD';
     case POST = 'POST';

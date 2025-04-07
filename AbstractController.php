@@ -2,6 +2,8 @@
 
 namespace Yosko\Watamelo;
 
+use Yosko\Watamelo\Http\Request;
+
 /**
  * Base for all controllers
  */
@@ -10,9 +12,9 @@ abstract class AbstractController
     protected string $action = '';
     protected array $parameters = [];
     protected array $actions;
-    protected HttpRequest $request;
+    protected Request $request;
 
-    public function __construct(HttpRequest $request)
+    public function __construct(Request $request)
     {
         $this->request = $request;
     }

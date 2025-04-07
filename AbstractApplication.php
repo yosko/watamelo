@@ -3,6 +3,7 @@
 namespace Yosko\Watamelo;
 
 use Exception;
+use Yosko\Watamelo\Http\Request;
 
 define('WATAMELO_VERSION', '1.0');
 

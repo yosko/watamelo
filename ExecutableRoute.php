@@ -2,13 +2,15 @@
 
 namespace Yosko\Watamelo;
 
+use Yosko\Watamelo\Http\Request;
+
 class ExecutableRoute
 {
     public $route;
     public $arguments;
-    public $httpRequest;
+    public Request $httpRequest;
 
-    public function __construct(Route $route, array $arguments, HttpRequest $httpRequest)
+    public function __construct(Route $route, array $arguments, Request $httpRequest)
     {
         $this->route = $route;
         $this->arguments = $arguments;

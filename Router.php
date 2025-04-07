@@ -5,6 +5,8 @@ namespace Yosko\Watamelo;
 use BadMethodCallException;
 use LogicException;
 use RuntimeException;
+use Yosko\Watamelo\Http\Methods;
+use Yosko\Watamelo\Http\Request;
 
 /**
  * Almighty powerful and wonderful routing class
@@ -14,10 +16,11 @@ class Router
     protected array $routes;
     protected Route $defaultRoute;
     protected string $file;
-    protected HttpRequest $request;
+    protected Request $request;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
+        $this->request = $request;
         $this->routes = [];
         $this->file = '';
     }
@@ -38,7 +41,7 @@ class Router
     public function __call(string $name, array $arguments): Route
     {
         $method = strtoupper($name);
-        if (in_array($method, array_column(HttpMethods::cases(), 'name'))) {
+        if (in_array($method, array_column(Methods::cases(), 'name'))) {
             return $this->map($method, ...$arguments);
         } else {
             throw new BadMethodCallException("Unsupported HTTP method: {$method}");
@@ -67,7 +70,7 @@ class Router
         $parameters = [];
 
         if (is_null($url)) {
-            $url = $this->getUrl();
+            $url = $this->request->getPath();
         }
         $method = $_SERVER['REQUEST_METHOD'];
 
@@ -76,7 +79,7 @@ class Router
             $parameters = $this->matchRoute($method, $url, $route);
             if (!is_null($parameters)) {
                 $foundRoute = $route;
-                // TODO: let HttpRequest handle most of the parameters?
+                // TODO: let Request handle most of the parameters?
                 $foundRoute->foundParams = $parameters;
             }
         }
@@ -88,29 +91,11 @@ class Router
             throw new \RuntimeException('no available route found for this URL');
         }
 
-        // TODO:
-        $request = new HttpRequest($foundRoute->foundParams);
-
         // arguments destined to the action method
-        $arguments = array_merge($request->urlParams(), $foundRoute->foundParams);
+        $arguments = $foundRoute->foundParams;
 
         //return found route and parameters
-        return new ExecutableRoute($foundRoute, $arguments, $request);
-    }
-
-    public function getUrl(): string
-    {
-        // base URL as interpreted by this router
-        // (must always start with a "/")
-        $url = "/";
-
-        // TODO: rework with the use of HttpRequest instance to get URL
-        //remove '/' at the end of the url
-        // if (isset($_GET[$this->routeParamName])) {
-        //     $url .= trim($_GET[$this->routeParamName], "/");
-        // }
-
-        return $url;
+        return new ExecutableRoute($foundRoute, $arguments, $this->request);
     }
 
     public function matchRoute(string $method, string $url, Route $route): ?array
