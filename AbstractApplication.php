@@ -61,9 +61,25 @@ abstract class AbstractApplication
     }
 
     /**
-     * Run the application (will call the right class/controller and action)
+     * Run the application (initialize then execute)
      */
-    abstract public function run();
+    public function run()
+    {
+        $router = new Router(new Request());
+        $this->init($router);
+        $this->execute($router);
+    }
+
+    /**
+     * Initialise the application (routes, common settings, etc.)
+     */
+    public abstract function init(Router $router);
+
+    /**
+     * Execute the application (will call the right class/controller and action)
+     */
+    public abstract function execute(Router $router);
+
 
     public function getConcreteNamespace()
     {
