@@ -13,7 +13,6 @@ class View extends AbstractComponent
 {
     protected array $params;
     protected string $rootUrl;
-    protected string $routeParamName;
     protected string $baseUrl;
     protected string $currentUrl;
     protected string $templateName;
@@ -22,13 +21,12 @@ class View extends AbstractComponent
     protected string $templatePath;
     protected bool $ApacheURLRewriting;
 
-    public function __construct(string $template, string $rootUrl, string $routeParamName, bool $ApacheURLRewriting)
+    public function __construct(string $template, string $rootUrl, bool $ApacheURLRewriting)
     {
         parent::__construct();
 
         $this->params = [];
         $this->rootUrl = $rootUrl;
-        $this->routeParamName = $routeParamName;
         $this->templateName = $template;
         $this->ApacheURLRewriting = $ApacheURLRewriting;
 
@@ -52,7 +50,6 @@ class View extends AbstractComponent
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl ?: dirname($_SERVER['PHP_SELF']) . '/';
-        $this->baseUrl .= !$this->ApacheURLRewriting ? '?' . $this->routeParamName . '=' : '';
 
         $this->currentUrl = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http') . '://' . $_SERVER['SERVER_NAME'] . (isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : '');
 

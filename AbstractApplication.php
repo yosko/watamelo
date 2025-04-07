@@ -18,7 +18,6 @@ abstract class AbstractApplication
     protected View $view;
     protected bool $useDefaultRoutes = true;
     protected array $managers = [];
-    protected string $routeParamName;
 
 
     public function __construct(string $appName = '', string $configPath = 'Config')
@@ -45,7 +44,6 @@ abstract class AbstractApplication
             }
         }
 
-        $this->routeParamName = 'path';
         $this->appName = empty($appName) ? get_called_class() : $appName;
         $this->configPath = trim($configPath, '/');
     }
@@ -82,7 +80,6 @@ abstract class AbstractApplication
         $this->view = new View(
             $template,
             $rootUrl,
-            $this->routeParamName,
             $ApacheURLRewriting
         );
         $this->exceptionHandler->setView($this->view);
@@ -100,24 +97,6 @@ abstract class AbstractApplication
     public function configPath(): string
     {
         return $this->configPath;
-    }
-
-    /**
-     * Returns the application parameter name used in $_GET
-     * @return string name
-     */
-    public function routeParamName(): string
-    {
-        return $this->routeParamName;
-    }
-
-    /**
-     * Set the application parameter name used in $_GET
-     * @param string $routeParamName
-     */
-    public function setRouteParamName(string $routeParamName)
-    {
-        $this->routeParamName = $routeParamName;
     }
 
     /**

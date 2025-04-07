@@ -11,16 +11,14 @@ use RuntimeException;
  */
 class Router extends AbstractComponent
 {
-    protected string $routeParamName;
     protected array $routes;
     protected Route $defaultRoute;
     protected string $file;
     protected HttpRequest $request;
 
-    public function __construct(string $routeParamName)
+    public function __construct()
     {
         $this->routes = [];
-        $this->routeParamName = $routeParamName;
         $this->file = '';
     }
 
@@ -53,6 +51,12 @@ class Router extends AbstractComponent
         return $this->defaultRoute;
     }
 
+    public function dispatch(): void
+    {
+        $route = $this->findRoute();
+        $route->follow();
+    }
+
     /**
      * Returns a route based requested URL
      * @param string $url meaningful part of the url
@@ -72,6 +76,7 @@ class Router extends AbstractComponent
             $parameters = $this->matchRoute($method, $url, $route);
             if (!is_null($parameters)) {
                 $foundRoute = $route;
+                // TODO: let HttpRequest handle most of the parameters?
                 $foundRoute->foundParams = $parameters;
             }
         }
@@ -84,7 +89,7 @@ class Router extends AbstractComponent
         }
 
         // TODO:
-        $request = new HttpRequest($this->routeParamName, $foundRoute->foundParams);
+        $request = new HttpRequest($foundRoute->foundParams);
 
         // arguments destined to the action method
         $arguments = array_merge($request->urlParams(), $foundRoute->foundParams);
@@ -99,10 +104,11 @@ class Router extends AbstractComponent
         // (must always start with a "/")
         $url = "/";
 
+        // TODO: rework with the use of HttpRequest instance to get URL
         //remove '/' at the end of the url
-        if (isset($_GET[$this->routeParamName])) {
-            $url .= trim($_GET[$this->routeParamName], "/");
-        }
+        // if (isset($_GET[$this->routeParamName])) {
+        //     $url .= trim($_GET[$this->routeParamName], "/");
+        // }
 
         return $url;
     }

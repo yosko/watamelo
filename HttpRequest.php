@@ -7,19 +7,26 @@ namespace Yosko\Watamelo;
  */
 class HttpRequest
 {
+    private string $completeUrl;
+    private string $baseUrl;
     private string $url;
-    private string $urlNameParam;
     private array $headers;
     private array $urlParams;
 
-    public function __construct(?string $urlNameParam = null, array $urlParams = [])
+    public function __construct(array $urlParams = [])
     {
-        if (is_null($urlNameParam)) {
-            $this->url = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $_SERVER['REQUEST_URI']);
-        } else {
-            $this->urlNameParam = $urlNameParam;
-            $this->url = $_GET[$urlNameParam] ?? '';
+        $this->completeUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+        // remove base path (to the app) from url
+        $uri_chars = mb_str_split($this->completeUrl);
+        $script_chars = mb_str_split($_SERVER['SCRIPT_NAME']);
+        for ($i = 0; $i < count($script_chars); $i++) {
+            if ($script_chars[$i] !== $uri_chars[$i]) {
+                break;
+            }
         }
+        $this->baseUrl = implode('', array_slice($uri_chars, 0, $i - 1));
+        $this->url = implode('', array_slice($uri_chars, $i - 1));
 
         $this->urlParams = $urlParams;
     }
@@ -75,9 +82,6 @@ class HttpRequest
 
     public function queryString(): array
     {
-        $get = $_GET;
-        if (isset($this->urlNameParam))
-            unset($get[$this->urlNameParam]);
-        return $get;
+        return $_GET;
     }
 }

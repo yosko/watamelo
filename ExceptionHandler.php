@@ -9,7 +9,7 @@ namespace Yosko\Watamelo;
 class ExceptionHandler {
     private $rethrow;
     private View $view;
-    
+
     public function __construct()
     {
         set_exception_handler([$this, 'handler']);
@@ -28,7 +28,7 @@ class ExceptionHandler {
     {
         if (isset($this->view)) {
             $this->view->setParam('exception', $exception);
-            echo $this->view->renderView(ROOT.'/vendor/yosko/watamelo/views/exception', false);
+            echo $this->view->render(ROOT.'/vendor/yosko/watamelo/views/exception', false);
         } else {
             $this->rethrow = $exception;
         }

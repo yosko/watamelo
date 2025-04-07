@@ -52,7 +52,7 @@ As stated above, routing definition and use is to be set in your application cla
 ```php
 public function run()
 {
-    $router = new Router($this->routeParamName());
+    $router = new Router();
 
     // Define routes here
     $router->mapDefault(ErrorController::class, 'error404');
