@@ -9,7 +9,7 @@ use LogicException;
  * View manager
  * Class that handle the output of the application
  */
-class View extends AbstractComponent
+class View
 {
     protected array $params;
     protected string $rootUrl;
@@ -23,8 +23,6 @@ class View extends AbstractComponent
 
     public function __construct(string $template, string $rootUrl, bool $ApacheURLRewriting)
     {
-        parent::__construct();
-
         $this->params = [];
         $this->rootUrl = $rootUrl;
         $this->templateName = $template;

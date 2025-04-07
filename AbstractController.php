@@ -5,7 +5,7 @@ namespace Yosko\Watamelo;
 /**
  * Base for all controllers
  */
-abstract class AbstractController extends AbstractComponent
+abstract class AbstractController
 {
     protected string $action = '';
     protected array $parameters = [];
@@ -14,7 +14,6 @@ abstract class AbstractController extends AbstractComponent
 
     public function __construct(HttpRequest $request)
     {
-        parent::__construct();
         $this->request = $request;
     }
 

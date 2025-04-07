@@ -9,7 +9,7 @@ use RuntimeException;
 /**
  * Almighty powerful and wonderful routing class
  */
-class Router extends AbstractComponent
+class Router
 {
     protected array $routes;
     protected Route $defaultRoute;
