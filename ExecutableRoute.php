@@ -18,10 +18,16 @@ class ExecutableRoute
     }
 
     public function follow() {
-        $className = $this->route->class;
+        $handler = $this->route->handler;
         $action = $this->route->action;
 
-        $classInstance = new $className($this->httpRequest);
+        if (is_string($handler)) {
+            $classInstance = new $handler($this->httpRequest);
+        } elseif (is_object($handler)) {
+            $classInstance = $handler;
+        } else {
+            throw new \LogicException('Handler must be a class name or an instance');
+        }
         $classInstance->$action(...$this->arguments);
     }
 }

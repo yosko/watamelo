@@ -3,17 +3,14 @@ Watamelo
 
 Watamelo is a small and rather lightweight PHP MVC Framework under the GNU LGPL licence.
 
-It is currently in Alpha. This means that it might be unstable, and every way of doing things is subject to change in future versions.
+It is currently a work in progress. This means that it might be unstable, and every way of doing things is subject to change in future versions.
 
 ## Requirements
 
-Watamelo was written to use:
+Watamelo requires:
 
 * **PHP 8** or above
-
-Optional (but recommended) elements:
-
-* Apache URL rewriting module
+* Apache URL rewriting module (although it might be easy to work with other web server's rewriting approach)
 
 ## Install the framework via Composer
 First, set your `composer.json`:
@@ -50,17 +47,18 @@ You will then need to define:
 As stated above, routing definition and use is to be set in your application class. Let's call it `MyApplication`. Exemple:
 
 ```php
-public function run()
+public function init(Router $router)
 {
-    $router = new Router();
-
     // Define routes here
     $router->mapDefault(ErrorController::class, 'error404');
     $router->get('/', DefaultController::class, 'index');
 
+}
+
+public function init(Router $router)
+{
     // Find and follow the route to the corresponding class method
-    $route = $router->findRoute();
-    $route->follow();
+    $route->dispatch();
 }
 ```
 
@@ -109,7 +107,7 @@ Note: the type defined in the method's argument will be used for route matching.
 Currently supported types: `int`, `string`, `float`, `bool` (backed enum will comme soon).
 
 ### Optional URL parameters
-You can also define optional URL parameters
+You can also define optional URL parameters (will be captured at then end of the URL):
 
 ```php
 $router->get('/test/{a}/{b}', DefaultController::class, 'test')
@@ -129,10 +127,10 @@ The following URLs will match the route:
 - `/test/A/B/C`: c=C, d=Y (default)
 - `/test/A/B/C/D`: c=C, d=D
 
-Note that even if these are named parameters, the aditional ones will be matched in the order they were declared.
+Note that even if these are named parameters, the optional ones will be matched in the order they were declared.
 
 ### Additional parameters
-You can set aditional parameters that will be sent to the action method even though they don't appear in the URL (they might be set during application's `->run()` for example):
+You can set aditional parameters that will be sent to the action method even though they don't appear in the URL (they might be set during application's `->init()` for example):
 
 ```php
 $router->get('/test', DefaultController::class, 'test')
@@ -146,7 +144,7 @@ public function test(string $e)
 }
 ```
 
-Here, `test()` will always receive `e=E` even if it was not from the HTTP request.
+Here, `test()` will always receive `e=E` even if it doesn't come from the HTTP request.
 
 ### Views & template
 
@@ -158,6 +156,13 @@ If you have any question or suggestion, please feel free to contact me or post a
 
 ## Version History
 
+- v1.1 (2025-04-XX)
+  - reworked and moved HttpRequest to its own namespace/directory
+  - removed AbstractComponent to avoid injecting whole AbstractApplication to everyone
+  - removed constants and simplified paths definition
+  - routing: rewritten path isn't sent as a query param anymore
+  - routing: handlers can be class names or instances
+  - multiple fixes from previous version
 - v1.0-rc1 (2025-03-20)
   - reworked HTTP request/response handling and routing
     - new HttpRequest and HttpResponse classes

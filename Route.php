@@ -8,7 +8,7 @@ class Route
 {
     public string $url;
     public string $urlRegexp;
-    public string $class;
+    public string|object $handler;
     public string $action;
     public string $method;
     public array $requiredParams;
@@ -17,12 +17,12 @@ class Route
     public array $optionalParams;
     private array $middlewares;
 
-    public function __construct(string $method, string $url, string $class, string $action = 'index', $optional = [], $additional = [])
+    public function __construct(string $method, string $url, string|object $handler, string $action = 'index', $optional = [], $additional = [])
     {
         $this->method = $method;
         $this->url = $url;
         list($this->urlRegexp, $this->requiredParams) = $this->getUrlRegex();
-        $this->class = $class;
+        $this->handler = $handler;
         $this->action = $action;
         $this->foundParams = [];
         $this->additionalParams = [];
@@ -63,7 +63,7 @@ class Route
     public function requiredParamsTypes(): array
     {
         $types = [];
-        $r = new \ReflectionMethod($this->class, $this->action);
+        $r = new \ReflectionMethod($this->handler, $this->action);
         $params = $r->getParameters();
         foreach ($params as $param) {
             $type = $param->getType()->getName();

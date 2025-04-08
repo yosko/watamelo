@@ -28,12 +28,12 @@ class Router
     public function map(
         string $method,
         string $url,
-        string $class,
+        string|object $handler,
         string $action = 'index',
         array $additional = [],
         array $optional = []
     ): Route {
-        $route = new Route($method, $url, $class, $action, $additional, $optional);
+        $route = new Route($method, $url, $handler, $action, $additional, $optional);
         $this->routes[] = $route;
         return $route;
     }
@@ -48,9 +48,9 @@ class Router
         }
     }
 
-    public function mapDefault(string $class, string $action = 'index'): Route
+    public function mapDefault(string|object $handler, string $action = 'index'): Route
     {
-        $this->defaultRoute = new Route('', '', $class, $action);
+        $this->defaultRoute = new Route('', '', $handler, $action);
         return $this->defaultRoute;
     }
 
