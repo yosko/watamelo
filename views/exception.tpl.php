@@ -12,18 +12,17 @@ $message = sprintf('%s(%s): %s',
 $trace = $exception->getTrace();
 //d($source, $message, $trace);
 
+// TODO: rework CSS location
 ?>
 
 <article class="error">
     <style scoped>
         @import "<?php echo $templateUrl; ?>css/style.css"
     </style>
-    <ol>
-        <li>
-            <strong><?php echo $message; ?></strong>
-            <br>
-            <?php echo $source; ?>
-        </li><?php
+    <h2><?php echo $message; ?></h2>
+    <p><?php echo $source; ?></p>
+    <p>Trace:</p>
+    <ol><?php
     foreach ($trace as $row) { ?>
 
         <li>

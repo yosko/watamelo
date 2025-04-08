@@ -15,36 +15,35 @@ class View
     protected string $rootUrl;
     protected string $baseUrl;
     protected string $currentUrl;
-    protected string $templateName;
+    protected string $tplSubdir;
     protected object $template;
     protected string $templateUrl;
     protected string $templatePath;
     protected bool $ApacheURLRewriting;
 
-    public function __construct(string $template, string $rootUrl, bool $ApacheURLRewriting)
+    public function __construct(string $rootUrl, string $rootPath, string $tplSubdir = '')
     {
         $this->params = [];
         $this->rootUrl = $rootUrl;
-        $this->templateName = $template;
-        $this->ApacheURLRewriting = $ApacheURLRewriting;
+        $this->tplSubdir = $tplSubdir;
+        $this->ApacheURLRewriting = true;
 
-        //template config
-        if ($this->templateName === false) {
-            $this->templateName = "default";
-        }
+        // template subdirectory: make sure it ends with a /
+        $this->tplSubdir = $this->tplSubdir !== '' ? rtrim($this->tplSubdir, '/') . '/' : '';
 
+        // TODO: check if really useful
         if (empty($this->rootUrl)) {
             $protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'
                 || !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
                 ? 'https://'
                 : "http://";
             $this->rootUrl = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
-            $this->setParam("templateUrl", $this->rootUrl . 'App/Templates/' . $this->templateName . '/');
+            $this->setParam("templateUrl", $this->rootUrl . 'App/Templates/' . $this->tplSubdir);
         }
 
         // TODO: are all this variables really needed?
-        $this->templateUrl = $this->rootUrl . 'App/Templates/' . $this->templateName . '/';
-        $this->templatePath = ROOT . DIRECTORY_SEPARATOR . 'App/Templates' . DIRECTORY_SEPARATOR . $this->templateName . DIRECTORY_SEPARATOR;
+        $this->templateUrl = $this->rootUrl . 'App/Templates/' . $this->tplSubdir;
+        $this->templatePath = $rootPath . '/App/Templates/' . $this->tplSubdir;
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl ?: dirname($_SERVER['PHP_SELF']) . '/';

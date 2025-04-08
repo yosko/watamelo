@@ -28,7 +28,8 @@ class ExceptionHandler {
     {
         if (isset($this->view)) {
             $this->view->setParam('exception', $exception);
-            echo $this->view->render(ROOT.'/vendor/yosko/watamelo/views/exception', false);
+            // TODO: new path definition to be tested
+            echo $this->view->render('exception', __DIR__.'/views/');
         } else {
             $this->rethrow = $exception;
         }

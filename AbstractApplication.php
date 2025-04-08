@@ -13,28 +13,46 @@ define('WATAMELO_VERSION', '1.0');
  */
 abstract class AbstractApplication
 {
-    protected string $appName;
     protected string $configPath;
+    protected ?string $root;
+    protected Request $request;
     protected ExceptionHandler $exceptionHandler;
     protected View $view;
     protected bool $useDefaultRoutes = true;
     protected array $managers = [];
 
 
-    public function __construct(string $appName = '', string $configPath = 'Config')
+    public function __construct(string $configPath = 'Config', ?string $root = null, bool $devEnv = true)
     {
+        $this->request = new Request();
+
+        // set the root path (filesystem path to the app)
+        $this->root = $root ?? '';
+
         //handle errors and warnings
-        $this->setErrorReporting(DEVELOPMENT_ENVIRONMENT);
+        $this->setErrorReporting($devEnv);
         $this->exceptionHandler = new ExceptionHandler();
 
-        $errorFile = ROOT . '/tmp/logs/error.log';
+        $errorFile = $this->root . 'tmp/logs/error.log';
         ini_set('log_errors', 'On');
         ini_set('error_log', $errorFile);
+        $this->purgeLogs($errorFile);
 
-        //purge old logs
+        $this->configPath = trim($configPath, '/');
+
+        $this->initView($this->request);
+    }
+
+    /**
+     * Purge the old logs
+     * TODO: move this feature to another Composer package?
+     * @param string $errorFile path to main error log
+     */
+    protected function purgeLogs(string $errorFile)
+    {
         $today = date('Y-m-d');
-        $errorFileYesterday = ROOT . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -1 day')) . '.log';
-        $errorFileAWeekAgo = ROOT . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -8 day')) . '.log';
+        $errorFileYesterday = $this->root . 'tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -1 day')) . '.log';
+        $errorFileAWeekAgo = $this->root . 'tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -8 day')) . '.log';
         if (file_exists($errorFile) && !file_exists($errorFileYesterday) && file_exists($errorFile) && filesize($errorFile) > 0) {
             rename(
                 $errorFile,
@@ -44,11 +62,13 @@ abstract class AbstractApplication
                 unlink($errorFileAWeekAgo);
             }
         }
-
-        $this->appName = empty($appName) ? get_called_class() : $appName;
-        $this->configPath = trim($configPath, '/');
     }
 
+    /**
+     * Set the error reporting level
+     * @param bool $isDebug true if the application should display errors
+     * @return void
+     */
     public function setErrorReporting($isDebug)
     {
         error_reporting(E_ALL);
@@ -65,7 +85,7 @@ abstract class AbstractApplication
      */
     public function run()
     {
-        $router = new Router(new Request());
+        $router = new Router($this->request);
         $this->init($router);
         $this->execute($router);
     }
@@ -92,23 +112,10 @@ abstract class AbstractApplication
      * @param string $rootUrl
      * @param bool $ApacheURLRewriting
      */
-    public function initView(string $template, string $rootUrl, bool $ApacheURLRewriting)
+    public function initView()
     {
-        $this->view = new View(
-            $template,
-            $rootUrl,
-            $ApacheURLRewriting
-        );
+        $this->view = new View($this->request->getBasePath(), $this->root);
         $this->exceptionHandler->setView($this->view);
-    }
-
-    /**
-     * Returns the application name
-     * @return string name
-     */
-    public function appName(): string
-    {
-        return $this->appName;
     }
 
     public function configPath(): string
