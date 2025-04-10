@@ -54,7 +54,7 @@ class Request
             $common .= mb_substr($script, $i, 1);
         }
 
-        $this->basePath = rtrim(dirname($common), '/');
+        $this->basePath = rtrim($common, '/');
         return $this->basePath;
     }
 
