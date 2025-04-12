@@ -13,6 +13,9 @@ Watamelo requires:
 * Apache URL rewriting module (although it might be easy to work with other web server's rewriting approach)
 
 ## Install the framework via Composer
+You can use either start from the [skeleton repo](https://github.com/yosko/watamelo-skeleton) (see instructions there) or start from scratch
+
+### Start from scratch
 First, set your `composer.json`:
 
 ```json
@@ -39,12 +42,14 @@ composer install
 ## Define app
 
 You will then need to define:
-- your own application class extending `\Yosko\Watamelo\AbstractApplication` and implement routing in the `run()` method.
-- if you wish to use Watamelo's `View` class for rendering, it is for now required to put your PHP templates in `App/Templates`.
+- your own application class extending `\Yosko\Watamelo\AbstractApplication`, with:
+  - routing implementation and any initialization in `init()`
+  - routing execution in `execute()`
+- your single entry point (example: `index.php`) instaciating your app class and calling `run()` on it.
 
 
 ## Setup routing
-As stated above, routing definition and use is to be set in your application class. Let's call it `MyApplication`. Exemple:
+As stated above, routing definition and use is to be set in method `init()` of your application class. Let's call it `MyApplication`. Exemple:
 
 ```php
 public function init(Router $router)
@@ -147,8 +152,18 @@ public function test(string $e)
 Here, `test()` will always receive `e=E` even if it doesn't come from the HTTP request.
 
 ### Views & template
+TODO: currently, this feature is incomplete and cannot be used. The View instance is only known by the app class and isn't sent to controllers/actions.
 
-TODO
+Watamelo gives a templating system: not a real template engine as it works with templates in PHP, but it still sets a separate execution context.
+
+You can choose your own templates path (default : `src/Templates/`) by setting it during init:
+
+```php
+public function init(Router $router)
+{
+  $this->setTplPath('my/custom/templating/path/');
+}
+```
 
 ## FAQ
 
@@ -156,7 +171,7 @@ If you have any question or suggestion, please feel free to contact me or post a
 
 ## Version History
 
-- v1.1 (2025-04-XX)
+- v1.1 (2025-04-12)
   - reworked and moved HttpRequest to its own namespace/directory
   - removed AbstractComponent to avoid injecting whole AbstractApplication to everyone
   - removed constants and simplified paths definition

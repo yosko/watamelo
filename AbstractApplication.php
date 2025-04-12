@@ -13,6 +13,7 @@ define('WATAMELO_VERSION', '1.0');
  */
 abstract class AbstractApplication
 {
+    protected ?string $tplPath;
     protected string $configPath;
     protected ?string $root;
     protected Request $request;
@@ -39,8 +40,6 @@ abstract class AbstractApplication
         $this->purgeLogs($errorFile);
 
         $this->configPath = trim($configPath, '/');
-
-        $this->initView($this->request);
     }
 
     /**
@@ -80,6 +79,11 @@ abstract class AbstractApplication
         }
     }
 
+    public function setTplPath(?string $tplPath)
+    {
+        $this->tplPath = $tplPath;
+    }
+
     /**
      * Run the application (initialize then execute)
      */
@@ -87,6 +91,7 @@ abstract class AbstractApplication
     {
         $router = new Router($this->request);
         $this->init($router);
+        $this->initView($this->tplPath);
         $this->execute($router);
     }
 
@@ -108,13 +113,12 @@ abstract class AbstractApplication
 
     /**
      * Initialise the View object
-     * @param string $template
-     * @param string $rootUrl
+     * @param ?string $tplPath
      * @param bool $ApacheURLRewriting
      */
-    public function initView()
+    public function initView(?string $tplPath = null)
     {
-        $this->view = new View($this->request->getBasePath(), $this->root);
+        $this->view = new View($this->request->getBasePath(), $this->root, $tplPath);
         $this->exceptionHandler->setView($this->view);
     }
 

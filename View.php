@@ -15,21 +15,26 @@ class View
     protected string $rootUrl;
     protected string $baseUrl;
     protected string $currentUrl;
-    protected string $tplSubdir;
+    protected string $tplPath;
     protected object $template;
     protected string $templateUrl;
     protected string $templatePath;
     protected bool $ApacheURLRewriting;
 
-    public function __construct(string $rootUrl, string $rootPath, string $tplSubdir = '')
+    public function __construct(string $rootUrl, string $rootPath, ?string $tplPath = null)
     {
         $this->params = [];
         $this->rootUrl = $rootUrl;
-        $this->tplSubdir = $tplSubdir;
+        $this->tplPath = $tplPath;
         $this->ApacheURLRewriting = true;
 
-        // template subdirectory: make sure it ends with a /
-        $this->tplSubdir = $this->tplSubdir !== '' ? rtrim($this->tplSubdir, '/') . '/' : '';
+        // template directory
+        if (is_null($tplPath) {
+            $this->tplPath = 'src/Templates/'   ;
+        } else {
+            // make sure it ends with a /
+            $this->tplPath = $this->tplPath !== '' ? rtrim($this->tplPath, '/') . '/' : '';
+        }
 
         // TODO: check if really useful
         if (empty($this->rootUrl)) {
@@ -38,12 +43,14 @@ class View
                 ? 'https://'
                 : "http://";
             $this->rootUrl = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
-            $this->setParam("templateUrl", $this->rootUrl . 'App/Templates/' . $this->tplSubdir);
+
+            // TODO: rework this, template paths aren't meant to be publicly accessible
+            $this->setParam("templateUrl", $this->rootUrl . $this->tplPath);
         }
 
         // TODO: are all this variables really needed?
-        $this->templateUrl = $this->rootUrl . 'App/Templates/' . $this->tplSubdir;
-        $this->templatePath = $rootPath . '/App/Templates/' . $this->tplSubdir;
+        $this->templateUrl = $this->rootUrl . $this->tplPath;
+        $this->templatePath = $rootPath . $this->tplPath;
 
         //if there is no URL Rewriting, the route will be put in the $_GET['p']
         $this->baseUrl = $this->rootUrl ?: dirname($_SERVER['PHP_SELF']) . '/';
