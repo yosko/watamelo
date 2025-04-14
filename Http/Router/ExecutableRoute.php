@@ -1,6 +1,6 @@
 <?php
 
-namespace Yosko\Watamelo;
+namespace Yosko\Watamelo\Http\Router;
 
 use Yosko\Watamelo\Http\Request;
 

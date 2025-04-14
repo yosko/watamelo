@@ -2,7 +2,7 @@
 
 namespace Yosko\Watamelo\Http;
 
-enum Methods: string {
+enum Method: string {
     case GET = 'GET';
     case HEAD = 'HEAD';
     case POST = 'POST';

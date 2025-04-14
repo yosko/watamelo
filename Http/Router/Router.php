@@ -1,11 +1,11 @@
 <?php
 
-namespace Yosko\Watamelo;
+namespace Yosko\Watamelo\Http\Router;
 
 use BadMethodCallException;
 use LogicException;
 use RuntimeException;
-use Yosko\Watamelo\Http\Methods;
+use Yosko\Watamelo\Http\Method;
 use Yosko\Watamelo\Http\Request;
 
 /**
@@ -41,7 +41,7 @@ class Router
     public function __call(string $name, array $arguments): Route
     {
         $method = strtoupper($name);
-        if (in_array($method, array_column(Methods::cases(), 'name'))) {
+        if (in_array($method, array_column(Method::cases(), 'name'))) {
             return $this->map($method, ...$arguments);
         } else {
             throw new BadMethodCallException("Unsupported HTTP method: {$method}");

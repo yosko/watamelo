@@ -3,7 +3,9 @@
 namespace Yosko\Watamelo;
 
 use Exception;
+use Yosko\Watamelo\Http\Handler\ExceptionHandler;
 use Yosko\Watamelo\Http\Request;
+use Yosko\Watamelo\Http\Router\Router;
 
 define('WATAMELO_VERSION', '1.0');
 
