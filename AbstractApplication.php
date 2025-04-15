@@ -7,7 +7,7 @@ use Yosko\Watamelo\Http\Handler\ExceptionHandler;
 use Yosko\Watamelo\Http\Request;
 use Yosko\Watamelo\Http\Router\Router;
 
-define('WATAMELO_VERSION', '1.0');
+define('WATAMELO_VERSION', '1.1');
 
 /**
  * Abstract class
