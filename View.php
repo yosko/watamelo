@@ -25,15 +25,14 @@ class View
     {
         $this->params = [];
         $this->rootUrl = $rootUrl;
-        $this->tplPath = $tplPath;
         $this->ApacheURLRewriting = true;
 
         // template directory
-        if (is_null($tplPath) {
-            $this->tplPath = 'src/Templates/'   ;
+        if (is_null($tplPath)) {
+            $this->tplPath = 'src/Templates/';
         } else {
             // make sure it ends with a /
-            $this->tplPath = $this->tplPath !== '' ? rtrim($this->tplPath, '/') . '/' : '';
+            $this->tplPath = $tplPath !== '' ? rtrim($tplPath, '/') . '/' : '';
         }
 
         // TODO: check if really useful

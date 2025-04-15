@@ -42,6 +42,7 @@ abstract class AbstractApplication
         $this->purgeLogs($errorFile);
 
         $this->configPath = trim($configPath, '/');
+        $this->tplPath = null;
     }
 
     /**
