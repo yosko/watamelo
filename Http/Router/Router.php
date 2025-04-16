@@ -5,8 +5,8 @@ namespace Yosko\Watamelo\Http\Router;
 use BadMethodCallException;
 use LogicException;
 use RuntimeException;
-use Yosko\Watamelo\Http\Method;
-use Yosko\Watamelo\Http\Request;
+use Yosko\Watamelo\Component\Http\Method;
+use Yosko\Watamelo\Component\Http\Request;
 
 /**
  * Almighty powerful and wonderful routing class

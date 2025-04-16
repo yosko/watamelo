@@ -1,6 +1,6 @@
 <?php
 
-namespace Yosko\Watamelo\Http;
+namespace Yosko\Watamelo\Component\Http;
 
 /**
  * Encapsulate HTTP request
