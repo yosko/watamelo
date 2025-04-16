@@ -1,6 +1,6 @@
 <?php
 
-namespace Yosko\Watamelo\Http\Router;
+namespace Watamelo\Framework\Http\Router;
 
 use LogicException;
 

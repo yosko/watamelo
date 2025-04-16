@@ -1,11 +1,11 @@
 <?php
 
-namespace Yosko\Watamelo;
+namespace Watamelo\Framework;
 
 use Exception;
-use Yosko\Watamelo\Http\Handler\ExceptionHandler;
-use Yosko\Watamelo\Component\Http\Request;
-use Yosko\Watamelo\Http\Router\Router;
+use Watamelo\Component\Http\Request;
+use Watamelo\Framework\Http\Handler\ExceptionHandler;
+use Watamelo\Framework\Http\Router\Router;
 
 define('WATAMELO_VERSION', '1.1');
 

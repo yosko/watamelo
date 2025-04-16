@@ -1,8 +1,8 @@
 <?php
 
-namespace Yosko\Watamelo\Http\Handler;
+namespace Watamelo\Framework\Http\Handler;
 
-use Yosko\Watamelo\View;
+use Watamelo\Framework\View;
 
 /**
  * Exception handler using the View system if possible.
@@ -31,7 +31,7 @@ class ExceptionHandler {
         if (isset($this->view)) {
             $this->view->setParam('exception', $exception);
             // TODO: new path definition to be tested
-            echo $this->view->render('exception', __DIR__.'../../templates/');
+            echo $this->view->render('exception', __DIR__.'/../../templates/');
         } else {
             $this->rethrow = $exception;
         }

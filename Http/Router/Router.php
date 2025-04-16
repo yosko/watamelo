@@ -1,12 +1,14 @@
 <?php
 
-namespace Yosko\Watamelo\Http\Router;
+namespace Watamelo\Framework\Http\Router;
 
 use BadMethodCallException;
 use LogicException;
 use RuntimeException;
-use Yosko\Watamelo\Component\Http\Method;
-use Yosko\Watamelo\Component\Http\Request;
+use Watamelo\Framework\Http\Handler\HandlerInvoker;
+use Watamelo\Framework\Http\Handler\HandlerInvokerInterface;
+use Watamelo\Component\Http\Method;
+use Watamelo\Component\Http\Request;
 
 /**
  * Almighty powerful and wonderful routing class
@@ -54,24 +56,31 @@ class Router
         return $this->defaultRoute;
     }
 
-    public function dispatch(): void
+    /**
+     * Dispatch HTTP request to the corresponding HTTP handler action (eg. find corresponding route$)
+     *
+     * @param HandlerInvokerInterface|null $invoker custom handler invoker (if not provided, a basic one will be used)
+     * @return void
+     */
+    public function dispatch(?HandlerInvokerInterface $invoker = null): void
     {
-        $route = $this->findRoute();
-        $route->follow();
+        if (is_null($invoker)) {
+            $invoker = new HandlerInvoker();
+        }
+        $resolved = $this->findRoute();
+        $invoker->follow($resolved->route, $resolved->arguments, $this->request);
     }
 
     /**
      * Returns a route based requested URL
      * @param string $url meaningful part of the url
      */
-    public function findRoute(?string $url = null): ExecutableRoute
+    public function findRoute(): ResolvedRoute
     {
         $foundRoute = null;
         $parameters = [];
 
-        if (is_null($url)) {
-            $url = $this->request->getPath();
-        }
+        $url = $this->request->getPath();
         $method = $_SERVER['REQUEST_METHOD'];
 
         //check for a predefined route
@@ -95,7 +104,7 @@ class Router
         $arguments = $foundRoute->foundParams;
 
         //return found route and parameters
-        return new ExecutableRoute($foundRoute, $arguments, $this->request);
+        return new ResolvedRoute($foundRoute, $arguments);
     }
 
     public function matchRoute(string $method, string $url, Route $route): ?array

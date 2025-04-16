@@ -1,6 +1,6 @@
 <?php
 
-namespace Yosko\Watamelo\Component\Http;
+namespace Watamelo\Component\Http;
 
 enum Method: string {
     case GET = 'GET';

@@ -1,6 +1,6 @@
 <?php
 
-namespace Yosko\Watamelo;
+namespace Watamelo\Framework;
 
 use Exception;
 use PDO;
