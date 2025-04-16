@@ -172,9 +172,10 @@ If you have any question or suggestion, please feel free to contact me or post a
 ## Version History
 
 - v1.2 (2025-04-16)
-  - moved Request and Method yet to another namespace for autonomous components (might turn it into a separate package later)
-  - Http handlers ("controllers") are now called via an invoker which can be replaced/overwritten
+  - hopefully *final* reorganization of namespaces, directories and classes names
   - simplified base namespace to "Watamelo" and framework's to "Watamelo\Framework"
+  - Request and Method will their own autonomous component (might turn it into a separate package later)
+  - Http handlers ("controllers") are now called via an invoker which can be replaced/overwritten
 - v1.1 (2025-04-12)
   - reworked and moved HttpRequest to its own namespace/directory
   - removed AbstractComponent to avoid injecting whole AbstractApplication to everyone
