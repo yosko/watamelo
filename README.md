@@ -60,7 +60,7 @@ public function init(Router $router)
 
 }
 
-public function init(Router $router)
+public function execute(Router $router)
 {
     // Find and follow the route to the corresponding class method
     $route->dispatch();
