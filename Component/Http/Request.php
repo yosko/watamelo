@@ -130,7 +130,7 @@ class Request
         if ($this->bodyParams !== null)
             return $this->bodyParams;
 
-        $type = $this->getContentType();
+        $type = $this->getContentType() ?? '';
         $body = $this->getRawBody();
 
         if (str_contains($type, 'application/json')) {
