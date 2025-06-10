@@ -28,7 +28,7 @@ $trace = $exception->getTrace();
         <li>
             <strong><?php printf('%s%s%s(...)', $row['class'], $row['type'], $row['function']); ?></strong>
             <br>
-            <?php printf('%s:%s', $row['file'], $row['line']); ?>
+            <?php if (isset($row['file'])) { printf('%s:%s', $row['file'], $row['line']); } ?>
         </li><?php
 
     } ?>
