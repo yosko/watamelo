@@ -111,10 +111,33 @@ class Request
         return $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? null;
     }
 
-    public function getHost()
+    public function getHost(): string
     {
         // or $this->getHeader('Host');
         return $_SERVER['HTTP_HOST'];
+    }
+
+    /**
+     * Get request headers used for CORS (Cross-Origin Resource Sharing).
+     *
+     * @return array
+     */
+    public function getCorsHeaders(): array
+    {
+        $headersNames = [
+            'Origin',
+            'Access-Control-Request-Method',
+            'Access-Control-Request-Headers',
+        ];
+        $corsHeaders = [];
+        foreach ($headersNames as $name) {
+            $value = $this->getHeader($name);
+            if ($value !== null) {
+                $corsHeaders[$name] = $value;
+            }
+        }
+
+        return $corsHeaders;
     }
 
 
@@ -123,6 +146,21 @@ class Request
     public function getRawBody(): string
     {
         return $this->rawBody ??= file_get_contents('php://input') ?: '';
+    }
+
+    public function getJsonBody(): ?array
+    {
+        $body = $this->getRawBody();
+        if ($body === '') {
+            return null;
+        }
+
+        $data = json_decode($body, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException('Invalid JSON body: ' . json_last_error_msg());
+        }
+
+        return $data;
     }
 
     public function getBodyParams(): array
