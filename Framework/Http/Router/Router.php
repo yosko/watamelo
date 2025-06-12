@@ -9,6 +9,7 @@ use Watamelo\Framework\Http\Handler\HandlerInvoker;
 use Watamelo\Framework\Http\Handler\HandlerInvokerInterface;
 use Watamelo\Component\Http\Method;
 use Watamelo\Component\Http\Request;
+use Watamelo\Framework\Debugger;
 
 /**
  * Almighty powerful and wonderful routing class
@@ -62,12 +63,13 @@ class Router
      * @param HandlerInvokerInterface|null $invoker custom handler invoker (if not provided, a basic one will be used)
      * @return void
      */
-    public function dispatch(?HandlerInvokerInterface $invoker = null): void
+    public function dispatch(?HandlerInvokerInterface $invoker = null, bool $debug = false): void
     {
         if (is_null($invoker)) {
             $invoker = new HandlerInvoker();
         }
-        $resolved = $this->findRoute();
+
+        $resolved = $this->findRoute($debug ? new Debugger() : null);
         $invoker->follow($resolved->route, $resolved->arguments, $this->request);
     }
 
@@ -75,17 +77,26 @@ class Router
      * Returns a route based requested URL
      * @param string $url meaningful part of the url
      */
-    public function findRoute(): ResolvedRoute
+    public function findRoute(?Debugger $debugger = null): ResolvedRoute
     {
         $foundRoute = null;
         $parameters = [];
 
         $url = $this->request->getPath();
         $method = $_SERVER['REQUEST_METHOD'];
+        $debugger?->log(sprintf('Called: %s %s', $method, $url));
 
         //check for a predefined route
         foreach ($this->routes as $route) {
-            $parameters = $this->matchRoute($method, $url, $route);
+            $parameters = $this->matchRoute($method, $url, $route, $debugger);
+
+            $debugger?->log(sprintf(
+                '%s: %s %s',
+                (is_null($parameters)) ? 'Not matched' : 'Matched',
+                $route->method,
+                $route->urlRegexp
+            ), (is_null($parameters)) ? 'ko' : 'ok',);
+
             if (!is_null($parameters)) {
                 $foundRoute = $route;
                 // TODO: let Request handle most of the parameters?
@@ -107,7 +118,7 @@ class Router
         return new ResolvedRoute($foundRoute, $arguments);
     }
 
-    public function matchRoute(string $method, string $url, Route $route): ?array
+    public function matchRoute(string $method, string $url, Route $route, ?Debugger $debugger = null): ?array
     {
         if ($method != $route->method) {
             return null;
