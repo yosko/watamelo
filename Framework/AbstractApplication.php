@@ -25,18 +25,19 @@ abstract class AbstractApplication
     protected array $managers = [];
 
 
-    public function __construct(string $configPath = 'Config', ?string $root = null, bool $devEnv = true)
+    public function __construct(string $configPath = 'Config', bool $devEnv = true)
     {
         $this->request = new Request();
 
-        // set the root path (filesystem path to the app)
-        $this->root = $root ?? '';
+        // Root dir is common ancestor between cwd and the present file
+        $this->root = $this->commonBaseDir(getcwd(), __DIR__);
+        chdir($this->root);
 
-        //handle errors and warnings
+        // Handle errors and warnings
         $this->setErrorReporting($devEnv);
         $this->exceptionHandler = new ExceptionHandler();
 
-        $errorFile = $this->root . 'tmp/logs/error.log';
+        $errorFile = $this->root . '/tmp/logs/error.log';
         ini_set('log_errors', 'On');
         ini_set('error_log', $errorFile);
         $this->purgeLogs($errorFile);
@@ -44,6 +45,23 @@ abstract class AbstractApplication
         $this->configPath = trim($configPath, '/');
         $this->tplPath = null;
     }
+
+    protected function commonBaseDir(string $dir1, string $dir2): string
+    {
+        $parts1 = explode('/', $dir1);
+        $parts2 = explode('/', $dir2);
+
+        $common = [];
+        foreach ($parts1 as $i => $part) {
+            if (!isset($parts2[$i]) || $parts2[$i] !== $part) {
+                break;
+            }
+            $common[] = $part;
+        }
+
+        return implode('/', $common);
+    }
+
 
     /**
      * Purge the old logs
@@ -53,8 +71,8 @@ abstract class AbstractApplication
     protected function purgeLogs(string $errorFile)
     {
         $today = date('Y-m-d');
-        $errorFileYesterday = $this->root . 'tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -1 day')) . '.log';
-        $errorFileAWeekAgo = $this->root . 'tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -8 day')) . '.log';
+        $errorFileYesterday = $this->root . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -1 day')) . '.log';
+        $errorFileAWeekAgo = $this->root . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -8 day')) . '.log';
         if (file_exists($errorFile) && !file_exists($errorFileYesterday) && file_exists($errorFile) && filesize($errorFile) > 0) {
             rename(
                 $errorFile,
@@ -74,12 +92,7 @@ abstract class AbstractApplication
     public function setErrorReporting($isDebug)
     {
         error_reporting(E_ALL);
-        if ($isDebug) {
-            ini_set('display_errors', 'On');
-        } else {
-            error_reporting(E_ALL);
-            ini_set('display_errors', 'Off');
-        }
+        ini_set('display_errors', $isDebug ? 'On' : 'Off');
     }
 
     public function setTplPath(?string $tplPath)
