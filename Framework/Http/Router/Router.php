@@ -29,7 +29,7 @@ class Router
 
     public function map(
         string $method,
-        string $url,
+        ?string $url,
         string|object $handler,
         string $action = 'index',
         array $additional = [],

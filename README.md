@@ -76,7 +76,7 @@ Every other route is defined via the methods:
 A route needs:
 - a source request composed of
   - a HTTP method (either via the PHP method used or via the `->map()` argument)
-  - a URL (always starting with a `/`)
+  - a URL (always starting with a `/`). _Catchall_: If `null` is given, will match any URL (ex: to handle pre-flight request in a single action for all URLs when method `OPTIONS` is called).
 - a destination "action":
   - a class
   - a method of that class, which will be called if a HTTP request matches the route

@@ -6,7 +6,7 @@ use LogicException;
 
 class Route
 {
-    public string $url;
+    public ?string $url;
     public string $urlRegexp;
     public string|object $handler;
     public string $action;
@@ -17,7 +17,7 @@ class Route
     public array $optionalParams;
     private array $middlewares;
 
-    public function __construct(string $method, string $url, string|object $handler, string $action = 'index', $optional = [], $additional = [])
+    public function __construct(string $method, ?string $url, string|object $handler, string $action = 'index', $optional = [], $additional = [])
     {
         $this->method = $method;
         $this->url = $url;
@@ -44,9 +44,13 @@ class Route
 
     private function getUrlRegex(): array
     {
-        $requiredParams = [];
+        // when url is null, match any URL
+        if ($this->url === null) {
+            return ['.*', []];
+        }
 
         //handle parameter types
+        $requiredParams = [];
         $regexp = preg_replace_callback(
             "/{(\w+)}/",
             function ($matches) use (&$requiredParams) {
