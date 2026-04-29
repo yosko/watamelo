@@ -99,7 +99,7 @@ class Router
 
             if (!is_null($parameters)) {
                 $foundRoute = $route;
-                // TODO: let Request handle most of the parameters?
+                // @todo let Request handle most of the parameters?
                 $foundRoute->foundParams = $parameters;
             }
         }
@@ -178,7 +178,7 @@ class Router
                     else
                         $parameters[$requiredParam] = $filteredValue;
                     break;
-                // @todo: add support for backed enums (PHP 8.1+)
+                // @todo add support for backed enums (PHP 8.1+)
                 // case 'enum':
                 //     if ()
                 //     break;
@@ -200,7 +200,7 @@ class Router
                 return null;
             }
 
-            // @todo: use "/" as separator instead of "|"? (would need careful testing)
+            // @todo use "/" as separator instead of "|"? (would need careful testing)
             $optionalParamsGiven = preg_split('%\|%', trim($optionalParamsGiven, '/?'));
             if (count($optionalParamsGiven) == 1 && empty($optionalParamsGiven[0])) {
                 unset($optionalParamsGiven[0]);

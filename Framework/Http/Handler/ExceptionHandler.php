@@ -24,14 +24,13 @@ class ExceptionHandler {
     /**
      * @todo Avoid using __destruct to rethrow exceptions, integrate with App lifecycle instead?
      * Display exceptions and errors in a nicely manner if possible
-     * @param Throwable $e
-     * @throws Exception
+     * @param \Throwable $exception
      */
     public function handler($exception)
     {
         if (isset($this->view)) {
             $this->view->setParam('exception', $exception);
-            // TODO: new path definition to be tested
+            // @todo new path definition to be tested
             echo $this->view->render('exception', __DIR__.'/../../templates/');
         } else {
             $this->rethrow = $exception;

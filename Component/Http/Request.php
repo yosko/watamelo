@@ -61,7 +61,7 @@ class Request
     /**
      * URL path within the app.
      * (without the base path *to* the app).
-     * TODO: to be tested
+     * @todo to be tested
      *
      * @return string
      */
@@ -230,7 +230,7 @@ class Request
         return $this->getBodyParams()[$key] ?? $this->getQueryParams()[$key] ?? null;
     }
 
-    // TODO: remove this after tests
+    // @todo remove this after tests
     // public function __construct()
     // {
     //     $this->completeUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

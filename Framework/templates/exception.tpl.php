@@ -12,7 +12,7 @@ $message = sprintf('%s(%s): %s',
 $trace = $exception->getTrace();
 //d($source, $message, $trace);
 
-// TODO: rework CSS location
+// @todo rework CSS location
 ?>
 
 <article class="error">
