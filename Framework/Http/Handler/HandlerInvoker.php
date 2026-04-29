@@ -21,6 +21,7 @@ class HandlerInvoker implements HandlerInvokerInterface
         } else {
             throw new \LogicException('Handler must be a class name or an instance');
         }
+        // @todo action should probably return a Response object instead of echoing directly
         $classInstance->$action(...$arguments);
     }
 }

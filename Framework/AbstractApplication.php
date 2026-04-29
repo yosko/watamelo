@@ -7,8 +7,6 @@ use Watamelo\Component\Http\Request;
 use Watamelo\Framework\Http\Handler\ExceptionHandler;
 use Watamelo\Framework\Http\Router\Router;
 
-define('WATAMELO_VERSION', '1.1');
-
 /**
  * Abstract class
  * Main application, will be called from index.php
@@ -112,7 +110,7 @@ abstract class AbstractApplication
     }
 
     /**
-     * Initialise the application (routes, common settings, etc.)
+     * Initialize the application (routes, common settings, etc.)
      */
     public abstract function init(Router $router);
 
@@ -128,9 +126,8 @@ abstract class AbstractApplication
     }
 
     /**
-     * Initialise the View object
+     * Initialize the View object
      * @param ?string $tplPath
-     * @param bool $ApacheURLRewriting
      */
     public function initView(?string $tplPath = null)
     {

@@ -15,10 +15,10 @@ class DbFactory
     private static PDO $PDOInstance;
 
     /**
-     * Get the connexion object
+     * Get the connection object
      * @param string $dbms type of database (sqlite, mysql, etc...)
      * @param StdClass $dbParam database parameters (connection string, etc...)
-     * @return PDO|false           connexion object (PDO instance)
+     * @return PDO|false           connection object (PDO instance)
      */
     public static function getConnection(string $dbms, StdClass $dbParam)
     {
@@ -26,11 +26,11 @@ class DbFactory
         if (!isset(self::$PDOInstance) || !self::$PDOInstance) {
             $db = false;
             if ($dbms == "sqlite") {
-                $db = self::startSqliteConnexion($dbParam);
+                $db = self::startSqliteConnection($dbParam);
             } elseif ($dbms == "mysql") {
-                $db = self::startMysqlConnexion($dbParam);
+                $db = self::startMysqlConnection($dbParam);
             } elseif ($dbms == "postgresql") {
-                $db = self::startPostgresConnexion($dbParam);
+                $db = self::startPostgresConnection($dbParam);
             }
 
             self::$PDOInstance = $db;
@@ -40,11 +40,11 @@ class DbFactory
     }
 
     /**
-     * Start a sqlite connexion
+     * Start a sqlite connection
      * @param StdClass $dbParam database parameters (file name under ->dbName)
-     * @return PDO|false          connexion object (PDO instance)
+     * @return PDO|false          connection object (PDO instance)
      */
-    public static function startSqliteConnexion(StdClass $dbParam)
+    public static function startSqliteConnection(StdClass $dbParam)
     {
         $db = false;
         try {
@@ -58,11 +58,11 @@ class DbFactory
     }
 
     /**
-     * Start a MySQL connexion
+     * Start a MySQL connection
      * @param StdClass $dbParam database parameters (connection string, etc...)
-     * @return PDO|false          connexion object (PDO instance)
+     * @return PDO|false          connection object (PDO instance)
      */
-    public static function startMysqlConnexion(StdClass $dbParam)
+    public static function startMysqlConnection(StdClass $dbParam)
     {
         $db = new PDO('mysql:host=localhost;dbname=' . $dbParam->dbName, 'root', '');
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -71,11 +71,11 @@ class DbFactory
     }
 
     /**
-     * Start a PostgreSQL connexion
+     * Start a PostgreSQL connection
      * @param StdClass $dbParam database parameters (connection string, etc...)
-     * @return PDO|false          connexion object (PDO instance)
+     * @return PDO|false          connection object (PDO instance)
      */
-    public static function startPostgresConnexion(StdClass $dbParam)
+    public static function startPostgresConnection(StdClass $dbParam)
     {
         throw new Exception("PostgreSQL not implemented yet");
     }

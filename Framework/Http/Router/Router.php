@@ -118,6 +118,9 @@ class Router
         return new ResolvedRoute($foundRoute, $arguments);
     }
 
+    /**
+     * @todo This role (match, cast types, options management) will have to be split into several private methods.
+     */
     public function matchRoute(string $method, string $url, Route $route, ?Debugger $debugger = null): ?array
     {
         if ($method != $route->method) {

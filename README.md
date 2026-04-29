@@ -1,5 +1,7 @@
 Watamelo
 =====
+[![Latest Stable Version](https://img.shields.io/packagist/v/yosko/watamelo.svg)](https://packagist.org/packages/yosko/watamelo)
+[![License](https://img.shields.io/packagist/l/yosko/watamelo.svg)](https://packagist.org/packages/yosko/watamelo)
 
 Watamelo is a small and rather lightweight PHP MVC Framework under the GNU LGPL licence.
 
@@ -23,13 +25,7 @@ First, set your `composer.json`:
     ...
     "require": {
         "yosko/watamelo": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:yosko/watamelo.git"
-        }
-    ]
+    }
 }
 ```
 
