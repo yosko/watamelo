@@ -23,7 +23,7 @@ abstract class AbstractApplication
     protected array $managers = [];
 
 
-    public function __construct(string $configPath = 'Config', bool $devEnv = true, ?Request $request = null)
+    public function __construct(string $configPath = 'config', bool $devEnv = true, ?Request $request = null)
     {
         $this->request = $request ?? new Request();
 

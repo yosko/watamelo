@@ -152,7 +152,7 @@ TODO: currently, this feature is incomplete and cannot be used. The View instanc
 
 Watamelo gives a templating system: not a real template engine as it works with templates in PHP, but it still sets a separate execution context.
 
-You can choose your own templates path (default : `src/Templates/`) by setting it during init:
+You can choose your own templates path (default : `src/templates/`) by setting it during init:
 
 ```php
 public function init(Router $router)

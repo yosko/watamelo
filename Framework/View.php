@@ -32,7 +32,7 @@ class View
 
         // template directory
         if (is_null($tplPath)) {
-            $this->tplPath = 'src/Templates/';
+            $this->tplPath = 'src/templates/';
         } else {
             // make sure it ends with a /
             $this->tplPath = $tplPath !== '' ? rtrim($tplPath, '/') . '/' : '';
