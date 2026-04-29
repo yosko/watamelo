@@ -79,6 +79,45 @@ class Request
         return $this->path;
     }
 
+    public function getScheme(): string
+    {
+        // HTTP_X_FORWARDED_PROTO: if the app is behind a proxy, reverse-proxy or load-balancer
+        // REQUEST_SCHEME: fallback via Apache's default approach since 2.4
+        return $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME'] ?? 'http';
+    }
+
+    /**
+     * Get the root URL of the application (scheme + host + base path)
+     * e.g. http://localhost/my-project
+     *
+     * @return string
+     */
+    public function getRootUrl(): string
+    {
+        return $this->getScheme() . '://' . $this->getHost() . $this->getBasePath();
+    }
+
+    /**
+     * Get the full URL of the current request as sent by the client (with query string)
+     *
+     * @return string
+     */
+    public function getFullUrl(): string
+    {
+        return $this->getScheme() . '://' . $this->getHost() . $this->getUri();
+    }
+
+    /**
+     * Get the rewritten URL of the current request (using REDIRECT_URL if available)
+     *
+     * @return string
+     */
+    public function getRewrittenUrl(): string
+    {
+        $path = $_SERVER['REDIRECT_URL'] ?? parse_url($this->getUri(), PHP_URL_PATH);
+        return $this->getScheme() . '://' . $this->getHost() . $path;
+    }
+
 
     /******** URL parameters ********/
 

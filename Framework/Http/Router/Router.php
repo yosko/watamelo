@@ -83,7 +83,7 @@ class Router
         $parameters = [];
 
         $url = $this->request->getPath();
-        $method = $_SERVER['REQUEST_METHOD'];
+        $method = $this->request->getMethod();
         $debugger?->log(sprintf('Called: %s %s', $method, $url));
 
         //check for a predefined route

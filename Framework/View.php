@@ -4,6 +4,7 @@ namespace Watamelo\Framework;
 
 use DOMDocument;
 use LogicException;
+use Watamelo\Component\Http\Request;
 
 /**
  * View manager
@@ -19,13 +20,15 @@ class View
     protected object $template;
     protected string $templateUrl;
     protected string $templatePath;
-    protected bool $ApacheURLRewriting;
+    protected Request $request;
 
-    public function __construct(string $rootUrl, string $rootPath, ?string $tplPath = null)
+    public function __construct(Request $request, string $rootPath, ?string $tplPath = null)
     {
         $this->params = [];
-        $this->rootUrl = $rootUrl;
-        $this->ApacheURLRewriting = true;
+        $this->request = $request;
+
+        // base URL for the client
+        $this->rootUrl = $request->getRootUrl();
 
         // template directory
         if (is_null($tplPath)) {
@@ -35,26 +38,14 @@ class View
             $this->tplPath = $tplPath !== '' ? rtrim($tplPath, '/') . '/' : '';
         }
 
-        // TODO: check if really useful
-        if (empty($this->rootUrl)) {
-            $protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on'
-                || !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
-                ? 'https://'
-                : "http://";
-            $this->rootUrl = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/';
-
-            // TODO: rework this, template paths aren't meant to be publicly accessible
-            $this->setParam("templateUrl", $this->rootUrl . $this->tplPath);
-        }
-
-        // TODO: are all this variables really needed?
-        $this->templateUrl = $this->rootUrl . $this->tplPath;
+        $this->templateUrl = rtrim($this->rootUrl, '/') . '/' . $this->tplPath;
         $this->templatePath = $rootPath . $this->tplPath;
 
-        //if there is no URL Rewriting, the route will be put in the $_GET['p']
-        $this->baseUrl = $this->rootUrl ?: dirname($_SERVER['PHP_SELF']) . '/';
+        // base URL for route building (always with trailing slash)
+        $this->baseUrl = rtrim($this->rootUrl, '/') . '/';
 
-        $this->currentUrl = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http') . '://' . $_SERVER['SERVER_NAME'] . (isset($_SERVER['REDIRECT_URL']) ? $_SERVER['REDIRECT_URL'] : '');
+        // full rewritten URL (Apache internal path)
+        $this->currentUrl = $request->getRewrittenUrl();
 
         $this->setParam("templateUrl", $this->templateUrl);
         $this->setParam("rootUrl", $this->rootUrl);

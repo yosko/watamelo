@@ -23,9 +23,9 @@ abstract class AbstractApplication
     protected array $managers = [];
 
 
-    public function __construct(string $configPath = 'Config', bool $devEnv = true)
+    public function __construct(string $configPath = 'Config', bool $devEnv = true, ?Request $request = null)
     {
-        $this->request = new Request();
+        $this->request = $request ?? new Request();
 
         // Root dir is common ancestor between cwd and the present file
         $this->root = $this->commonBaseDir(getcwd(), __DIR__);
@@ -131,7 +131,7 @@ abstract class AbstractApplication
      */
     public function initView(?string $tplPath = null)
     {
-        $this->view = new View($this->request->getBasePath(), $this->root, $tplPath);
+        $this->view = new View($this->request, $this->root, $tplPath);
         $this->exceptionHandler->setView($this->view);
     }
 
