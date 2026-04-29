@@ -90,7 +90,7 @@ abstract class AbstractApplication
     public abstract function init(Router $router);
 
     /**
-     * Execute the application (will call the right class/controller and action)
+     * Execute the application (will call the right action within a handler)
      */
     public abstract function execute(Router $router);
 

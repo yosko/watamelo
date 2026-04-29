@@ -8,8 +8,8 @@ Routing definition and use is to be set in method `init()` of your application c
 public function init(Router $router)
 {
     // Define routes here
-    $router->mapDefault(ErrorController::class, 'error404');
-    $router->get('/', DefaultController::class, 'index');
+    $router->mapDefault(ErrorHandler::class, 'error404');
+    $router->get('/', DefaultHandler::class, 'index');
 
 }
 
@@ -30,12 +30,12 @@ A route needs:
 - a source request composed of
   - a HTTP method (either via the PHP method used or via the `->map()` argument)
   - a URL (always starting with a `/`). _Catchall_: If `null` is given, will match any URL (ex: to handle pre-flight request in a single action for all URLs when method `OPTIONS` is called).
-- a destination "action":
-  - a class
-  - a method of that class, which will be called if a HTTP request matches the route
+- a destination "action" (typically a method within a **Handler** class, which can be a "Controller"):
+  - a handler class
+  - an action method of that class, which will be called if a HTTP request matches the route
 - optional other arguments (see below): *additional* and *optional* parameters
 
-In the example above, a `GET` request to the root (`/`) of the website will call `index()` (a non static method) that can be defined like this in its class (`DefaultController`):
+In the example above, a `GET` request to the root (`/`) of the website will call `index()` (a non static method) that can be defined like this in its class (`DefaultHandler`):
 
 ```php
 public function index()
@@ -49,7 +49,7 @@ public function index()
 You can setup one or multiple variables in the URL:
 
 ```php
-$router->get('/test/{a}/{b}', DefaultController::class, 'test');
+$router->get('/test/{a}/{b}', DefaultHandler::class, 'test');
 ```
 
 And then receive them in the "action" method:
@@ -68,7 +68,7 @@ Currently supported types: `int`, `string`, `float`, `bool` (backed enum will co
 You can also define optional URL parameters (will be captured at then end of the URL):
 
 ```php
-$router->get('/test/{a}/{b}', DefaultController::class, 'test')
+$router->get('/test/{a}/{b}', DefaultHandler::class, 'test')
     ->addOptionalParam('c')
     ->addOptionalParam('d');
 ```
@@ -93,7 +93,7 @@ Note that even if these are named parameters, the optional ones will be matched 
 You can set aditional parameters that will be sent to the action method even though they don't appear in the URL (they might be set during application's `->init()` for example):
 
 ```php
-$router->get('/test', DefaultController::class, 'test')
+$router->get('/test', DefaultHandler::class, 'test')
     ->setAdditionalParam('e', 'E');
 ```
 

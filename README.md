@@ -3,7 +3,7 @@ Watamelo
 [![Latest Stable Version](https://img.shields.io/packagist/v/yosko/watamelo.svg)](https://packagist.org/packages/yosko/watamelo)
 [![License](https://img.shields.io/packagist/l/yosko/watamelo.svg)](https://packagist.org/packages/yosko/watamelo)
 
-Watamelo is a small and rather lightweight PHP MVC Framework under the GNU LGPL licence.
+Watamelo is a small and rather lightweight PHP Framework under the GNU LGPL licence.
 
 It is currently a work in progress. This means that it might be unstable, and every way of doing things is subject to change in future versions.
 
@@ -52,7 +52,7 @@ class App extends \Watamelo\Framework\AbstractApplication {
 }
 ```
 
-2. **Create your action** (here an example in `src/Controller/MainController.php`):
+2. **Create your action** (typically in a **Handler** class such as a "Controller"; here an example in `src/Controller/MainController.php`):
 ```php
 class MainController {
     public function hello() { echo "Hello Watamelo!"; }
