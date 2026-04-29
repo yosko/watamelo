@@ -1,0 +1,101 @@
+# Version History
+
+[Back to README](../README.md)
+
+- v1.3 (2026-04-29)
+  - enhanced routing with routes without URL (match any URL, focus only on the method)
+  - routing debugging
+  - expand the use of Request instead of superglobals
+  - lots of cleanup
+- v1.2 (2025-04-16)
+  - hopefully *final* reorganization of namespaces, directories and classes names
+  - simplified base namespace to "Watamelo" and framework's to "Watamelo\Framework"
+  - Request and Method will their own autonomous component (might turn it into a separate package later)
+  - Http handlers ("controllers") are now called via an invoker which can be replaced/overwritten
+- v1.1 (2025-04-12)
+  - reworked and moved HttpRequest to its own namespace/directory
+  - removed AbstractComponent to avoid injecting whole AbstractApplication to everyone
+  - removed constants and simplified paths definition
+  - routing: rewritten path isn't sent as a query param anymore
+  - routing: handlers can be class names or instances
+  - multiple fixes from previous version
+- v1.0-rc1 (2025-03-20)
+  - reworked HTTP request/response handling and routing
+    - new HttpRequest and HttpResponse classes
+    - routes declaration based on method name
+    - actions now receive parameters (required, optional, additional) as named arguments
+    - route parameters now support types: int, string, float, bool ((backed)enum will come)
+  - simplified View class (most features should be handled as an extension)
+  - cleanup of convoluted or unused features
+- v0.12 (2022-09-16)
+  - migrated to PHP 7.4
+  - enabled strict types
+  - cleaned/formatted code
+  - updated external libraries
+  - added Data* and other facilitators in example app
+- v0.11 (2016-11-14)
+  - fixed cookie path errors
+  - minor rewrite and new useful functions in example classes
+  - fixed shorthand function ```executeTransaction``` to avoid transaction conflicts
+  - fixed missing explicit namespaces
+  - fixed syntax error in ```lib/Application.php```
+- v0.10 (2016-02-04)
+  - introduction of namespace (now used everywhere)
+  - minor tweaks to .gitignore
+  - proper HTTPS handling in generated URLs
+  - auto create long-term sessions directory
+  - new $currentUrl parameters available to views
+  - fixed content-type headers for atom/rss
+  - exceptions and errors handling and logging
+  - lots of tweaking to comply to PSR-2
+  - edited autoloader to handle potential plugin classes
+- v0.8/0.9 (2015-06-30)
+  - added rewrite rule to block access to ```lib/``` directory
+  - added the ability to use template files stored outside of the ```tpl/``` directory
+  - expanded ConfigManager to handle custom json config files
+  - added a SqlGenerator class to construct queries and updated UserManager to rely on it
+  - added a bunch of small utility functions to the Tools class
+  - automatically rename error log files every day
+  - updated example database model for a simpler naming system
+  - updated EasyDump to 0.8 (including latest fixes)
+  - disabled authentication log (not very useful)
+  - minor bugfixes
+- v0.8 (2014-09-22)
+  - added CSS views handling (a way to add PHP in CSS files to handle variables, etc...)
+  - use StdClass objects instead of arrays for list of objects of variable natures
+  - handle DBMS and DB parameters in example code, not in Watamelo library (gives the ability to use as much database connections as needed)
+  - fix error on renderData() where options didn't work
+  - in given example, moved SQL files into the model directory
+  - in given example, updated YosLogin (this never stops...)
+  - in given example, use prefix for table names
+  - in given example, keep more useful tools
+  - in given example, make authController (and its YosLogin logger) accessible
+- v0.7 (2014-06-27)
+  - handle app variables within routes
+  - updated YosLogin, again
+  - make URL parameters accessible from the view by default
+  - avoid having to redeclare executeIndex in every controller
+  - minor fixes in config manager
+  - enhanced session manager with some other methods
+  - remove example specific code from the core of watamelo
+- v0.6 (2014-02-17)
+  - parameters are extracted for the view, instead of kept in an array
+  - reorganised some code
+  - define DBMS on the app level
+  - updated YosLogin
+  - separated app version number from framework version number
+- v0.5 (2013-10-28)
+  - handle views without any external template librarby
+  - minor fixes
+- v0.4 (2013-10-17)
+  - many minor fixes and tweaks
+  - replaced route definition file from JSON to XML (with DTD)
+  - moved route definition file from data/ to app/ (because it concerns the app itself)
+- v0.3 (2013-08-12)
+  - added feed generation (atom/rss)
+  - added data download as file
+- v0.2 (2013-08-02)
+  - handle urls with or without rewriting
+  - config handling is now a Controller (and considered as implementation example)
+- v0.1 (2013-08-01)
+  - initial version
