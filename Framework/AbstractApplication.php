@@ -35,11 +35,6 @@ abstract class AbstractApplication
         $this->setErrorReporting($devEnv);
         $this->exceptionHandler = new ExceptionHandler();
 
-        $errorFile = $this->root . '/tmp/logs/error.log';
-        ini_set('log_errors', 'On');
-        ini_set('error_log', $errorFile);
-        $this->purgeLogs($errorFile);
-
         $this->configPath = trim($configPath, '/');
         $this->tplPath = null;
     }
@@ -60,27 +55,6 @@ abstract class AbstractApplication
         return implode('/', $common);
     }
 
-
-    /**
-     * Purge the old logs
-     * TODO: move this feature to another Composer package?
-     * @param string $errorFile path to main error log
-     */
-    protected function purgeLogs(string $errorFile)
-    {
-        $today = date('Y-m-d');
-        $errorFileYesterday = $this->root . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -1 day')) . '.log';
-        $errorFileAWeekAgo = $this->root . '/tmp/logs/error-' . date('Y-m-d', strtotime($today . ' -8 day')) . '.log';
-        if (file_exists($errorFile) && !file_exists($errorFileYesterday) && file_exists($errorFile) && filesize($errorFile) > 0) {
-            rename(
-                $errorFile,
-                $errorFileYesterday
-            );
-            if (file_exists($errorFileAWeekAgo)) {
-                unlink($errorFileAWeekAgo);
-            }
-        }
-    }
 
     /**
      * Set the error reporting level
