@@ -28,6 +28,7 @@ abstract class AbstractApplication
         $this->request = $request ?? new Request();
 
         // Root dir is common ancestor between cwd and the present file
+        // @todo Is this approach really robust? Should we use dirname(__DIR__, 3) instead?
         $this->root = $this->commonBaseDir(getcwd(), __DIR__);
         chdir($this->root);
 
