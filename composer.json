@@ -3,7 +3,7 @@
     "description": "small PHP MVC Framework",
     "type": "library",
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.2"
     },
     "autoload": {
         "psr-4": {

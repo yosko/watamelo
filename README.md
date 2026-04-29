@@ -11,7 +11,7 @@ It is currently a work in progress. This means that it might be unstable, and ev
 
 Watamelo requires:
 
-* **PHP 8** or above
+* **PHP 8.2** or above
 * Apache URL rewriting module (although it might be easy to work with other web server's rewriting approach)
 
 ## Install the framework via Composer
