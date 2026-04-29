@@ -74,8 +74,8 @@ class Router
     }
 
     /**
-     * Returns a route based requested URL
-     * @param string $url meaningful part of the url
+     * Returns a route based on the requested URL held by the Request object
+     * @param Debugger|null $debugger optional debugger instance
      */
     public function findRoute(?Debugger $debugger = null): ResolvedRoute
     {
@@ -178,6 +178,7 @@ class Router
                     else
                         $parameters[$requiredParam] = $filteredValue;
                     break;
+                // @todo: add support for backed enums (PHP 8.1+)
                 // case 'enum':
                 //     if ()
                 //     break;
@@ -199,6 +200,7 @@ class Router
                 return null;
             }
 
+            // @todo: use "/" as separator instead of "|"? (would need careful testing)
             $optionalParamsGiven = preg_split('%\|%', trim($optionalParamsGiven, '/?'));
             if (count($optionalParamsGiven) == 1 && empty($optionalParamsGiven[0])) {
                 unset($optionalParamsGiven[0]);

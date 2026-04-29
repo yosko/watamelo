@@ -36,6 +36,36 @@ Then install the framework:
 composer install
 ```
 
+## Quick Start
+
+The easiest way to start is using the [watamelo-skeleton](https://github.com/yosko/watamelo-skeleton) repository.
+
+Otherwise, you can create a minimalist application in 3 steps:
+
+1. **Define your App** (here an example in `src/App.php`):
+```php
+class App extends \Watamelo\Framework\AbstractApplication {
+    public function init($router) {
+        $router->get('/', \App\Controller\MainController::class, 'hello');
+    }
+    public function execute($router) { $router->dispatch(); }
+}
+```
+
+2. **Create your action** (here an example in `src/Controller/MainController.php`):
+```php
+class MainController {
+    public function hello() { echo "Hello Watamelo!"; }
+}
+```
+
+3. **Launch it** (here an example in `public/index.php`):
+```php
+(new \App\App())->run();
+```
+
+---
+
 ## Documentation
 
 See specific documentation files for more detailed information:

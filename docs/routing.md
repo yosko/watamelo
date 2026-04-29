@@ -83,7 +83,9 @@ public function test(string $a, string $b, string $c='Z', string $d='Y')
 The following URLs will match the route:
 - `/test/A/B`: c and d will have their default values (c=Z, d=Y)
 - `/test/A/B/C`: c=C, d=Y (default)
-- `/test/A/B/C/D`: c=C, d=D
+- `/test/A/B/C|D`: c=C, d=D
+
+:warning: **Note**: currently, multiple optional parameters must be separated by a pipe (`|`) instead of a slash (`/`) in the URL.
 
 Note that even if these are named parameters, the optional ones will be matched in the order they were declared.
 
