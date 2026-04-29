@@ -46,13 +46,8 @@ class DbFactory
      */
     public static function startSqliteConnection(StdClass $dbParam)
     {
-        $db = false;
-        try {
-            $db = new PDO('sqlite:' . $dbParam->dbPath . $dbParam->dbName, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+        $db = new PDO('sqlite:' . $dbParam->dbPath . $dbParam->dbName, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $db;
     }
@@ -64,10 +59,7 @@ class DbFactory
      */
     public static function startMysqlConnection(StdClass $dbParam)
     {
-        $db = new PDO('mysql:host=localhost;dbname=' . $dbParam->dbName, 'root', '');
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        return $db;
+        throw new \Exception("MySQL not implemented yet");
     }
 
     /**
